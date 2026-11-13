@@ -1,1 +1,221 @@
-﻿{"items":[{"content":{"body":"## 🎯 Objective\nImplement an interactive 5-step conversational wizard within WhatsApp chats powered by an in-memory Redis finite state machine (FSM).\n\n## 💼 Business Value\nEliminates external app dependencies, allowing everyday users to schedule reminders in under 30 seconds directly inside WhatsApp without learning complex commands.\n\n## 📋 Requirements Traceability\n- **BRD Business Objectives**: BO-01 (In-App Scheduling), BO-04 (Dispatch Accuracy), BO-06 (Temporal Precision)\n- **Functional Requirements**:\n  - `FR-WIZ-01`: In-memory draft state machine with 15-minute inactivity TTL\n  - `FR-WIZ-02`: Recipient resolution (vCard 3.0, E.164 phone numbers, aliases, group permissions)\n  - `FR-WIZ-03`: Multi-modal payload capture (text up to 4,096 chars, images, audio/voice, documents, videos)\n  - `FR-WIZ-04`: Natural language temporal parsing via `chrono-node` with user timezone anchor\n  - `FR-WIZ-05`: Confirmation preview card with interactive buttons (Confirm, Edit, Cancel)\n\n## 🛠️ Acceptance Criteria\n- [ ] Inactive wizard sessions automatically expire after 15 minutes with memory reclaimed.\n- [ ] Parser accepts vCard 3.0 contact cards, raw E.164 phone numbers, and saved contact aliases.\n- [ ] Natural language expressions (\"tomorrow at 9:30am\") resolved relative to user's localized IANA timezone.\n- [ ] Confirmation card renders with interactive `[✅ Confirm]`, `[✏️ Edit]`, and `[❌ Cancel]` buttons.\n- [ ] Tapping `[✏️ Edit]` allows stepping back to any previous field without losing other entered data.\n","number":12,"repository":"Shivam-Jha96/scheduler","title":"[EPIC-02] In-Chat Conversational Guided Wizard (FR-WIZ)","type":"Issue","url":"https://github.com/Shivam-Jha96/scheduler/issues/12"},"id":"PVTI_lAHOATDjps4BrbmUzhIaIbQ","labels":["epic","brd"],"repository":"https://github.com/Shivam-Jha96/scheduler","status":"Todo","title":"[EPIC-02] In-Chat Conversational Guided Wizard (FR-WIZ)"},{"content":{"body":"## 🎯 Objective\nBuild a high-throughput, atomic command grammar interface for power users, automated systems, and quick scheduling.\n\n## 💼 Business Value\nReduces interaction friction from 5 conversational turns to 1 atomic command turn for repeated power users and business operators.\n\n## 📋 Requirements Traceability\n- **BRD Business Objectives**: BO-01 (In-App Scheduling)\n- **Functional Requirements**:\n  - FR-CLI-01: Fast-Path /schedule <target> <time> | <message> for one-off dispatches\n  - FR-CLI-02: Recurring CLI /schedule --repeat <rule> <target> <time> | <message>\n  - FR-CLI-03: Queue inspection /list [pending|sent|all] [page]\n  - FR-CLI-04: Cancellation & BullMQ eviction /cancel <job_uid>\n  - FR-CLI-05: In-place editing /edit <job_uid> <field> <new_val>\n  - FR-CLI-06: Timezone configuration /timezone <IANA_zone>\n\n## 🛠️ Acceptance Criteria\n- [ ] /schedule <target> <time> | <message> schedules atomically in a single message turn.\n- [ ] /list cleanly paginates and displays active jobs with localized timestamps and status badges (🟡 PENDING, 🟢 SENT, 🔴 FAILED).\n- [ ] /cancel <job_uid> updates database to CANCELLED and evicts in-flight job from BullMQ.\n- [ ] In-place edit /edit updates database parameters and reschedules in-flight jobs.\n- [ ] Syntax errors provide clear correction examples and parameter hints.","number":2,"repository":"Shivam-Jha96/scheduler","title":"[EPIC-03] Command Grammar & Fast-Path Slash Interface (FR-CLI)","type":"Issue","url":"https://github.com/Shivam-Jha96/scheduler/issues/2"},"id":"PVTI_lAHOATDjps4BrbmUzhIaIfk","labels":["epic","brd"],"repository":"https://github.com/Shivam-Jha96/scheduler","status":"Todo","title":"[EPIC-03] Command Grammar & Fast-Path Slash Interface (FR-CLI)"},{"content":{"body":"## 🎯 Objective\nImplement the distributed Two-Tier Hybrid Scheduling architecture combining PostgreSQL 16 durable storage with BullMQ/Redis sliding-window delay queues.\n\n## 💼 Business Value\nSolves database connection exhaustion and polling latency while preventing millions of long-term jobs from exhausting expensive Redis RAM. Delivers sub-second dispatch precision (< 1.0s variance).\n\n## 📋 Requirements Traceability\n- **BRD Business Objectives**: BO-04 (Sub-Second Accuracy < 1.0s drift), BO-05 (Sustainable Unit Economics < /mo)\n- **Functional Requirements**:\n  - FR-SCHED-01: 60s Look-Ahead Feeder querying PostgreSQL using FOR UPDATE SKIP LOCKED for jobs due in next 5 minutes\n  - FR-SCHED-02: BullMQ Redis delayed queue buffer with millisecond countdown timers\n  - FR-SCHED-03: Distributed worker pool consuming triggers and invoking target channel adapters\n\n## 🛠️ Acceptance Criteria\n- [ ] 60-second cron feeder queries PostgreSQL using FOR UPDATE SKIP LOCKED for jobs due in next 5 minutes.\n- [ ] Redis memory usage for 10,000 pending jobs remains below 250 KB (only 5-minute sliding window buffered).\n- [ ] Horizontal feeder scaling produces zero race conditions or duplicate claims across nodes.\n- [ ] Poller execution time remains < 0.5ms under 100,000 synthetic rows using partial B-tree index.\n- [ ] Jobs scheduled 30 days in advance execute within ±1000 ms of target timestamp.","number":3,"repository":"Shivam-Jha96/scheduler","title":"[EPIC-04] Two-Tier Hybrid Scheduling Engine (FR-SCHED)","type":"Issue","url":"https://github.com/Shivam-Jha96/scheduler/issues/3"},"id":"PVTI_lAHOATDjps4BrbmUzhIaIlE","labels":["epic","brd"],"repository":"https://github.com/Shivam-Jha96/scheduler","status":"Todo","title":"[EPIC-04] Two-Tier Hybrid Scheduling Engine (FR-SCHED)"},{"content":{"body":"## 🎯 Objective\nBuild a mathematically robust recurrence calculation engine using Luxon guaranteeing local wall-clock invariance across seasonal Daylight Saving Time shifts and month-end boundary conditions.\n\n## 💼 Business Value\nEliminates reminder drift (BO-06, BR-05). Users scheduled for 9:00 AM local time receive messages at exactly 9:00 AM regardless of 23h spring-forward or 25h fall-back transitions.\n\n## 📋 Requirements Traceability\n- **BRD Business Objectives**: BO-06 (Temporal Precision & DST Invariance: 0.0 min drift)\n- **Business Rules**: BR-05 (Wall-Clock Invariance anchored to user IANA timezone)\n- **Functional Requirements**:\n  - FR-REC-01: Single-Active-Row recurrence state machine (updating existing row in-place)\n  - FR-REC-02: Calendar-day Luxon DST arithmetic (UTC -> Local -> Calendar Add -> UTC)\n  - FR-REC-03: Month-End Anchor Day preservation (Jan 31 -> Feb 28 -> Mar 31)\n  - FR-REC-04: Server reboot fast-forwarding / misfire handling past NOW()\n\n## 🛠️ Acceptance Criteria\n- [ ] Single active row updated in-place upon execution to avoid runaway row duplication.\n- [ ] Month-end anchor day (Jan 31 -> Feb 28/29 -> Mar 31 -> Apr 30) preserved without day drift.\n- [ ] DST transition test suite passes 100% across New York, London, Sydney, and UTC.\n- [ ] Extended server downtime of 4 hours fast-forwards overdue recurring jobs past NOW() and marks skipped runs as MISFIRED.","number":4,"repository":"Shivam-Jha96/scheduler","title":"[EPIC-05] Temporal Mathematics & Wall-Clock Recurrence (FR-REC)","type":"Issue","url":"https://github.com/Shivam-Jha96/scheduler/issues/4"},"id":"PVTI_lAHOATDjps4BrbmUzhIaIp8","labels":["epic","brd"],"repository":"https://github.com/Shivam-Jha96/scheduler","status":"Todo","title":"[EPIC-05] Temporal Mathematics & Wall-Clock Recurrence (FR-REC)"},{"content":{"body":"## 🎯 Objective\nEnforce an end-to-end zero-double-send guarantee (0.0% tolerance) and human-like behavioral telemetry to protect accounts from algorithmic bans.\n\n## 💼 Business Value\nEliminates relationship damage caused by duplicate message blasts (BO-02) and maintains personal account restriction rate < 0.01% (BO-03).\n\n## 📋 Requirements Traceability\n- **BRD Business Objectives**: BO-02 (Zero Double-Sends: 0.0%), BO-03 (Account Safety: < 0.01% ban rate)\n- **Business Rules**: BR-02 (Anti-Spam & Health Protection)\n- **Functional Requirements**:\n  - FR-REL-01: Exponential backoff with jitter (2s, 4s, 8s, 16s, 32s + 500ms)\n  - FR-REL-02: Dead Letter Queue (DLQ) & out-of-band user alerts\n  - FR-REL-03: Dead-Man's-Switch background recovery sweeper (runs every 2m for jobs > 5m in PROCESSING)\n  - FR-META-01: Human typing emulation (composing state 35–55 ms/char, clamped 1.5s–4.0s)\n  - FR-META-02: Inter-message serialization & jitter spacing (3–6s known contacts, 8–15s new contacts)\n\n## 🛠️ Acceptance Criteria\n- [ ] Deterministic 22-char stanza ID (3EB0 + SHA256(...)) enforces WhatsApp socket deduplication.\n- [ ] Distributed Redis mutex (SET lock:job:{id} NX EX 600) acquired prior to transport dispatch.\n- [ ] Outbound messages emit human-paced composing presence before text transmission.\n- [ ] Dead-Man's Sweeper automatically recovers orphaned PROCESSING jobs older than 5 minutes.\n- [ ] Zero duplicate messages dispatched during chaos testing with worker SIGKILL.","number":5,"repository":"Shivam-Jha96/scheduler","title":"[EPIC-06] Reliability, Deduplication & Anti-Ban Telemetry (FR-REL)","type":"Issue","url":"https://github.com/Shivam-Jha96/scheduler/issues/5"},"id":"PVTI_lAHOATDjps4BrbmUzhIaIt0","labels":["epic","brd"],"repository":"https://github.com/Shivam-Jha96/scheduler","status":"Todo","title":"[EPIC-06] Reliability, Deduplication & Anti-Ban Telemetry (FR-REL)"},{"content":{"body":"## 🎯 Objective\nImplement privacy-first and regional messaging adapters including containerized signal-cli, official LINE Messaging API, and macOS AppleScript/BlueBubbles iMessage bridge.\n\n## 💼 Business Value\nCaptures privacy-conscious users (50M Signal MAUs), regional dominance in Japan/Taiwan/Thailand (LINE), and North American prosumers (iMessage blue-bubbles).\n\n## 📋 Requirements Traceability\n- **Omnichannel Scale-Out Requirements**:\n  - OMNI-05: Headless Signal E2EE integration (signal-cli JSON-RPC secondary linked device)\n  - EPIC-13: Privacy ecosystem expansion for Signal\n  - EPIC-14: Regional & prosumer bridges for LINE & iMessage\n- **Adapters**:\n  - ^Gdapters/signal\n  - ^Gdapters/line\n  - ^Gdapters/imessage\n\n## 🛠️ Acceptance Criteria\n- [ ] Headless signal-cli secondary linked device sends E2EE cloud-queued messages while sender phone is offline.\n- [ ] User pairs Signal account via linked device QR code in web dashboard.\n- [ ] LINE adapter delivers scheduled flex message cards through official Messaging API.\n- [ ] iMessage bridge relays scheduled text to recipient phone numbers via connected macOS host.","number":9,"repository":"Shivam-Jha96/scheduler","title":"[EPIC-10] Privacy & Ecosystem Bridges (Signal, LINE, iMessage)","type":"Issue","url":"https://github.com/Shivam-Jha96/scheduler/issues/9"},"id":"PVTI_lAHOATDjps4BrbmUzhIaI-A","labels":["epic","brd"],"repository":"https://github.com/Shivam-Jha96/scheduler","status":"Todo","title":"[EPIC-10] Privacy & Ecosystem Bridges (Signal, LINE, iMessage)"},{"content":{"body":"## 🎯 Objective\nDeliver a modern Next.js responsive web application for multi-channel account management, visual calendar queue inspection, and bulk scheduling.\n\n## 💼 Business Value\nEmpowers business operators, marketing teams, and prosumers to manage cross-platform dispatches with calendar overviews and bulk CSV imports.\n\n## 📋 Requirements Traceability\n- **Omnichannel Requirements**:\n  - OMNI-07: Universal Web Management Portal\n  - OMNI-08: SaaS Monetization, Tier Quotas & Stripe Subscription Billing\n  - EPIC-15: Universal Web Dashboard & Cross-Platform Control Plane\n- **Applications**:\n  - ^Gpps/web-dashboard\n  - ^Gpps/api-gateway\n\n## 🛠️ Acceptance Criteria\n- [ ] Web portal displays real-time connection status across linked WhatsApp, Signal, Discord, and Viber accounts.\n- [ ] Interactive calendar view visualizes upcoming dispatches with search and filter capabilities.\n- [ ] Bulk CSV upload schedules hundreds of dispatches across target channels in seconds.\n- [ ] Real-time job status updates stream to browser via WebSockets / Server-Sent Events.\n- [ ] Tier quota middleware enforces message caps based on subscription tier (Free, Pro, Business).","number":10,"repository":"Shivam-Jha96/scheduler","title":"[EPIC-11] Centralized Control Plane & Web Management Dashboard","type":"Issue","url":"https://github.com/Shivam-Jha96/scheduler/issues/10"},"id":"PVTI_lAHOATDjps4BrbmUzhIaJCg","labels":["epic","brd"],"repository":"https://github.com/Shivam-Jha96/scheduler","status":"Todo","title":"[EPIC-11] Centralized Control Plane & Web Management Dashboard"}],"totalCount":7}
+{
+  "items": [
+    {
+      "content": {
+        "body": "## \ud83c\udfaf Objective\nImplement an interactive 5-step conversational wizard within WhatsApp chats powered by an in-memory Redis finite state machine (FSM).\n\n## \ud83d\udcbc Business Value\nEliminates external app dependencies, allowing everyday users to schedule reminders in under 30 seconds directly inside WhatsApp without learning complex commands.\n\n## \ud83d\udccb Requirements Traceability\n- **BRD Business Objectives**: BO-01 (In-App Scheduling), BO-04 (Dispatch Accuracy), BO-06 (Temporal Precision)\n- **Functional Requirements**:\n  - `FR-WIZ-01`: In-memory draft state machine with 15-minute inactivity TTL\n  - `FR-WIZ-02`: Recipient resolution (vCard 3.0, E.164 phone numbers, aliases, group permissions)\n  - `FR-WIZ-03`: Multi-modal payload capture (text up to 4,096 chars, images, audio/voice, documents, videos)\n  - `FR-WIZ-04`: Natural language temporal parsing via `chrono-node` with user timezone anchor\n  - `FR-WIZ-05`: Confirmation preview card with interactive buttons (Confirm, Edit, Cancel)\n\n## \ud83d\udee0\ufe0f Acceptance Criteria\n- [ ] Inactive wizard sessions automatically expire after 15 minutes with memory reclaimed.\n- [ ] Parser accepts vCard 3.0 contact cards, raw E.164 phone numbers, and saved contact aliases.\n- [ ] Natural language expressions (\"tomorrow at 9:30am\") resolved relative to user's localized IANA timezone.\n- [ ] Confirmation card renders with interactive `[\u2705 Confirm]`, `[\u270f\ufe0f Edit]`, and `[\u274c Cancel]` buttons.\n- [ ] Tapping `[\u270f\ufe0f Edit]` allows stepping back to any previous field without losing other entered data.\n",
+        "number": 12,
+        "repository": "Shivam-Jha96/scheduler",
+        "title": "[EPIC-02] In-Chat Conversational Guided Wizard (FR-WIZ)",
+        "type": "Issue",
+        "url": "https://github.com/Shivam-Jha96/scheduler/issues/12"
+      },
+      "id": "PVTI_lAHOATDjps4BrbmUzhIaIbQ",
+      "labels": [
+        "epic",
+        "brd"
+      ],
+      "repository": "https://github.com/Shivam-Jha96/scheduler",
+      "status": "Backlog",
+      "title": "[EPIC-02] In-Chat Conversational Guided Wizard (FR-WIZ)"
+    },
+    {
+      "content": {
+        "body": "## \ud83c\udfaf Objective\nBuild a high-throughput, atomic command grammar interface for power users, automated systems, and quick scheduling.\n\n## \ud83d\udcbc Business Value\nReduces interaction friction from 5 conversational turns to 1 atomic command turn for repeated power users and business operators.\n\n## \ud83d\udccb Requirements Traceability\n- **BRD Business Objectives**: BO-01 (In-App Scheduling)\n- **Functional Requirements**:\n  - FR-CLI-01: Fast-Path /schedule <target> <time> | <message> for one-off dispatches\n  - FR-CLI-02: Recurring CLI /schedule --repeat <rule> <target> <time> | <message>\n  - FR-CLI-03: Queue inspection /list [pending|sent|all] [page]\n  - FR-CLI-04: Cancellation & BullMQ eviction /cancel <job_uid>\n  - FR-CLI-05: In-place editing /edit <job_uid> <field> <new_val>\n  - FR-CLI-06: Timezone configuration /timezone <IANA_zone>\n\n## \ud83d\udee0\ufe0f Acceptance Criteria\n- [ ] /schedule <target> <time> | <message> schedules atomically in a single message turn.\n- [ ] /list cleanly paginates and displays active jobs with localized timestamps and status badges (\ud83d\udfe1 PENDING, \ud83d\udfe2 SENT, \ud83d\udd34 FAILED).\n- [ ] /cancel <job_uid> updates database to CANCELLED and evicts in-flight job from BullMQ.\n- [ ] In-place edit /edit updates database parameters and reschedules in-flight jobs.\n- [ ] Syntax errors provide clear correction examples and parameter hints.",
+        "number": 2,
+        "repository": "Shivam-Jha96/scheduler",
+        "title": "[EPIC-03] Command Grammar & Fast-Path Slash Interface (FR-CLI)",
+        "type": "Issue",
+        "url": "https://github.com/Shivam-Jha96/scheduler/issues/2"
+      },
+      "id": "PVTI_lAHOATDjps4BrbmUzhIaIfk",
+      "labels": [
+        "epic",
+        "brd"
+      ],
+      "repository": "https://github.com/Shivam-Jha96/scheduler",
+      "status": "Backlog",
+      "title": "[EPIC-03] Command Grammar & Fast-Path Slash Interface (FR-CLI)"
+    },
+    {
+      "content": {
+        "body": "## \ud83c\udfaf Objective\nImplement the distributed Two-Tier Hybrid Scheduling architecture combining PostgreSQL 16 durable storage with BullMQ/Redis sliding-window delay queues.\n\n## \ud83d\udcbc Business Value\nSolves database connection exhaustion and polling latency while preventing millions of long-term jobs from exhausting expensive Redis RAM. Delivers sub-second dispatch precision (< 1.0s variance).\n\n## \ud83d\udccb Requirements Traceability\n- **BRD Business Objectives**: BO-04 (Sub-Second Accuracy < 1.0s drift), BO-05 (Sustainable Unit Economics < $30.00/mo per 10k messages)\n- **Functional Requirements**:\n  - `FR-SCHED-01`: 60s Look-Ahead Feeder querying PostgreSQL using `FOR UPDATE SKIP LOCKED` for jobs due in next 5 minutes\n  - `FR-SCHED-02`: BullMQ Redis delayed queue buffer with millisecond countdown timers\n  - `FR-SCHED-03`: Distributed worker pool consuming triggers and invoking target channel adapters\n  - `FR-SCHED-04`: Idempotency, distributed lock recovery and zero double-send enforcement (co-managed with FR-REL)\n\n## \ud83d\udee0\ufe0f Acceptance Criteria\n- [ ] 60-second cron feeder queries PostgreSQL using `FOR UPDATE SKIP LOCKED` for jobs due in next 5 minutes.\n- [ ] Redis memory usage for 10,000 pending jobs remains below 250 KB (only 5-minute sliding window buffered).\n- [ ] Horizontal feeder scaling produces zero race conditions or duplicate claims across nodes.\n- [ ] Poller execution time remains < 0.5ms under 100,000 synthetic rows using partial B-tree index.\n- [ ] Jobs scheduled 30 days in advance execute within \u00b11000 ms of target timestamp.",
+        "number": 3,
+        "repository": "Shivam-Jha96/scheduler",
+        "title": "[EPIC-04] Two-Tier Hybrid Scheduling Engine (FR-SCHED)",
+        "type": "Issue",
+        "url": "https://github.com/Shivam-Jha96/scheduler/issues/3"
+      },
+      "id": "PVTI_lAHOATDjps4BrbmUzhIaIlE",
+      "labels": [
+        "epic",
+        "brd"
+      ],
+      "repository": "https://github.com/Shivam-Jha96/scheduler",
+      "status": "Backlog",
+      "title": "[EPIC-04] Two-Tier Hybrid Scheduling Engine (FR-SCHED)"
+    },
+    {
+      "content": {
+        "body": "## \ud83c\udfaf Objective\nBuild a mathematically robust recurrence calculation engine using Luxon guaranteeing local wall-clock invariance across seasonal Daylight Saving Time shifts and month-end boundary conditions.\n\n## \ud83d\udcbc Business Value\nEliminates reminder drift (BO-06, BR-05). Users scheduled for 9:00 AM local time receive messages at exactly 9:00 AM regardless of 23h spring-forward or 25h fall-back transitions.\n\n## \ud83d\udccb Requirements Traceability\n- **BRD Business Objectives**: BO-06 (Temporal Precision & DST Invariance: 0.0 min drift)\n- **Business Rules**: BR-05 (Wall-Clock Invariance anchored to user IANA timezone)\n- **Functional Requirements**:\n  - FR-REC-01: Single-Active-Row recurrence state machine (updating existing row in-place)\n  - FR-REC-02: Calendar-day Luxon DST arithmetic (UTC -> Local -> Calendar Add -> UTC)\n  - FR-REC-03: Month-End Anchor Day preservation (Jan 31 -> Feb 28 -> Mar 31)\n  - FR-REC-04: Server reboot fast-forwarding / misfire handling past NOW()\n\n## \ud83d\udee0\ufe0f Acceptance Criteria\n- [ ] Single active row updated in-place upon execution to avoid runaway row duplication.\n- [ ] Month-end anchor day (Jan 31 -> Feb 28/29 -> Mar 31 -> Apr 30) preserved without day drift.\n- [ ] DST transition test suite passes 100% across New York, London, Sydney, and UTC.\n- [ ] Extended server downtime of 4 hours fast-forwards overdue recurring jobs past NOW() and marks skipped runs as MISFIRED.",
+        "number": 4,
+        "repository": "Shivam-Jha96/scheduler",
+        "title": "[EPIC-05] Temporal Mathematics & Wall-Clock Recurrence (FR-REC)",
+        "type": "Issue",
+        "url": "https://github.com/Shivam-Jha96/scheduler/issues/4"
+      },
+      "id": "PVTI_lAHOATDjps4BrbmUzhIaIp8",
+      "labels": [
+        "epic",
+        "brd"
+      ],
+      "repository": "https://github.com/Shivam-Jha96/scheduler",
+      "status": "Backlog",
+      "title": "[EPIC-05] Temporal Mathematics & Wall-Clock Recurrence (FR-REC)"
+    },
+    {
+      "content": {
+        "body": "## \ud83c\udfaf Objective\nEnforce an end-to-end zero-double-send guarantee (0.0% tolerance) and human-like behavioral telemetry to protect accounts from algorithmic bans.\n\n## \ud83d\udcbc Business Value\nEliminates relationship damage caused by duplicate message blasts (BO-02) and maintains personal account restriction rate < 0.01% (BO-03).\n\n## \ud83d\udccb Requirements Traceability\n- **BRD Business Objectives**: BO-02 (Zero Double-Sends: 0.0%), BO-03 (Account Safety: < 0.01% ban rate)\n- **Business Rules**: BR-02 (Anti-Spam & Health Protection)\n- **Functional Requirements**:\n  - FR-REL-01: Exponential backoff with jitter (2s, 4s, 8s, 16s, 32s + 500ms)\n  - FR-REL-02: Dead Letter Queue (DLQ) & out-of-band user alerts\n  - FR-REL-03: Dead-Man's-Switch background recovery sweeper (runs every 2m for jobs > 5m in PROCESSING)\n  - FR-META-01: Human typing emulation (composing state 35\u201355 ms/char, clamped 1.5s\u20134.0s)\n  - FR-META-02: Inter-message serialization & jitter spacing (3\u20136s known contacts, 8\u201315s new contacts)\n\n## \ud83d\udee0\ufe0f Acceptance Criteria\n- [ ] Deterministic 22-char stanza ID (3EB0 + SHA256(...)) enforces WhatsApp socket deduplication.\n- [ ] Distributed Redis mutex (SET lock:job:{id} NX EX 600) acquired prior to transport dispatch.\n- [ ] Outbound messages emit human-paced composing presence before text transmission.\n- [ ] Dead-Man's Sweeper automatically recovers orphaned PROCESSING jobs older than 5 minutes.\n- [ ] Zero duplicate messages dispatched during chaos testing with worker SIGKILL.",
+        "number": 5,
+        "repository": "Shivam-Jha96/scheduler",
+        "title": "[EPIC-06] Reliability, Deduplication & Anti-Ban Telemetry (FR-REL)",
+        "type": "Issue",
+        "url": "https://github.com/Shivam-Jha96/scheduler/issues/5"
+      },
+      "id": "PVTI_lAHOATDjps4BrbmUzhIaIt0",
+      "labels": [
+        "epic",
+        "brd"
+      ],
+      "repository": "https://github.com/Shivam-Jha96/scheduler",
+      "status": "Backlog",
+      "title": "[EPIC-06] Reliability, Deduplication & Anti-Ban Telemetry (FR-REL)"
+    },
+    {
+      "content": {
+        "body": "## \ud83c\udfaf Objective\nImplement official WhatsApp Business Cloud API integration supporting both 24-hour service window messaging and automated Meta Utility Template fallback.\n\n## \ud83d\udcbc Business Value\nProvides an enterprise-grade, zero-ban-risk channel for corporate entities, high-volume transactional notifications, and automated template dispatches.\n\n## \ud83d\udccb Requirements Traceability\n- **BRD Business Objectives**: BO-01 (In-App Scheduling), BO-05 (Sustainable Unit Economics)\n- **Business Rules**: BR-01 (Meta Policy & 24h Customer Service Window Compliance)\n- **Functional Requirements**:\n  - FR-META-03: 1-Click CTA redirector service (https://sched.app/r/{job_uid} -> whatsapp://send?phone={phone}&text={msg})\n  - FR-META-04: 24-Hour customer window watchdog (NOW() - last_inbound >= 24h)\n  - Automated Utility Template fallback routing (scheduled_reminder_cta_v1)\n  - Webhook receiver with X-Hub-Signature-256 HMAC-SHA256 verification\n\n## \ud83d\udee0\ufe0f Acceptance Criteria\n- [ ] Inbound webhooks process and acknowledge Meta with HTTP 200 OK within < 200ms.\n- [ ] 1-Click CTA service (https://sched.app/r/{job_uid}) 302-redirects to pre-filled WhatsApp chat in 1 tap.\n- [ ] Watchdog detects elapsed 24-hour window and automatically routes notification via approved Utility Template.\n- [ ] Messages attempted outside the 24h window deliver cleanly without triggering Error 131047.",
+        "number": 6,
+        "repository": "Shivam-Jha96/scheduler",
+        "title": "[EPIC-07] Cloud API Enterprise Model & Template Routing (FR-META)",
+        "type": "Issue",
+        "url": "https://github.com/Shivam-Jha96/scheduler/issues/6"
+      },
+      "id": "PVTI_lAHOATDjps4BrbmUzhIaIyY",
+      "labels": [
+        "epic",
+        "brd"
+      ],
+      "repository": "https://github.com/Shivam-Jha96/scheduler",
+      "status": "Backlog",
+      "title": "[EPIC-07] Cloud API Enterprise Model & Template Routing (FR-META)"
+    },
+    {
+      "content": {
+        "body": "## \ud83c\udfaf Objective\nEstablish the decoupled hexagonal transport adapter architecture isolating core scheduling logic from third-party chat protocols.\n\n## \ud83d\udcbc Business Value\nAllows independent teams to author, test, and maintain channel adapters (WhatsApp, Discord, Viber, Signal, etc.) without risking core scheduler regressions.\n\n## \ud83d\udccb Requirements Traceability\n- **Omnichannel Requirements**:\n  - `OMNI-01`: Transport-Agnostic Core (`IMessagingTransportAdapter` contract)\n  - `OMNI-02`: Polymorphic multi-account session store (`user_platform_sessions`)\n  - `OMNI-06`: Developer Extensibility SDK (`@scheduler/adapter-sdk`, `@scheduler/adapter-test-kit`, scaffolding CLI)\n- **Packages & Tools**:\n  - `packages/adapter-sdk`\n  - `packages/adapter-registry`\n  - `packages/adapter-test-kit`\n  - `tools/create-adapter`\n\n## \ud83d\udee0\ufe0f Acceptance Criteria\n- [ ] Standardized `IChannelAdapter` contract implemented by all adapter packages.\n- [ ] Inversion of Control `AdapterRegistry` resolves channel adapters dynamically at runtime.\n- [ ] Running `npm run create:adapter -- --name <channel>` generates fully compliant boilerplate.\n- [ ] `@scheduler/adapter-test-kit` validates contract compliance across all adapters.\n- [ ] Core scheduling modules have zero direct compile-time dependencies on specific transport libraries.",
+        "number": 7,
+        "repository": "Shivam-Jha96/scheduler",
+        "title": "[EPIC-08] Unified Transport Abstraction Layer (IMessagingTransportAdapter)",
+        "type": "Issue",
+        "url": "https://github.com/Shivam-Jha96/scheduler/issues/7"
+      },
+      "id": "PVTI_lAHOATDjps4BrbmUzhIaI2Q",
+      "labels": [
+        "epic",
+        "brd"
+      ],
+      "repository": "https://github.com/Shivam-Jha96/scheduler",
+      "status": "Backlog",
+      "title": "[EPIC-08] Unified Transport Abstraction Layer (IMessagingTransportAdapter)"
+    },
+    {
+      "content": {
+        "body": "## \ud83c\udfaf Objective\nBuild official, policy-compliant channel adapters for Discord (Gateway v10) and Viber (REST Bot API).\n\n## \ud83d\udcbc Business Value\nExpands market reach to 1.1B Viber users and 200M Discord MAUs with zero account ban risks through official developer bot APIs.\n\n## \ud83d\udccb Requirements Traceability\n- **Omnichannel Scale-Out Requirements**:\n  - `OMNI-03`: Official Viber REST Bot API adapter with 1-to-1 reminders and interactive carousels\n  - `OMNI-04`: Official Discord Bot API (`discord.js`, Gateway v10) with native slash commands\n- **Workspaces**:\n  - `adapters/discord`\n  - `adapters/viber`\n\n## \ud83d\udee0\ufe0f Acceptance Criteria\n- [ ] Discord bot supports native `/schedule` slash commands with interactive time pickers.\n- [ ] Discord dispatches scheduled messages to channels, threads, and direct messages.\n- [ ] Viber bot handles inbound webhooks and delivers 1-to-1 reminders with rich keyboard carousels.\n- [ ] Both adapters achieve 100% pass rate in `@scheduler/adapter-test-kit` contract verification.",
+        "number": 8,
+        "repository": "Shivam-Jha96/scheduler",
+        "title": "[EPIC-09] High-Volume Compliant Adapters (Viber & Discord)",
+        "type": "Issue",
+        "url": "https://github.com/Shivam-Jha96/scheduler/issues/8"
+      },
+      "id": "PVTI_lAHOATDjps4BrbmUzhIaI54",
+      "labels": [
+        "epic",
+        "brd"
+      ],
+      "repository": "https://github.com/Shivam-Jha96/scheduler",
+      "status": "Backlog",
+      "title": "[EPIC-09] High-Volume Compliant Adapters (Viber & Discord)"
+    },
+    {
+      "content": {
+        "body": "## \ud83c\udfaf Objective\nImplement privacy-first and regional messaging adapters including containerized `signal-cli`, official LINE Messaging API, and macOS AppleScript/BlueBubbles iMessage bridge.\n\n## \ud83d\udcbc Business Value\nCaptures privacy-conscious users (50M Signal MAUs), regional dominance in Japan/Taiwan/Thailand (LINE), and North American prosumers (iMessage blue-bubbles).\n\n## \ud83d\udccb Requirements Traceability\n- **Omnichannel Scale-Out Requirements**:\n  - `OMNI-05`: Headless Signal E2EE integration (`signal-cli` JSON-RPC secondary linked device)\n  - LINE Messaging API adapter with flex message carousels\n  - macOS AppleScript / BlueBubbles bridge for iMessage\n- **Workspaces**:\n  - `adapters/signal`\n  - `adapters/line`\n  - `adapters/imessage`\n\n## \ud83d\udee0\ufe0f Acceptance Criteria\n- [ ] Headless `signal-cli` secondary linked device sends E2EE cloud-queued messages while sender phone is offline.\n- [ ] User pairs Signal account via linked device QR code in web dashboard.\n- [ ] LINE adapter delivers scheduled flex message cards through official Messaging API.\n- [ ] iMessage bridge relays scheduled text to recipient phone numbers via connected macOS host.",
+        "number": 9,
+        "repository": "Shivam-Jha96/scheduler",
+        "title": "[EPIC-10] Privacy & Ecosystem Bridges (Signal, LINE, iMessage)",
+        "type": "Issue",
+        "url": "https://github.com/Shivam-Jha96/scheduler/issues/9"
+      },
+      "id": "PVTI_lAHOATDjps4BrbmUzhIaI-A",
+      "labels": [
+        "epic",
+        "brd"
+      ],
+      "repository": "https://github.com/Shivam-Jha96/scheduler",
+      "status": "Backlog",
+      "title": "[EPIC-10] Privacy & Ecosystem Bridges (Signal, LINE, iMessage)"
+    },
+    {
+      "content": {
+        "body": "## \ud83c\udfaf Objective\nDeliver a modern Next.js responsive web application for multi-channel account management, visual calendar queue inspection, and bulk scheduling.\n\n## \ud83d\udcbc Business Value\nEmpowers business operators, marketing teams, and prosumers to manage cross-platform dispatches with calendar overviews and bulk CSV imports.\n\n## \ud83d\udccb Requirements Traceability\n- **Omnichannel Requirements**:\n  - `OMNI-07`: Universal Web Management Portal\n  - `OMNI-08`: SaaS Monetization, Tier Quotas & Stripe Subscription Billing\n- **Workspaces**:\n  - `apps/web-dashboard`\n  - `apps/api-gateway`\n\n## \ud83d\udee0\ufe0f Acceptance Criteria\n- [ ] Web portal displays real-time connection status across linked WhatsApp, Signal, Discord, and Viber accounts.\n- [ ] Interactive calendar view visualizes upcoming dispatches with search and filter capabilities.\n- [ ] Bulk CSV upload schedules hundreds of dispatches across target channels in seconds.\n- [ ] Real-time job status updates stream to browser via WebSockets / Server-Sent Events.\n- [ ] Tier quota middleware enforces message caps based on subscription tier (Free, Pro, Business).",
+        "number": 10,
+        "repository": "Shivam-Jha96/scheduler",
+        "title": "[EPIC-11] Centralized Control Plane & Web Management Dashboard",
+        "type": "Issue",
+        "url": "https://github.com/Shivam-Jha96/scheduler/issues/10"
+      },
+      "id": "PVTI_lAHOATDjps4BrbmUzhIaJCg",
+      "labels": [
+        "epic",
+        "brd"
+      ],
+      "repository": "https://github.com/Shivam-Jha96/scheduler",
+      "status": "Backlog",
+      "title": "[EPIC-11] Centralized Control Plane & Web Management Dashboard"
+    },
+    {
+      "content": {
+        "body": "## \ud83c\udfaf Objective\nArchitect a high-speed, cost-optimized multi-modal media attachment pipeline supporting voice notes, images, PDFs, and videos with RAM pre-warming.\n\n## \ud83d\udcbc Business Value\nKeeps operational cloud storage costs negligible via 24-hour auto-purge lifecycles while ensuring instantaneous transmission without network fetch lag.\n\n## \ud83d\udccb Requirements Traceability\n- **BRD Business Objectives**: BO-05 (Sustainable Unit Economics: < $30.00/mo per 10k messages)\n- **Functional Requirements**:\n  - `FR-WIZ-03`: Multi-Modal Payload Capture (images, voice, PDF, video)\n- **Storage Infrastructure**:\n  - S3 / MinIO compatible object storage with SSE-KMS encryption\n  - T-30s / T-5m memory pre-warming cache in delivery workers\n\n## \ud83d\udee0\ufe0f Acceptance Criteria\n- [ ] Multi-modal upload pipeline securely ingests images, voice notes, PDFs, and video up to 15MB.\n- [ ] T-30s Look-Ahead pre-warms media into worker memory buffer prior to execution time.\n- [ ] Media attachments up to 5MB dispatch with < 1.0s variance from target timestamp.\n- [ ] Uploaded files automatically receive presigned URLs with 15-minute validity.\n- [ ] Automated S3 lifecycle rules permanently purge media files 24 hours post-dispatch.",
+        "number": 11,
+        "repository": "Shivam-Jha96/scheduler",
+        "title": "[EPIC-12] Multi-Modal Media Storage & Pre-Warming Cache Engine",
+        "type": "Issue",
+        "url": "https://github.com/Shivam-Jha96/scheduler/issues/11"
+      },
+      "id": "PVTI_lAHOATDjps4BrbmUzhIaJGw",
+      "labels": [
+        "epic",
+        "brd"
+      ],
+      "repository": "https://github.com/Shivam-Jha96/scheduler",
+      "status": "Backlog",
+      "title": "[EPIC-12] Multi-Modal Media Storage & Pre-Warming Cache Engine"
+    },
+    {
+      "content": {
+        "body": "## \ud83c\udfaf Objective\nEstablish robust multi-device peer-to-peer session management using `@whiskeysockets/baileys` Noise_XX protocol with seamless single-phone pairing code flows.\n\n## \ud83d\udcbc Business Value\nEnables personal 1-to-1 message scheduling without requiring corporate Meta WABA accounts or expensive third-party BSPs. Maintains sender authenticity so recipients see Alice's personal phone number and avatar.\n\n## \ud83d\udccb Requirements Traceability\n- **BRD Business Objectives**: BO-01 (In-App Scheduling), BO-03 (Account Safety & Anti-Ban)\n- **Business Rules**: BR-03 (Data Privacy & Encryption at Rest), BR-04 (Sender Authenticity)\n- **Functional Requirements**:\n  - `FR-AUTH-01`: Auto-Provisioning on first inbound message\n  - `FR-AUTH-02`: Single-phone 8-character pairing code flow (`sock.requestPairingCode`)\n  - `FR-AUTH-03`: AES-256-GCM Signal pre-key envelope encryption vault\n  - `FR-AUTH-04`: Session lifecycle & circuit breakers (Code 401 unlinked, 403 banned, 515 restart backoff)\n\n## \ud83d\udee0\ufe0f Acceptance Criteria\n- [ ] Single-phone 8-character pairing code flow (`/link` -> `sock.requestPairingCode`) functions cleanly without a secondary screen.\n- [ ] Session credentials and Signal pre-keys are envelope-encrypted with AES-256-GCM using KMS keys before persistence.\n- [ ] Automatic reconnect with exponential backoff on transient socket drops (code 515).\n- [ ] Circuit breakers freeze session and alert user immediately on 401 unlinked or 403 banned errors.\n- [ ] Multi-device session remains valid across weeks as long as primary phone is active on WhatsApp every 14 days.",
+        "number": 1,
+        "repository": "Shivam-Jha96/scheduler",
+        "title": "[EPIC-01] Authentication & Companion Device Pairing (FR-AUTH)",
+        "type": "Issue",
+        "url": "https://github.com/Shivam-Jha96/scheduler/issues/1"
+      },
+      "id": "PVTI_lAHOATDjps4BrbmUzhIaJeQ",
+      "labels": [
+        "epic",
+        "brd"
+      ],
+      "repository": "https://github.com/Shivam-Jha96/scheduler",
+      "status": "Backlog",
+      "title": "[EPIC-01] Authentication & Companion Device Pairing (FR-AUTH)"
+    }
+  ],
+  "totalCount": 12
+}
