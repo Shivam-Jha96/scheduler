@@ -45,14 +45,14 @@ graph TD
 
     WORKER --> REGISTRY
     REGISTRY --> SDK
-    SDK <|.. WA_BAI
-    SDK <|.. WA_META
-    SDK <|.. TG
-    SDK <|.. DISC
-    SDK <|.. SLACK
-    SDK <|.. WEBHOOK
-    SDK <|.. VIBER
-    SDK <|.. CUSTOM
+    WA_BAI -.-> SDK
+    WA_META -.-> SDK
+    TG -.-> SDK
+    DISC -.-> SDK
+    SLACK -.-> SDK
+    WEBHOOK -.-> SDK
+    VIBER -.-> SDK
+    CUSTOM -.-> SDK
 
     GW --> REGISTRY & DB
     FEEDER --> DB & QUEUE
