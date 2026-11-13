@@ -1,0 +1,27 @@
+mutation {
+  updateProjectV2Field(
+    input: {
+      fieldId: "PVTSSF_lAHOATDjps4BrbmUzhpuXfQ"
+      singleSelectOptions: [
+        { name: "Backlog", color: GRAY, description: "Backlog items awaiting grooming or scheduling" },
+        { name: "Ready", color: BLUE, description: "Groomed and ready for development" },
+        { name: "In Progress", color: YELLOW, description: "Actively in development" },
+        { name: "In Review", color: PURPLE, description: "Under PR/code review" },
+        { name: "Done", color: GREEN, description: "Completed and verified" }
+      ]
+    }
+  ) {
+    projectV2Field {
+      ... on ProjectV2SingleSelectField {
+        id
+        name
+        options {
+          id
+          name
+          color
+          description
+        }
+      }
+    }
+  }
+}

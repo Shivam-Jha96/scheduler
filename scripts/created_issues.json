@@ -1,0 +1,52 @@
+﻿[
+    {
+        "url":  "https://github.com/Shivam-Jha96/scheduler/issues/1",
+        "title":  "[EPIC-01] Authentication \u0026 Companion Device Pairing (FR-AUTH)"
+    },
+    {
+        "url":  {
+
+                },
+        "title":  "[EPIC-02] In-Chat Conversational Guided Wizard (FR-WIZ)"
+    },
+    {
+        "url":  "https://github.com/Shivam-Jha96/scheduler/issues/2",
+        "title":  "[EPIC-03] Command Grammar \u0026 Fast-Path Slash Interface (FR-CLI)"
+    },
+    {
+        "url":  "https://github.com/Shivam-Jha96/scheduler/issues/3",
+        "title":  "[EPIC-04] Two-Tier Hybrid Scheduling Engine (FR-SCHED)"
+    },
+    {
+        "url":  "https://github.com/Shivam-Jha96/scheduler/issues/4",
+        "title":  "[EPIC-05] Temporal Mathematics \u0026 Wall-Clock Recurrence (FR-REC)"
+    },
+    {
+        "url":  "https://github.com/Shivam-Jha96/scheduler/issues/5",
+        "title":  "[EPIC-06] Reliability, Deduplication \u0026 Anti-Ban Telemetry (FR-REL)"
+    },
+    {
+        "url":  "https://github.com/Shivam-Jha96/scheduler/issues/6",
+        "title":  "[EPIC-07] Cloud API Enterprise Model \u0026 Template Routing (FR-META)"
+    },
+    {
+        "url":  "https://github.com/Shivam-Jha96/scheduler/issues/7",
+        "title":  "[EPIC-08] Unified Transport Abstraction Layer (IMessagingTransportAdapter)"
+    },
+    {
+        "url":  "https://github.com/Shivam-Jha96/scheduler/issues/8",
+        "title":  "[EPIC-09] High-Volume Compliant Adapters (Viber \u0026 Discord)"
+    },
+    {
+        "url":  "https://github.com/Shivam-Jha96/scheduler/issues/9",
+        "title":  "[EPIC-10] Privacy \u0026 Ecosystem Bridges (Signal, LINE, iMessage)"
+    },
+    {
+        "url":  "https://github.com/Shivam-Jha96/scheduler/issues/10",
+        "title":  "[EPIC-11] Centralized Control Plane \u0026 Web Management Dashboard"
+    },
+    {
+        "url":  "https://github.com/Shivam-Jha96/scheduler/issues/11",
+        "title":  "[EPIC-12] Multi-Modal Media Storage \u0026 Pre-Warming Cache Engine"
+    }
+]
