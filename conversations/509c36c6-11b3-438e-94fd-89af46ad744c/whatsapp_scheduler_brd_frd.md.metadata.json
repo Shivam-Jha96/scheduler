@@ -1,0 +1,5 @@
+{
+  "summary":  "Consolidated Business Requirements Document (BRD) and Functional Requirements Document (FRD) for the In-WhatsApp Message Scheduler Chatbot. Covers executive vision, business rules, financial unit economics, detailed functional modules (FR-AUTH, FR-WIZ, FR-CLI, FR-SCHED, FR-REC, FR-REL, FR-META), and the Requirements Traceability Matrix (RTM).",
+  "updatedAt":  "2026-11-12T06:55:09.785872400Z",
+  "userFacing":  true
+}

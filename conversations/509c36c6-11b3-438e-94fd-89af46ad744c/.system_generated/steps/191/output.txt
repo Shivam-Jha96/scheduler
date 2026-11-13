@@ -1,0 +1,28 @@
+The search for ""KakaoTalk" schedule message native Jordy" returned the following summary:
+When KakaoTalk first rolled out its native **Message Scheduling** feature via its virtual assistant **"Talk Secretary Jordy" (톡비서 죠르디)**, scheduled messages came with a distinct **Jordy icon/badge** attached to the message bubble[1][2]. This indicated to the recipient that the text was sent automatically via a tool rather than typed out in real-time[1].
+
+However, due to user feedback regarding privacy and natural communication, KakaoTalk released an update (v10.0.5) that **removed the Jordy icon/badge** from scheduled messages[3][4]. 
+
+### How the KakaoTalk Native Schedule Message Feature Works:
+
+1. **Accessing the Feature:**
+   * **Mobile (iOS / Android):** Tap the **`+` (plus)** button next to the chat text input box or use the `#` (hash/sharp) menu shortcut inside a chat room, then select **Message Scheduling** (often managed through Jordy's tools/your "Chat with yourself" briefing tab)[5][6].
+   * **PC Version:** Click the **Jordy icon** or tool button near the chat input area[6].
+
+2. **Setting the Schedule:**
+   * Type your message, choose the desired date and time (in 5-minute increments), and set whether you want a reminder notification beforehand[5][6].
+   * You can manage or cancel up to 10 active scheduled messages at a time through your "Chat with yourself" room (where Jordy acts as your assistant)[2][6].
+
+3. **Current Appearance:**
+   * When the scheduled time arrives, the message sends automatically[5]. 
+   * Because the **Jordy badge/icon was removed**, the message now looks completely normal—just like any other standard text message sent manually by you[4].
+
+Sources:
+[1] [blogspot.com](https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQHm3lAC1fp9gKXQVLV_1bzZ1tWqY-WG2R8UPoDdD0Mvr_ZeFYjUli0nzV3uwOUyLk8tIYpVcHQqRYM7PLzC4lZIOK4E1JvqDickROEE4M6mK-n7U-7V2dj8p8nOmHGUVrN6v9FtKSV_bh_EBhSRgrrtOORu42ApxRd3Y7gDORQNS6XUIquVZwME)
+[2] [etnews.com](https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQG918HBLGBviPA7kou_yEnTci4ISBiPXBJ8eC6N1vKstdXeqDpehWiCS4lVVt6vj_MxTrk-LWLdu_XrI5XtN7wLc-4RiWwx8MTncv4HYduwAgWXe0fdeTgtWpYNS8TItKEmHthCbyo1foE3ieSWSFCOUUEXt1XaX59aX9Nb-5pLZPsqOt47b7Sp9iVKK2_8D0U6G_qAWcbfLKUglOIfcVko6atcxZ8R5pIF6mOG7PXC-ugPNYsfQYvhbAjPEspi_3pX4vM=)
+[3] [tistory.com](https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQG117JxktaDcXN6fbfBscELVxsLeB64t9u2DJH93x7GDdL5E4NsmfjxQDfVVkLZ6wHcfRLlfaOfjo0cRzXg7z9LomHpSZb3YYbelNOjFFA6EnHFXAbat6tNOw==)
+[4] [ddaily.co.kr](https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQFoijqFwZNzPe_LCzTpjdF8NesdWG4PAKk7yU8FtCN0tQp_RVIRQ2fySkmybofV1pmZBRdF-I3k349Kwdzbt4fPTMNwbGzSjswGNx4XAwTxpjJCqDFAzF-zNXf4ahx8Wq6EeYHwIWTNKbKkcf4=)
+[5] [blogspot.com](https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQHm3lAC1fp9gKXQVLV_1bzZ1tWqY-WG2R8UPoDdD0Mvr_ZeFYjUli0nzV3uwOUyLk8tIYpVcHQqRYM7PLzC4lZIOK4E1JvqDickROEE4M6mK-n7U-7V2dj8p8nOmHGUVrN6v9FtKSV_bh_EBhSRgrrtOORu42ApxRd3Y7gDORQNS6XUIquVZwME)
+[6] [zdnet.co.kr](https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQHQgWOjHLgFHzYEgXuu5VUYH7iiVPWBv6ygQxl8ZXLl_iqlc-9mFUQ-TqZekufn01UyW1IdLLhN8YzMrWRMyoDVQ2BddXYuO-Y5IJuQoet7staE5tQRdvhgtxXtiuq4ms_O)
+
+Note: Source URLs are HTTP redirects; check where they resolve if you need the direct link.

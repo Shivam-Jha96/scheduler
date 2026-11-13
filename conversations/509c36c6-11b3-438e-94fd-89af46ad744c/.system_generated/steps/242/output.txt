@@ -1,0 +1,11 @@
+Command exited with code 0.
+
+Command output:
+Written HTML workspace: C:\Users\Lenovo\teamwork_projects\whatsapp_scheduler_bot\Partner_Meeting_Briefing_QnA.html
+Written HTML artifact: C:\Users\Lenovo\.gemini\antigravity\brain\509c36c6-11b3-438e-94fd-89af46ad744c\Partner_Meeting_Briefing_QnA.html
+Compiling PDF with: C:\Program Files\Google\Chrome\Application\chrome.exe
+Chrome result:  [5844:9264:1113/130950.826:ERROR:chrome\browser\extensions\external_registry_loader_win.cc:147] Missing value path for key Software\Google\Chrome\Extensions\dngcpimnedloihjnnfngkgjoidhnaolf.
+[5844:9264:1113/130950.826:ERROR:chrome\browser\extensions\external_registry_loader_win.cc:147] Missing value path for key Software\Google\Chrome\Extensions\fcoeoabgfenejglbffodgkkbkcdhcgfn.
+666410 bytes written to file C:\Users\Lenovo\teamwork_projects\whatsapp_scheduler_bot\Partner_Meeting_Briefing_QnA.pdf
+
+Successfully created PDF: C:\Users\Lenovo\teamwork_projects\whatsapp_scheduler_bot\Partner_Meeting_Briefing_QnA.pdf & C:\Users\Lenovo\.gemini\antigravity\brain\509c36c6-11b3-438e-94fd-89af46ad744c\Partner_Meeting_Briefing_QnA.pdf

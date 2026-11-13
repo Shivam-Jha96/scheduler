@@ -1,0 +1,9 @@
+Command exited with code 0.
+
+Command output:
+
+Lines Words Characters Property
+----- ----- ---------- --------
+  123  1368      11907         
+
+

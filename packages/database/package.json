@@ -1,0 +1,23 @@
+{
+  "name": "@scheduler/database",
+  "version": "1.0.0",
+  "private": true,
+  "license": "MIT",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "scripts": {
+    "build": "tsc -b",
+    "typecheck": "tsc --noEmit",
+    "db:generate": "prisma generate",
+    "clean": "rm -rf dist"
+  },
+  "dependencies": {
+    "@prisma/client": "^6.4.1",
+    "@scheduler/types": "*"
+  },
+  "devDependencies": {
+    "@scheduler/typescript-config": "*",
+    "prisma": "^6.4.1",
+    "typescript": "^5.7.3"
+  }
+}

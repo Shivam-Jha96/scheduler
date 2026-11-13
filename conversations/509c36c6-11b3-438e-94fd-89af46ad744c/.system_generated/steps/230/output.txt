@@ -1,0 +1,7 @@
+Command exited with code 1.
+
+Command output:
+An empty pipe element is not allowed.
+    + CategoryInfo          : ParserError: (:) [], ParentContainsErrorRecordException
+    + FullyQualifiedErrorId : EmptyPipeElement
+ 

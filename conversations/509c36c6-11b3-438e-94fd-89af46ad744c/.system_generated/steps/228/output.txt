@@ -1,0 +1,30 @@
+Command exited with code 0.
+
+Command output:
+
+C:\Users\Lenovo\teamwork_projects\whatsapp_scheduler_bot\WHATSAPP_SCHEDULER_TECHNICAL_PLAN.md:31:## 1. The In-WhatsApp 
+Scheduler Concept & Architectural Paradox
+C:\Users\Lenovo\teamwork_projects\whatsapp_scheduler_bot\WHATSAPP_SCHEDULER_TECHNICAL_PLAN.md:58:## 2. Comprehensive 
+Multi-Dimensional Trade-Off Matrix
+C:\Users\Lenovo\teamwork_projects\whatsapp_scheduler_bot\WHATSAPP_SCHEDULER_TECHNICAL_PLAN.md:92:## 3. Dual 
+Operational Delivery Mechanisms
+C:\Users\Lenovo\teamwork_projects\whatsapp_scheduler_bot\WHATSAPP_SCHEDULER_TECHNICAL_PLAN.md:113:## 4. Unit Economics 
+& Cost Scaling Analysis
+C:\Users\Lenovo\teamwork_projects\whatsapp_scheduler_bot\WHATSAPP_SCHEDULER_TECHNICAL_PLAN.md:129:## 5. End-to-End 
+System Architecture
+C:\Users\Lenovo\teamwork_projects\whatsapp_scheduler_bot\WHATSAPP_SCHEDULER_TECHNICAL_PLAN.md:200:## 6. Conversational 
+State Machine & WhatsApp Interaction UX
+C:\Users\Lenovo\teamwork_projects\whatsapp_scheduler_bot\WHATSAPP_SCHEDULER_TECHNICAL_PLAN.md:253:## 7. Relational 
+Data Model & PostgreSQL Persistence Schema
+C:\Users\Lenovo\teamwork_projects\whatsapp_scheduler_bot\WHATSAPP_SCHEDULER_TECHNICAL_PLAN.md:369:## 8. Two-Tier 
+Hybrid Scheduling Engine
+C:\Users\Lenovo\teamwork_projects\whatsapp_scheduler_bot\WHATSAPP_SCHEDULER_TECHNICAL_PLAN.md:382:## 9. Recurrence 
+Engine & DST-Safe Wall-Clock Calculation
+C:\Users\Lenovo\teamwork_projects\whatsapp_scheduler_bot\WHATSAPP_SCHEDULER_TECHNICAL_PLAN.md:499:## 10. Reliability, 
+Crash Recovery & Zero-Double-Send Guarantee
+C:\Users\Lenovo\teamwork_projects\whatsapp_scheduler_bot\WHATSAPP_SCHEDULER_TECHNICAL_PLAN.md:552:## 11. Operational 
+Failure Modes & Anti-Ban Heuristics
+C:\Users\Lenovo\teamwork_projects\whatsapp_scheduler_bot\WHATSAPP_SCHEDULER_TECHNICAL_PLAN.md:567:## 12. Phased 
+Implementation Roadmap & Verification Strategy
+
+

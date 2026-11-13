@@ -1,0 +1,16 @@
+Command exited with code 0.
+
+Command output:
+
+
+    Directory: C:\Users\Lenovo\teamwork_projects\whatsapp_scheduler_bot\docs
+
+
+Mode                 LastWriteTime         Length Name                                                                 
+----                 -------------         ------ ----                                                                 
+-a----        12-11-2026  12:24 PM          12065 BUSINESS_REQUIREMENTS_DOCUMENT.md                                    
+-a----        08-11-2026  12:43 AM         111666 FEASIBILITY_AND_PLATFORM_ARCHITECTURE.md                             
+-a----        12-11-2026  12:24 PM          18169 FUNCTIONAL_REQUIREMENTS_DOCUMENT.md                                  
+-a----        08-11-2026  01:24 AM         145457 SYSTEM_DESIGN_AND_SCHEDULING_SPECIFICATION.md                        
+
+

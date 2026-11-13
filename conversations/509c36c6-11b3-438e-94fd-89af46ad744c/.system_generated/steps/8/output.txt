@@ -1,0 +1,5 @@
+A1: (Recommended) A research report and implementation plan document
+A2: (Recommended) Compare both approaches and their trade-offs
+A3: (Recommended) None of these: no restrictions, any approach that works
+A4: (Recommended) None, research and determine from scratch
+A5: (Recommended) ~/teamwork_projects/whatsapp_scheduler_bot

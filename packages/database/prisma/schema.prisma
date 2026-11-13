@@ -1,0 +1,77 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+enum JobStatus {
+  SCHEDULED
+  STAGED_IN_QUEUE
+  PROCESSING
+  DELIVERED
+  FAILED
+  CANCELLED
+}
+
+model ChannelAccount {
+  id                String       @id @default(uuid()) @db.Uuid
+  userId            String       @map("user_id") @db.VarChar(128)
+  channelId         String       @map("channel_id") @db.VarChar(64)
+  accountIdentifier String       @map("account_identifier") @db.VarChar(128)
+  
+  // Encrypted auth state / tokens (session string, bot token, oauth credentials)
+  encryptedAuthData Bytes        @map("encrypted_auth_data")
+  authDataIv         Bytes        @map("auth_data_iv")
+  authDataTag        Bytes        @map("auth_data_tag")
+  
+  isActive          Boolean      @default(true) @map("is_active")
+  createdAt         DateTime     @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt         DateTime     @updatedAt @map("updated_at") @db.Timestamptz(6)
+
+  schedules         ScheduledMessage[]
+
+  @@unique([userId, channelId, accountIdentifier])
+  @@map("channel_accounts")
+}
+
+model ScheduledMessage {
+  id               String          @id @default(uuid()) @db.Uuid
+  userId           String          @map("user_id") @db.VarChar(128)
+  channelAccountId String          @map("channel_account_id") @db.Uuid
+  channelAccount   ChannelAccount  @relation(fields: [channelAccountId], references: [id])
+  
+  channelId        String          @map("channel_id") @db.VarChar(64)
+  recipientId      String          @map("recipient_id") @db.VarChar(255)
+  
+  // Zero-knowledge encrypted payload
+  encryptedPayload Bytes           @map("encrypted_payload")
+  payloadIv        Bytes           @map("payload_iv")
+  payloadAuthTag   Bytes           @map("payload_auth_tag")
+  keyFingerprint   String          @map("key_fingerprint") @db.VarChar(64)
+  
+  // Timing & Recurrence
+  scheduledFor     DateTime        @map("scheduled_for") @db.Timestamptz(6)
+  timezone         String          @default("UTC") @db.VarChar(64)
+  cronExpression   String?         @map("cron_expression") @db.VarChar(128)
+  recurrenceRule   String?         @map("recurrence_rule") @db.VarChar(255)
+  parentScheduleId String?         @map("parent_schedule_id") @db.Uuid
+  
+  // Execution & Mutex
+  status           JobStatus       @default(SCHEDULED)
+  idempotencyKey   String          @unique @map("idempotency_key") @db.VarChar(64)
+  executionWorker  String?         @map("execution_worker") @db.VarChar(128)
+  stagedAt         DateTime?       @map("staged_at") @db.Timestamptz(6)
+  deliveredAt      DateTime?       @map("delivered_at") @db.Timestamptz(6)
+  retryCount       Int             @default(0) @map("retry_count")
+  lastError        String?         @map("last_error") @db.Text
+  
+  createdAt        DateTime        @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt        DateTime        @updatedAt @map("updated_at") @db.Timestamptz(6)
+
+  @@index([status, scheduledFor], name: "idx_due_jobs")
+  @@index([userId, channelId], name: "idx_user_channel")
+  @@map("scheduled_messages")
+}

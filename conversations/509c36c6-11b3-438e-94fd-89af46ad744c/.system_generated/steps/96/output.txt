@@ -1,0 +1,10 @@
+Command exited with code 1.
+
+Command output:
+
+Name       Source                                                            
+----       ------                                                            
+python.exe C:\Users\Lenovo\AppData\Local\Programs\Python\Python313\python.exe
+node.exe   C:\Program Files\nodejs\node.exe                                  
+
+

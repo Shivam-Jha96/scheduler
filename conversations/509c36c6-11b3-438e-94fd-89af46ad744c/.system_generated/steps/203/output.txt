@@ -1,0 +1,73 @@
+Command exited with code 0.
+
+Command output:
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>WhatsApp Message Scheduler Bot â€” Business & Functional Requirements (BRD & FRD)</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <script type="module">
+    import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs';
+    mermaid.initialize({
+      startOnLoad: true,
+      theme: 'dark',
+      themeVariables: {
+        primaryColor: '#10b981',
+        primaryTextColor: '#f8fafc',
+        primaryBorderColor: '#059669',
+        lineColor: '#64748b',
+        secondaryColor: '#1e293b',
+        tertiaryColor: '#0f172a',
+        fontFamily: 'Inter, sans-serif'
+      }
+    });
+  </script>
+  <style>
+    body {
+      font-family: 'Inter', sans-serif;
+      background-color: #0b0f19;
+      color: #e2e8f0;
+    }
+    code, pre {
+      font-family: 'JetBrains Mono', monospace;
+    }
+    .glass-card {
+      background: rgba(15, 23, 42, 0.75);
+      backdrop-filter: blur(12px);
+      border: 1px solid rgba(51, 65, 85, 0.6);
+    }
+    .badge-brd {
+      background: rgba(59, 130, 246, 0.15);
+      color: #60a5fa;
+      border: 1px solid rgba(59, 130, 246, 0.4);
+    }
+    .badge-frd {
+      background: rgba(16, 185, 129, 0.15);
+      color: #34d399;
+      border: 1px solid rgba(16, 185, 129, 0.4);
+    }
+    @media print {
+      header, aside, .btn-pdf { display: none !important; }
+      body { background-color: #fff !important; color: #000 !important; }
+      .glass-card { background: #fff !important; border: 1px solid #cbd5e1 !important; color: #000 !important; box-shadow: none !important; }
+      .text-white { color: #000 !important; }
+      .text-slate-300, .text-slate-400 { color: #334155 !important; }
+      table { border-collapse: collapse !important; }
+      th, td { border: 1px solid #cbd5e1 !important; color: #000 !important; }
+    }
+  </style>
+</head>
+<body class="antialiased selection:bg-emerald-500 selection:text-white">
+
+  <!-- Header -->
+  <header class="sticky top-0 z-50 border-b border-slate-800 bg-slate-950/90 backdrop-blur-md">
+    <div class="max-w-7xl mx-auto px-6 py-3 flex items-center justify-between">
+      <div class="flex items-center space-x-3">
+        <span class="h-3 w-3 rounded-full bg-blue-500 animate-pulse"></span>
+        <span class="font-bold tracking-tight text-white text-sm md:text-base">WHATSAPP-SCHEDULER-BRD-FRD-V1.0</span>
+        <span class="text-xs px-2.5 py-0.5 rounded-full badge-brd font-medium">Business & Functional Requirements</span>

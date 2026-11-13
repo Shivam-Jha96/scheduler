@@ -1,0 +1,31 @@
+{
+  "name": "scheduler-monorepo",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Enterprise Omnichannel & Multi-App Message Scheduler Platform",
+  "packageManager": "npm@11.11.0",
+  "workspaces": [
+    "apps/*",
+    "packages/*",
+    "adapters/*",
+    "tools/*"
+  ],
+  "scripts": {
+    "build": "turbo run build",
+    "dev": "turbo run dev --parallel",
+    "test": "turbo run test",
+    "typecheck": "turbo run typecheck",
+    "create:adapter": "node tools/create-adapter/index.js",
+    "db:generate": "turbo run db:generate",
+    "clean": "turbo run clean"
+  },
+  "devDependencies": {
+    "@types/node": "^26.6.6",
+    "turbo": "^2.4.0",
+    "typescript": "^5.7.3"
+  },
+  "engines": {
+    "node": ">=20.0.0",
+    "npm": ">=10.0.0"
+  }
+}

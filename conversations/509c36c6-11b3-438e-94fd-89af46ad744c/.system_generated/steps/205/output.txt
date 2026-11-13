@@ -1,0 +1,53 @@
+Command exited with code 0.
+
+Command output:
+# Business Requirements Document (BRD)
+## In-WhatsApp Message Scheduler Chatbot
+
+**Document Identifier:** BRD-WAPP-SCHED-V1.0  
+**Project Name:** WhatsApp Message Scheduler Bot  
+**Document Status:** Approved for Implementation  
+**Version:** 1.0.0  
+**Effective Date:** November 2026  
+**Target Environment:** Node.js 22 LTS / PostgreSQL 16 / WhatsApp Multi-Device & Cloud API  
+**Author:** Product & Architecture Strategy Team  
+
+---
+
+## 1. Executive Summary & Project Vision
+
+### 1.1 Executive Summary
+WhatsApp is the world's leading messaging application with over 2.7 billion active users. However, WhatsApp provides **no native capability for end users to schedule personal or group messages** for future delivery within the mobile client. Users are forced to rely on clumsy third-party accessibility hacks, external calendar alarms, or manual reminders.
+
+The **WhatsApp Message Scheduler Bot** solves this friction by providing a seamless, in-chat scheduling engine. Operating directly within WhatsApp messaging threads, the bot enables any user (**Alice**) to schedule one-off or recurring messages to any personal contact or group chat (**Bob**).
+
+### 1.2 Vision Statement
+To deliver an intuitive, reliable, and privacy-compliant in-WhatsApp message scheduler that allows individuals and professionals to automate their communication without leaving WhatsApp, maintaining 100% peer-to-peer authenticity and zero-double-send reliability.
+
+---
+
+## 2. Business Problem Statement & Market Opportunity
+
+### 2.1 The Problem
+1. **Absence of Native Scheduling:** Unlike Telegram, Slack, or email clients, WhatsApp lacks native scheduled send capabilities for personal and small business accounts.
+2. **Friction of External Tools:** Existing workarounds (e.g., Siri Shortcuts, Android Accessibility automation, external CRM platforms) require complex setup, compromise device battery, and fail when the phone is locked or powered off.
+3. **The Sender Identity Dilemma:** Official WhatsApp Business Platform APIs originate messages from corporate Business Phone Numbers (WABA), confusing personal contacts and triggering Meta's strict 24-hour service window block (`Error 131047`).
+4. **Reliability & Ban Hazards:** Unofficial tools often send messages instantly without human pacing, triggering algorithmic SIM bans and resulting in lost client communication.
+
+### 2.2 Market Opportunity & Value Proposition
+- **Prosumers & Freelancers:** Schedule client follow-ups, invoices, and timezone-adjusted check-ins.
+- **Small Business Owners & Service Providers:** Automate appointment reminders, status updates, and operational notices without paying exorbitant enterprise CRM licensing.
+- **Personal Convenience:** Never forget birthdays, anniversaries, medication reminders, or group chat standups.
+
+---
+
+## 3. Business Objectives & Success Criteria (SMART)
+
+| Objective ID | Business Objective | Measurement Metric | Target Timeline |
+| :--- | :--- | :--- | :--- |
+| **BO-01** | Enable in-app message scheduling for personal and group chats | End-to-end scheduling via WhatsApp chat | Phase 1 (MVP) |
+| **BO-02** | Eliminate duplicate message delivery incidents | Physical double-send error rate | **0.0% (Zero Tolerance)** |
+| **BO-03** | Protect user accounts from Meta policy violations and SIM bans | Account suspension / ban rate | **< 0.01%** |
+| **BO-04** | Achieve high temporal delivery precision | Dispatch lag from scheduled target | **< 1.0 second** |
+| **BO-05** | Provide scalable, sustainable unit economics | Infrastructure cost per 10k messages | **< $30.00 / month** |
+| **BO-06** | Guarantee wall-clock time invariance across Daylight Saving Time | Reminder drift across seasonal shifts | **0.0 minutes drift** |

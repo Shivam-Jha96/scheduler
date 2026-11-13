@@ -1,0 +1,26 @@
+The search for ""Instagram" "schedule message" direct message native" returned the following summary:
+Instagram features a **native direct message (DM) scheduling** option that allows you to queue up text messages to send at a later date and time directly inside the mobile app[1][2][3]. 
+
+### How to Natively Schedule an Instagram DM:
+1. Open the **Instagram app** on your iOS or Android device[4].
+2. Go to your **Direct Messages (DMs)** inbox and open the conversation where you want to send the message[5].
+3. Type out your message in the text box as you normally would[6]. 
+4. Instead of tapping normally, **long-press (press and hold) the Send button**[6].
+5. A scheduling menu/pop-up will appear[6]. Use the options to pick your desired **date and time**, then confirm[7].
+
+### Key Details & Limitations:
+* **Timeframe:** You can typically schedule messages up to **29 days in advance**[8][6].
+* **Content Type:** The native feature primarily supports **text-only** messages[2][3]. 
+* **Managing Scheduled Messages:** Once scheduled, a notification banner (e.g., *"1 scheduled message"*) will appear at the bottom of the chat[7][6]. You can tap it to view upcoming scheduled messages, or long-press an individual scheduled bubble to **Send now, Copy text, or Delete** it[7][4].
+
+Sources:
+[1] [techpp.com](https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQHLyeWEwJKJFMbUyGoabJWFp6CFdboWe3tS91wlazAmlnFMx7IRas5q1gjud7C-2m4Oj9MUdxB6gPHFNB2r4mElaA_A07vpbBujIeg4gOn8UZVOXeFmAaLmt8-w_wwNtfH8Ndr1TGCDHL7Yz_jOyKhCOw==)
+[2] [dmiq.site](https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQEMm65jhJgqikHZFfbH9Jh8ua2yVPCkkwTQbU0tmlCIqdZ6GLeK4sCaIT3ZEDUdl8Sm_eKxkXWBhS1BnC67e9c--6Qs3eiMOog-Du8OyKUZwFsZvJAXDE3L7Zm8o9TH4Dy5MFDtb9k=)
+[3] [igdm.me](https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQE_ecApdW_s1nk0nfmRVG1TRbhJ5scpO5qHCCXBzZatOccEkhL83v5kcm-QnQQ_B8wDvjhnOHGnEJf9n4NXwsF8JeK3tCK6ZRUY7MLsR10nFRbL4wPb0O-JIcWyIzJRtdhSd3BofXH8IiLvkJM3Uz69ZManC_BXviDorCI=)
+[4] [cashify.in](https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQEkCIeIEhqoeyT2ih7FZjzc4kjLuhkUJDEObcKJ4bDQ2A0ffpcmuAR9HizFQN3eLjZuuL2of238-4rewPvZikUDTFw7_fOwfTP9joZ5eGhHxw8TiIEK_9MIlleDPViEYnyPFJPrZ4gK_F3v54nnEML-)
+[5] [indianexpress.com](https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQHERQqokuF5Xq92aL_As3X-hRgdkRzR6C3hLL-AyFUMd3P49fFgqT539kLxXI81jkrcvBi9tLs2BFvkH5oa463FVInzqJ4bxbxAZPxpYVLuepxaSjVHCCWASFLSkUV41RvmwpyeaPUWe_is5Rqtws8EE_61nxU_FIr0uMqb8fpK4gFKp-rcn4vkXjPkvJeN45f3oweJWFB0watGytSP)
+[6] [routenote.com](https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQG8lImghwOv5-9WOWSo3nIxztGkfPc3w40d6u45_lek75UMcRnM7sE8Gb-dv2aOHjmKIl0JX8RQyeJbPt8nSKLjMt7ACO1bL2xZtrUp9bk5m2SIHCa5KWDlHsS0JbhVWaZUhBz8qDtC-0EUfFDhLaj8zhOK9zAYSkxLwbYurpw=)
+[7] [youtube.com](https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQFgCjkGWetlJLbcrQsi0CVcEEGvTALOGWoJnWZZIhAIHAqk3eziiE7ppA97aRTmP3WT_ftAGX3L7QHTS0Z52Yo5KpeJMJHnEelJhHDJw7qM8qNX1NcGO1T_mWVaebSdPMs=)
+[8] [daily.dev](https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQF6FMA0Y8d2SgEwlIKi_e75iRj9YOcZrX8QXC1xok8v9Y6HJoMjgdmKFOslLzCKT80EO9tCFYBsTu9GWyt1CI0vfy2LqXb4VA48F8k0z2t_hy9bpqSUUxHvZH4NOE2rMMvnlC00VX53EQ-1aZfGP5IgFEecHYjW8Q08oXf3yHQkiD3OkqPE)
+
+Note: Source URLs are HTTP redirects; check where they resolve if you need the direct link.

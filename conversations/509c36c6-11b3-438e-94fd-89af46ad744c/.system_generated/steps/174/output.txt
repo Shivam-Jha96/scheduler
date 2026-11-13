@@ -1,0 +1,7 @@
+Command exited with code 0.
+
+Command output:
+BRD/FRD HTML written to: C:\Users\Lenovo\teamwork_projects\whatsapp_scheduler_bot\WhatsApp_Scheduler_BRD_FRD.html and copied to C:\Users\Lenovo\.gemini\antigravity\brain\509c36c6-11b3-438e-94fd-89af46ad744c\WhatsApp_Scheduler_BRD_FRD.html
+Compiling BRD/FRD PDF with Chrome Headless...
+Chrome return code: 0
+Successfully generated BRD/FRD PDF: 704.3 KB

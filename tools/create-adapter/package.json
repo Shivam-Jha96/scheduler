@@ -1,0 +1,9 @@
+{
+  "name": "@scheduler/create-adapter",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Scaffolding CLI for creating new transport adapters in the scheduler monorepo",
+  "bin": {
+    "create-adapter": "./index.js"
+  }
+}

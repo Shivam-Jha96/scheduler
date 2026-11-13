@@ -1,0 +1,670 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>WhatsApp Message Scheduler Bot — Business & Functional Requirements (BRD & FRD)</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <script type="module">
+    import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs';
+    mermaid.initialize({
+      startOnLoad: true,
+      theme: 'dark',
+      themeVariables: {
+        primaryColor: '#10b981',
+        primaryTextColor: '#f8fafc',
+        primaryBorderColor: '#059669',
+        lineColor: '#64748b',
+        secondaryColor: '#1e293b',
+        tertiaryColor: '#0f172a',
+        fontFamily: 'Inter, sans-serif'
+      }
+    });
+  </script>
+  <style>
+    body {
+      font-family: 'Inter', sans-serif;
+      background-color: #0b0f19;
+      color: #e2e8f0;
+    }
+    code, pre {
+      font-family: 'JetBrains Mono', monospace;
+    }
+    .glass-card {
+      background: rgba(15, 23, 42, 0.75);
+      backdrop-filter: blur(12px);
+      border: 1px solid rgba(51, 65, 85, 0.6);
+    }
+    .badge-brd {
+      background: rgba(59, 130, 246, 0.15);
+      color: #60a5fa;
+      border: 1px solid rgba(59, 130, 246, 0.4);
+    }
+    .badge-frd {
+      background: rgba(16, 185, 129, 0.15);
+      color: #34d399;
+      border: 1px solid rgba(16, 185, 129, 0.4);
+    }
+    @media print {
+      header, aside, .btn-pdf { display: none !important; }
+      body { background-color: #fff !important; color: #000 !important; }
+      .glass-card { background: #fff !important; border: 1px solid #cbd5e1 !important; color: #000 !important; box-shadow: none !important; }
+      .text-white { color: #000 !important; }
+      .text-slate-300, .text-slate-400 { color: #334155 !important; }
+      table { border-collapse: collapse !important; }
+      th, td { border: 1px solid #cbd5e1 !important; color: #000 !important; }
+    }
+  </style>
+</head>
+<body class="antialiased selection:bg-emerald-500 selection:text-white">
+
+  <!-- Header -->
+  <header class="sticky top-0 z-50 border-b border-slate-800 bg-slate-950/90 backdrop-blur-md">
+    <div class="max-w-7xl mx-auto px-6 py-3 flex items-center justify-between">
+      <div class="flex items-center space-x-3">
+        <span class="h-3 w-3 rounded-full bg-blue-500 animate-pulse"></span>
+        <span class="font-bold tracking-tight text-white text-sm md:text-base">WHATSAPP-SCHEDULER-BRD-FRD-V1.0</span>
+        <span class="text-xs px-2.5 py-0.5 rounded-full badge-brd font-medium">Business & Functional Requirements</span>
+      </div>
+      <div class="flex items-center space-x-3">
+        <a href="WhatsApp_Scheduler_BRD_FRD.pdf" class="btn-pdf text-xs bg-blue-600 hover:bg-blue-500 text-white font-semibold px-3 py-1.5 rounded-lg flex items-center space-x-1.5 transition">
+          <span>📄</span>
+          <span>Download BRD/FRD PDF</span>
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <div class="max-w-7xl mx-auto px-6 py-8 grid grid-cols-1 lg:grid-cols-12 gap-8">
+
+    <!-- Sidebar -->
+    <aside class="lg:col-span-3 hidden lg:block">
+      <nav class="sticky top-20 space-y-1 text-sm border-r border-slate-800 pr-4">
+        <p class="text-xs font-semibold uppercase tracking-wider text-blue-400 mb-2">Part I: BRD</p>
+        <a href="#brd-summary" class="block py-1.5 px-3 rounded hover:bg-slate-800/60 text-slate-300 hover:text-blue-400 transition">1. Executive Vision</a>
+        <a href="#brd-problem" class="block py-1.5 px-3 rounded hover:bg-slate-800/60 text-slate-300 hover:text-blue-400 transition">2. Problem & Opportunity</a>
+        <a href="#brd-objectives" class="block py-1.5 px-3 rounded hover:bg-slate-800/60 text-slate-300 hover:text-blue-400 transition">3. Business Objectives</a>
+        <a href="#brd-personas" class="block py-1.5 px-3 rounded hover:bg-slate-800/60 text-slate-300 hover:text-blue-400 transition">4. User Personas</a>
+        <a href="#brd-scope" class="block py-1.5 px-3 rounded hover:bg-slate-800/60 text-slate-300 hover:text-blue-400 transition">5. Scope (In/Out)</a>
+        <a href="#brd-rules" class="block py-1.5 px-3 rounded hover:bg-slate-800/60 text-slate-300 hover:text-blue-400 transition">6. Business Rules</a>
+        <a href="#brd-economics" class="block py-1.5 px-3 rounded hover:bg-slate-800/60 text-slate-300 hover:text-blue-400 transition">7. Financial Viability</a>
+
+        <p class="text-xs font-semibold uppercase tracking-wider text-emerald-400 mt-6 mb-2">Part II: FRD</p>
+        <a href="#frd-overview" class="block py-1.5 px-3 rounded hover:bg-slate-800/60 text-slate-300 hover:text-emerald-400 transition">8. Functional Modules</a>
+        <a href="#frd-auth" class="block py-1.5 px-3 rounded hover:bg-slate-800/60 text-slate-300 hover:text-emerald-400 transition">9. FR-AUTH Authentication</a>
+        <a href="#frd-wiz" class="block py-1.5 px-3 rounded hover:bg-slate-800/60 text-slate-300 hover:text-emerald-400 transition">10. FR-WIZ Wizard FSM</a>
+        <a href="#frd-cli" class="block py-1.5 px-3 rounded hover:bg-slate-800/60 text-slate-300 hover:text-emerald-400 transition">11. FR-CLI Command Grammar</a>
+        <a href="#frd-sched" class="block py-1.5 px-3 rounded hover:bg-slate-800/60 text-slate-300 hover:text-emerald-400 transition">12. FR-SCHED Hybrid Queue</a>
+        <a href="#frd-rec" class="block py-1.5 px-3 rounded hover:bg-slate-800/60 text-slate-300 hover:text-emerald-400 transition">13. FR-REC Recurrence Math</a>
+        <a href="#frd-rel" class="block py-1.5 px-3 rounded hover:bg-slate-800/60 text-slate-300 hover:text-emerald-400 transition">14. FR-REL Zero-Double-Send</a>
+        <a href="#frd-meta" class="block py-1.5 px-3 rounded hover:bg-slate-800/60 text-slate-300 hover:text-emerald-400 transition">15. FR-META Cloud API CTA</a>
+        <a href="#frd-nfr" class="block py-1.5 px-3 rounded hover:bg-slate-800/60 text-slate-300 hover:text-emerald-400 transition">16. NFR Specifications</a>
+        <a href="#frd-rtm" class="block py-1.5 px-3 rounded hover:bg-slate-800/60 text-slate-300 hover:text-emerald-400 transition">17. Traceability Matrix</a>
+      </nav>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="lg:col-span-9 space-y-12">
+
+      <!-- Header Title Banner -->
+      <section class="glass-card rounded-2xl p-8 border-l-4 border-l-blue-500 shadow-2xl">
+        <div class="flex flex-wrap gap-2 mb-4">
+          <span class="text-xs font-semibold uppercase tracking-wider px-2.5 py-1 rounded bg-slate-800 text-slate-300">Doc Suite: BRD & FRD</span>
+          <span class="text-xs font-semibold uppercase tracking-wider px-2.5 py-1 rounded badge-brd font-mono">Version 1.0.0 Approved</span>
+        </div>
+        <h1 class="text-3xl sm:text-4xl font-extrabold text-white tracking-tight leading-tight mb-4">
+          WhatsApp Message Scheduler Bot: Business (BRD) & Functional (FRD) Requirements
+        </h1>
+        <p class="text-slate-300 text-base leading-relaxed mb-6">
+          Comprehensive dual-document specification defining both the <strong>business justification, ROI, stakeholder personas, and operational policies</strong> (BRD), alongside the <strong>atomic functional requirements, system behavioral matrices, and verification criteria</strong> (FRD) for production implementation.
+        </p>
+        <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 pt-4 border-t border-slate-800/80 text-xs">
+          <div>
+            <span class="text-slate-400 block">Document ID</span>
+            <span class="font-semibold text-white">BRD-FRD-WAPP-V1</span>
+          </div>
+          <div>
+            <span class="text-slate-400 block">Stakeholder Approvals</span>
+            <span class="font-semibold text-emerald-400">Product, Arch, Legal</span>
+          </div>
+          <div>
+            <span class="text-slate-400 block">Zero Double-Send Goal</span>
+            <span class="font-semibold text-white">0.0% Tolerance</span>
+          </div>
+          <div>
+            <span class="text-slate-400 block">Meta Policy Governance</span>
+            <span class="font-semibold text-white">Cloud API + Baileys</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- ===================================================================== -->
+      <!-- PART I: BUSINESS REQUIREMENTS DOCUMENT (BRD)                         -->
+      <!-- ===================================================================== -->
+      <div class="pt-4 border-t border-slate-800">
+        <span class="text-xs font-bold uppercase tracking-widest text-blue-400">Part I</span>
+        <h2 class="text-3xl font-extrabold text-white mt-1">Business Requirements Document (BRD)</h2>
+      </div>
+
+      <!-- 1. Executive Vision -->
+      <section id="brd-summary" class="glass-card rounded-2xl p-6 sm:p-8 space-y-4">
+        <div class="flex items-center justify-between">
+          <h3 class="text-xl font-bold text-white">1. Executive Summary & Vision Statement</h3>
+          <span class="text-xs px-2.5 py-0.5 rounded badge-brd font-mono">BRD-01</span>
+        </div>
+        <p class="text-sm text-slate-300 leading-relaxed">
+          WhatsApp serves over 2.7 billion users globally, yet provides <strong>no native capability to schedule personal or group messages</strong>. Users are forced to rely on battery-draining OS hacks, external calendar alarms, or manual reminders.
+        </p>
+        <p class="text-sm text-slate-300 leading-relaxed">
+          The <strong>WhatsApp Message Scheduler Bot</strong> closes this functionality gap by embedding a high-precision, conversational scheduling engine directly into WhatsApp chats. It achieves <strong>100% peer-to-peer authenticity</strong> (messages sent from the user's real phone number), <strong>zero double-sends</strong>, and <strong>wall-clock invariance</strong> across all global timezones.
+        </p>
+      </section>
+
+      <!-- 2. Problem Statement & Opportunity -->
+      <section id="brd-problem" class="glass-card rounded-2xl p-6 sm:p-8 space-y-4">
+        <h3 class="text-xl font-bold text-white">2. Business Problem & Market Opportunity</h3>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs">
+          <div class="p-4 rounded-xl bg-slate-900/80 border border-slate-800 space-y-2">
+            <span class="font-bold text-rose-400">Current Market Frustrations</span>
+            <ul class="space-y-1.5 text-slate-300 list-disc list-inside">
+              <li>No native scheduled send button on WhatsApp iOS/Android personal apps.</li>
+              <li>External calendar alarms interrupt workflow and still require manual sending.</li>
+              <li>Official Meta Cloud API sends from business numbers, confusing contacts and violating P2P expectations.</li>
+              <li>Crude automation tools trigger Meta algorithmic SIM bans due to zero pacing.</li>
+            </ul>
+          </div>
+          <div class="p-4 rounded-xl bg-slate-900/80 border border-slate-800 space-y-2">
+            <span class="font-bold text-emerald-400">The Business Opportunity</span>
+            <ul class="space-y-1.5 text-slate-300 list-disc list-inside">
+              <li><strong>Prosumers & Freelancers:</strong> Schedule late-night drafts to deliver at 9:00 AM in client timezones.</li>
+              <li><strong>Small Businesses:</strong> Automate appointment confirmations and billing reminders without expensive CRM seats.</li>
+              <li><strong>Communities & Teams:</strong> Coordinate automated recurring standups and announcements in group chats.</li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <!-- 3. Business Objectives (SMART) -->
+      <section id="brd-objectives" class="glass-card rounded-2xl p-6 sm:p-8 space-y-4">
+        <h3 class="text-xl font-bold text-white">3. Business Objectives & Success Criteria (SMART)</h3>
+        <div class="overflow-x-auto rounded-xl border border-slate-800">
+          <table class="w-full text-left border-collapse text-xs">
+            <thead>
+              <tr class="bg-slate-900/90 text-slate-200 border-b border-slate-800">
+                <th class="p-3 font-semibold">Objective ID</th>
+                <th class="p-3 font-semibold">Business Goal</th>
+                <th class="p-3 font-semibold">Key Success Metric</th>
+                <th class="p-3 font-semibold">Target Timeline</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-slate-800/70 text-slate-300">
+              <tr>
+                <td class="p-3 font-mono text-blue-400">BO-01</td>
+                <td class="p-3 font-medium text-white">In-App Scheduling Capability</td>
+                <td class="p-3">100% of scheduling operations handled directly in WhatsApp chat</td>
+                <td class="p-3">Phase 1 (MVP)</td>
+              </tr>
+              <tr>
+                <td class="p-3 font-mono text-blue-400">BO-02</td>
+                <td class="p-3 font-medium text-white">Zero Double-Send Reliability</td>
+                <td class="p-3 text-emerald-400 font-bold">0.0% Duplicate Transmissions (Zero Tolerance)</td>
+                <td class="p-3">Phase 1 & Ongoing</td>
+              </tr>
+              <tr>
+                <td class="p-3 font-mono text-blue-400">BO-03</td>
+                <td class="p-3 font-medium text-white">Account Ban Protection</td>
+                <td class="p-3">&lt; 0.01% Account restriction / SIM ban rate</td>
+                <td class="p-3">Phase 1 & Ongoing</td>
+              </tr>
+              <tr>
+                <td class="p-3 font-mono text-blue-400">BO-04</td>
+                <td class="p-3 font-medium text-white">High Temporal Precision</td>
+                <td class="p-3">&lt; 1.0 second dispatch lag from scheduled timestamp</td>
+                <td class="p-3">Phase 3</td>
+              </tr>
+              <tr>
+                <td class="p-3 font-mono text-blue-400">BO-05</td>
+                <td class="p-3 font-medium text-white">Cost-Effective Scaling</td>
+                <td class="p-3">&lt; $30.00 / month infrastructure cost per 10,000 messages</td>
+                <td class="p-3">Phase 3 & 4</td>
+              </tr>
+              <tr>
+                <td class="p-3 font-mono text-blue-400">BO-06</td>
+                <td class="p-3 font-medium text-white">Wall-Clock DST Invariance</td>
+                <td class="p-3">0.0 minutes clock drift across spring/fall seasonal changes</td>
+                <td class="p-3">Phase 2</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- 4. User Personas -->
+      <section id="brd-personas" class="glass-card rounded-2xl p-6 sm:p-8 space-y-4">
+        <h3 class="text-xl font-bold text-white">4. User Personas & Stakeholder Profiles</h3>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-xs">
+          <div class="p-4 rounded-xl bg-slate-900/80 border border-slate-800 space-y-2">
+            <span class="font-bold text-white text-sm">Alice — Freelance Consultant</span>
+            <p class="text-slate-400">Drafts messages at night, schedules them for 9:00 AM client time. Needs P2P delivery from her real phone number.</p>
+          </div>
+          <div class="p-4 rounded-xl bg-slate-900/80 border border-slate-800 space-y-2">
+            <span class="font-bold text-white text-sm">Marcus — Gym & Studio Owner</span>
+            <p class="text-slate-400">Broadcasts recurring weekly schedules to client group chats and sends renewal notices. Needs fast-path CLI commands.</p>
+          </div>
+          <div class="p-4 rounded-xl bg-slate-900/80 border border-slate-800 space-y-2">
+            <span class="font-bold text-white text-sm">Elena — Remote Engineering Lead</span>
+            <p class="text-slate-400">Automates weekday standup check-in messages in project groups across US and European timezones with zero DST drift.</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- 5. Scope Definition -->
+      <section id="brd-scope" class="glass-card rounded-2xl p-6 sm:p-8 space-y-4">
+        <h3 class="text-xl font-bold text-white">5. Project Scope: In-Scope vs. Out-of-Scope</h3>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs">
+          <div class="p-4 rounded-xl bg-slate-900/80 border border-emerald-800/40 space-y-2">
+            <span class="font-bold text-emerald-400">In-Scope (Phases 1–5)</span>
+            <ul class="space-y-1 text-slate-300 list-disc list-inside">
+              <li>5-step guided wizard + fast-path CLI syntax (<code>/schedule</code>, <code>/list</code>, <code>/cancel</code>).</li>
+              <li>Personal account P2P companion node linking via 8-char pairing codes.</li>
+              <li>Official Cloud API Assistive CTA model with Utility Template fallback.</li>
+              <li>Two-tier hybrid scheduler (PostgreSQL 16 + BullMQ Redis buffer).</li>
+              <li>Wall-clock DST recurrence & 31st month-end anchor day preservation.</li>
+              <li>Multimodal support (Text, Image, PDF, Voice Notes, Video).</li>
+            </ul>
+          </div>
+          <div class="p-4 rounded-xl bg-slate-900/80 border border-rose-800/40 space-y-2">
+            <span class="font-bold text-rose-400">Out-of-Scope (Deferred / Prohibited)</span>
+            <ul class="space-y-1 text-slate-300 list-disc list-inside">
+              <li>Bulk unsolicited marketing broadcasts to unconsented phone numbers.</li>
+              <li>Automated scraping of public WhatsApp groups or address books.</li>
+              <li>Automated voice call scheduling or telephonic dialing.</li>
+              <li>In-app credit card or fiat currency payment processing gateway.</li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <!-- 6. Business Rules -->
+      <section id="brd-rules" class="glass-card rounded-2xl p-6 sm:p-8 space-y-4">
+        <h3 class="text-xl font-bold text-white">6. Core Business Rules (BR)</h3>
+        <div class="space-y-2.5 text-xs text-slate-300">
+          <div class="p-3 rounded-lg bg-slate-900/90 border border-slate-800 flex items-start space-x-3">
+            <span class="font-bold text-blue-400 shrink-0">BR-01</span>
+            <div><strong>Meta Messaging Compliance:</strong> Cloud API proactive messages beyond 24 hours must automatically route to pre-approved Meta Utility Templates to prevent API rejection.</div>
+          </div>
+          <div class="p-3 rounded-lg bg-slate-900/90 border border-slate-800 flex items-start space-x-3">
+            <span class="font-bold text-blue-400 shrink-0">BR-02</span>
+            <div><strong>Zero Double-Send Guarantee:</strong> Under no network condition or worker crash may the system dispatch a duplicate message payload to the same recipient.</div>
+          </div>
+          <div class="p-3 rounded-lg bg-slate-900/90 border border-slate-800 flex items-start space-x-3">
+            <span class="font-bold text-blue-400 shrink-0">BR-03</span>
+            <div><strong>Privacy & Cryptographic Vault:</strong> Signal protocol keys and Baileys session states must be encrypted at rest with AES-256-GCM. Personal data must be purged upon user request.</div>
+          </div>
+          <div class="p-3 rounded-lg bg-slate-900/90 border border-slate-800 flex items-start space-x-3">
+            <span class="font-bold text-blue-400 shrink-0">BR-04</span>
+            <div><strong>Anti-Ban Rate Pacing:</strong> Personal Baileys sessions must simulate human typing pauses (35–55 ms/char) and enforce 8–15s jitter between distinct recipient messages.</div>
+          </div>
+          <div class="p-3 rounded-lg bg-slate-900/90 border border-slate-800 flex items-start space-x-3">
+            <span class="font-bold text-blue-400 shrink-0">BR-05</span>
+            <div><strong>Wall-Clock Anchoring:</strong> Scheduled jobs are anchored to the user's localized IANA timezone, ensuring reminders never shift during seasonal DST clock changes.</div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 7. Financial Model -->
+      <section id="brd-economics" class="glass-card rounded-2xl p-6 sm:p-8 space-y-4">
+        <h3 class="text-xl font-bold text-white">7. Financial Viability & Unit Economics</h3>
+        <div class="overflow-x-auto rounded-xl border border-slate-800">
+          <table class="w-full text-left border-collapse text-xs">
+            <thead>
+              <tr class="bg-slate-900/90 text-slate-200 border-b border-slate-800">
+                <th class="p-3 font-semibold">Monthly Volume</th>
+                <th class="p-3 font-semibold">Cloud API (Assistive Model — APAC)</th>
+                <th class="p-3 font-semibold">Cloud API (Assistive Model — US/EU)</th>
+                <th class="p-3 font-semibold text-emerald-400">Baileys Companion (Self-Hosted VPS)</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-slate-800/70 text-slate-300">
+              <tr>
+                <td class="p-3 font-medium text-white">1,000 Messages</td>
+                <td class="p-3">$1.26 Meta + $5.00 VPS = <strong>$6.26</strong></td>
+                <td class="p-3">$10.50 Meta + $5.00 VPS = <strong>$15.50</strong></td>
+                <td class="p-3">$0.00 Meta + $12.00 VPS = <strong>$12.00</strong></td>
+              </tr>
+              <tr>
+                <td class="p-3 font-medium text-white">10,000 Messages</td>
+                <td class="p-3">$12.60 Meta + $15.00 VPS = <strong>$27.60</strong></td>
+                <td class="p-3">$105.00 Meta + $15.00 VPS = <strong>$120.00</strong></td>
+                <td class="p-3">$0.00 Meta + $28.00 VPS = <strong>$28.00</strong></td>
+              </tr>
+              <tr>
+                <td class="p-3 font-medium text-white">100,000 Messages</td>
+                <td class="p-3">$126.00 Meta + $80.00 Infra = <strong>$206.00</strong></td>
+                <td class="p-3">$1,050.00 Meta + $80.00 Infra = <strong>$1,130.00</strong></td>
+                <td class="p-3 text-emerald-400 font-semibold">$0.00 Meta + $160.00 Infra = <strong>$160.00 (Massive Scale Winner)</strong></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- ===================================================================== -->
+      <!-- PART II: FUNCTIONAL REQUIREMENTS DOCUMENT (FRD)                      -->
+      <!-- ===================================================================== -->
+      <div class="pt-6 border-t border-slate-800">
+        <span class="text-xs font-bold uppercase tracking-widest text-emerald-400">Part II</span>
+        <h2 class="text-3xl font-extrabold text-white mt-1">Functional Requirements Document (FRD)</h2>
+      </div>
+
+      <!-- 8. Functional Modules Overview -->
+      <section id="frd-overview" class="glass-card rounded-2xl p-6 sm:p-8 space-y-4">
+        <div class="flex items-center justify-between">
+          <h3 class="text-xl font-bold text-white">8. Functional Modules Overview</h3>
+          <span class="text-xs px-2.5 py-0.5 rounded badge-frd font-mono">FRD-01</span>
+        </div>
+        <p class="text-xs text-slate-300 leading-relaxed">
+          The functional specifications are partitioned into 7 discrete engineering modules:
+        </p>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs">
+          <div class="p-3.5 rounded-xl bg-slate-900/80 border border-slate-800 space-y-1">
+            <span class="font-bold text-emerald-400">FR-AUTH: Authentication & Linking</span>
+            <p class="text-slate-300">User auto-provisioning, 8-character pairing codes, Signal key AES-256-GCM envelope encryption, session reconnect state machine.</p>
+          </div>
+          <div class="p-3.5 rounded-xl bg-slate-900/80 border border-slate-800 space-y-1">
+            <span class="font-bold text-emerald-400">FR-WIZ: Conversational FSM Wizard</span>
+            <p class="text-slate-300">5-step interactive flow (Recipient vCard, Media/Text payload, Chrono temporal NLP, Recurrence rules, Confirmation preview).</p>
+          </div>
+          <div class="p-3.5 rounded-xl bg-slate-900/80 border border-slate-800 space-y-1">
+            <span class="font-bold text-emerald-400">FR-CLI: Fast-Path Command Grammar</span>
+            <p class="text-slate-300">Single-line command parser (<code>/schedule</code>, <code>/list</code>, <code>/cancel</code>, <code>/edit</code>, <code>/timezone</code>) with atomic BullMQ eviction.</p>
+          </div>
+          <div class="p-3.5 rounded-xl bg-slate-900/80 border border-slate-800 space-y-1">
+            <span class="font-bold text-emerald-400">FR-SCHED: Two-Tier Hybrid Scheduler</span>
+            <p class="text-slate-300">PostgreSQL 16 master ledger with partial indexing, 60s Look-Ahead Feeder, 5-minute BullMQ delayed queue buffer.</p>
+          </div>
+          <div class="p-3.5 rounded-xl bg-slate-900/80 border border-slate-800 space-y-1">
+            <span class="font-bold text-emerald-400">FR-REC: Recurrence & DST Invariance</span>
+            <p class="text-slate-300">Single active row pattern, Luxon calendar math, month-end anchor day preservation (Jan 31 &rarr; Feb 28 &rarr; Mar 31), reboot fast-forwarding.</p>
+          </div>
+          <div class="p-3.5 rounded-xl bg-slate-900/80 border border-slate-800 space-y-1">
+            <span class="font-bold text-emerald-400">FR-REL: Reliability & Zero-Double-Send</span>
+            <p class="text-slate-300">22-character deterministic WhatsApp stanza IDs, Redis Redlock mutex, dead-man's-switch sweeper, per-sender typing cadence pacing.</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- 9. FR-AUTH -->
+      <section id="frd-auth" class="glass-card rounded-2xl p-6 sm:p-8 space-y-4">
+        <h3 class="text-xl font-bold text-white">9. Module 1: Authentication & Device Linking (FR-AUTH)</h3>
+        <div class="overflow-x-auto rounded-xl border border-slate-800">
+          <table class="w-full text-left border-collapse text-xs">
+            <thead>
+              <tr class="bg-slate-900/90 text-slate-200 border-b border-slate-800">
+                <th class="p-3 font-semibold">Req ID</th>
+                <th class="p-3 font-semibold">Title</th>
+                <th class="p-3 font-semibold">Functional Specification</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-slate-800/70 text-slate-300">
+              <tr>
+                <td class="p-3 font-mono text-emerald-400">FR-AUTH-01</td>
+                <td class="p-3 font-medium text-white">User Auto-Provisioning</td>
+                <td class="p-3">On first message, creates user record in <code>users</code> with default UTC timezone, locale <code>en-US</code>, status <code>ACTIVE</code>.</td>
+              </tr>
+              <tr>
+                <td class="p-3 font-mono text-emerald-400">FR-AUTH-02</td>
+                <td class="p-3 font-medium text-white">8-Char Pairing Code Flow</td>
+                <td class="p-3">On <code>/link</code>, requests pairing code via Baileys (<code>sock.requestPairingCode</code>) and displays 8-digit code for 1-tap mobile pairing.</td>
+              </tr>
+              <tr>
+                <td class="p-3 font-mono text-emerald-400">FR-AUTH-03</td>
+                <td class="p-3 font-medium text-white">AES-256-GCM Signal Key Vault</td>
+                <td class="p-3">Credentials and Signal pre-keys are encrypted before DB write with 256-bit KMS key and 12-byte IV (zero plain keys stored).</td>
+              </tr>
+              <tr>
+                <td class="p-3 font-mono text-emerald-400">FR-AUTH-04</td>
+                <td class="p-3 font-medium text-white">Session Lifecycle & Circuit Breaker</td>
+                <td class="p-3">Code 401 purges session; code 403 halts all socket operations immediately; code 515 cleanly reconnects after 5s backoff.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- 10. FR-WIZ -->
+      <section id="frd-wiz" class="glass-card rounded-2xl p-6 sm:p-8 space-y-4">
+        <h3 class="text-xl font-bold text-white">10. Module 2: Conversational Wizard State Machine (FR-WIZ)</h3>
+        <div class="overflow-x-auto rounded-xl border border-slate-800">
+          <table class="w-full text-left border-collapse text-xs">
+            <thead>
+              <tr class="bg-slate-900/90 text-slate-200 border-b border-slate-800">
+                <th class="p-3 font-semibold">Req ID</th>
+                <th class="p-3 font-semibold">Step / Feature</th>
+                <th class="p-3 font-semibold">Detailed Specification</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-slate-800/70 text-slate-300">
+              <tr>
+                <td class="p-3 font-mono text-emerald-400">FR-WIZ-01</td>
+                <td class="p-3 font-medium text-white">Step 1: Recipient Resolution</td>
+                <td class="p-3">Extracts phone from vCard 3.0, E.164 text, or saved alias. Runs pre-flight verification on <code>@g.us</code> group chat permissions.</td>
+              </tr>
+              <tr>
+                <td class="p-3 font-mono text-emerald-400">FR-WIZ-02</td>
+                <td class="p-3 font-medium text-white">Step 2: Payload Capture</td>
+                <td class="p-3">Buffers text (up to 4,096 chars) or streams media to S3. Pre-warms attachments during T-5m look-ahead window.</td>
+              </tr>
+              <tr>
+                <td class="p-3 font-mono text-emerald-400">FR-WIZ-03</td>
+                <td class="p-3 font-medium text-white">Step 3: Temporal NLP</td>
+                <td class="p-3">Parses natural language (e.g. "tomorrow 9am") with <code>chrono-node</code> relative to user timezone. Rejects times &le; now + 60s.</td>
+              </tr>
+              <tr>
+                <td class="p-3 font-mono text-emerald-400">FR-WIZ-04</td>
+                <td class="p-3 font-medium text-white">Step 4: Recurrence Rule</td>
+                <td class="p-3">Presents 5 options: Once, Daily, Weekdays, Weekly, Monthly. Sets <code>anchor_day_of_month</code> for monthly jobs.</td>
+              </tr>
+              <tr>
+                <td class="p-3 font-mono text-emerald-400">FR-WIZ-05</td>
+                <td class="p-3 font-medium text-white">Step 5: Confirmation Preview</td>
+                <td class="p-3">Renders card with <code>[Confirm]</code> (ACID commit), <code>[Edit]</code> (jumps to target step), and <code>[Cancel]</code> (purges draft).</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- 11. FR-CLI -->
+      <section id="frd-cli" class="glass-card rounded-2xl p-6 sm:p-8 space-y-4">
+        <h3 class="text-xl font-bold text-white">11. Module 3: Fast-Path Command Grammar (FR-CLI)</h3>
+        <div class="space-y-2 text-xs font-mono text-slate-300">
+          <div class="p-3 rounded-lg bg-slate-900 border border-slate-800">
+            <span class="text-emerald-400 font-bold">FR-CLI-01:</span> <code>/schedule &lt;target&gt; &lt;time&gt; | &lt;message&gt;</code> &rarr; Instant one-off schedule.
+          </div>
+          <div class="p-3 rounded-lg bg-slate-900 border border-slate-800">
+            <span class="text-emerald-400 font-bold">FR-CLI-02:</span> <code>/schedule --repeat &lt;rule&gt; &lt;target&gt; &lt;time&gt; | &lt;msg&gt;</code> &rarr; Recurring schedule with DST invariance.
+          </div>
+          <div class="p-3 rounded-lg bg-slate-900 border border-slate-800">
+            <span class="text-emerald-400 font-bold">FR-CLI-03:</span> <code>/list [status] [page]</code> &rarr; Paginated list with status badges (<code>🟡 PENDING</code>, <code>🟢 SENT</code>, <code>🔴 FAILED</code>).
+          </div>
+          <div class="p-3 rounded-lg bg-slate-900 border border-slate-800">
+            <span class="text-emerald-400 font-bold">FR-CLI-04:</span> <code>/cancel &lt;job_uid&gt;</code> &rarr; Sets status to <code>CANCELLED</code> & invokes <code>bullQueue.remove(idempotencyKey)</code>.
+          </div>
+          <div class="p-3 rounded-lg bg-slate-900 border border-slate-800">
+            <span class="text-emerald-400 font-bold">FR-CLI-05:</span> <code>/edit &lt;job_uid&gt; &lt;time|message&gt; &lt;new_val&gt;</code> &rarr; Updates DB and resets in-flight timers.
+          </div>
+        </div>
+      </section>
+
+      <!-- 12. FR-SCHED -->
+      <section id="frd-sched" class="glass-card rounded-2xl p-6 sm:p-8 space-y-4">
+        <h3 class="text-xl font-bold text-white">12. Module 4: Two-Tier Hybrid Scheduling Engine (FR-SCHED)</h3>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs">
+          <div class="p-4 rounded-xl bg-slate-900/80 border border-slate-800 space-y-2">
+            <span class="font-bold text-emerald-400">Tier 1: PostgreSQL 16 Master Ledger</span>
+            <p class="text-slate-300">All scheduled jobs reside durably in PostgreSQL with monthly partitioning. A partial index on <code>WHERE status IN ('PENDING', 'QUEUED')</code> guarantees poller scan time &lt; 0.2 ms.</p>
+          </div>
+          <div class="p-4 rounded-xl bg-slate-900/80 border border-slate-800 space-y-2">
+            <span class="font-bold text-emerald-400">Tier 2: 60s Look-Ahead Feeder & BullMQ</span>
+            <p class="text-slate-300">Feeder claims jobs maturing in the next 5 minutes using <code>SKIP LOCKED</code> and stages them into BullMQ delayed queue (memory footprint &lt; 250 KB).</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- 13. FR-REC -->
+      <section id="frd-rec" class="glass-card rounded-2xl p-6 sm:p-8 space-y-4">
+        <h3 class="text-xl font-bold text-white">13. Module 5: Recurrence & Temporal Mathematics (FR-REC)</h3>
+        <div class="space-y-3 text-xs text-slate-300">
+          <div class="p-3.5 rounded-xl bg-slate-900/80 border border-slate-800 space-y-1">
+            <span class="font-bold text-emerald-400">Wall-Clock DST Invariance:</span>
+            <p>Converts UTC to user IANA timezone, adds calendar interval, and converts back to UTC. Guarantees 9:00 AM stays 9:00 AM across 23h spring-forward and 25h fall-back clock shifts.</p>
+          </div>
+          <div class="p-3.5 rounded-xl bg-slate-900/80 border border-slate-800 space-y-1">
+            <span class="font-bold text-emerald-400">Month-End Anchor Day Preservation:</span>
+            <p>For jobs set on day 31: executes Feb 28/29 in February, then cleanly restores day 31 in March, April 30, and May 31 without perpetual day drift.</p>
+          </div>
+          <div class="p-3.5 rounded-xl bg-slate-900/80 border border-slate-800 space-y-1">
+            <span class="font-bold text-emerald-400">Reboot Fast-Forwarding:</span>
+            <p>After multi-hour server downtime, overdue recurring jobs step forward past <code>NOW()</code> to prevent bursts of historical spam messages upon recovery.</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- 14. FR-REL -->
+      <section id="frd-rel" class="glass-card rounded-2xl p-6 sm:p-8 space-y-4">
+        <h3 class="text-xl font-bold text-white">14. Module 6: Reliability & Zero-Double-Send Guarantee (FR-REL)</h3>
+        <div class="bg-slate-950 p-4 rounded-xl border border-slate-800 overflow-x-auto text-xs">
+          <div class="mermaid">
+sequenceDiagram
+    autonumber
+    actor Worker as BullMQ Worker
+    participant Redis as Redis Lock Store
+    participant DB as PostgreSQL Ledger
+    participant Socket as Baileys Socket
+    actor Bob as Recipient Phone
+
+    Worker->>Worker: Format 22-char WA_MSG_ID = "3EB0" + SHA256[0..18]
+    Worker->>Redis: SET lock:job:<key> NX EX 60
+    alt Lock Acquired
+        Worker->>DB: UPDATE scheduled_jobs SET status='PROCESSING' WHERE status='QUEUED'
+        alt 1 Row Updated
+            Worker->>Socket: sendMessage(jid, text, { messageId: WA_MSG_ID })
+            Socket->>Bob: Deliver Message
+            Worker->>DB: Advance Recurrence or SET status='SENT'
+            Worker->>Redis: SET done:job:<key> 1 EX 86400
+        else 0 Rows (Cancelled / Stale)
+            Worker->>Worker: Drop trigger cleanly
+        end
+        Worker->>Redis: DEL lock:job:<key>
+    else Lock Exists
+        Worker->>Worker: Drop duplicate trigger
+    end
+          </div>
+        </div>
+      </section>
+
+      <!-- 15. FR-META -->
+      <section id="frd-meta" class="glass-card rounded-2xl p-6 sm:p-8 space-y-4">
+        <h3 class="text-xl font-bold text-white">15. Module 7: Meta Cloud API Assistive Model (FR-META)</h3>
+        <div class="space-y-2 text-xs text-slate-300">
+          <div class="p-3 rounded-lg bg-slate-900 border border-slate-800">
+            <strong>1-Click CTA Redirector:</strong> Endpoint <code>https://sched.app/r/{job_uid}</code> issues an <code>HTTP 302 Redirect</code> to <code>whatsapp://send?phone={phone}&text={msg}</code> pre-filling Alice's native chat with Bob.
+          </div>
+          <div class="p-3 rounded-lg bg-slate-900 border border-slate-800">
+            <strong>24h Window Watchdog:</strong> If <code>NOW() - user.last_inbound_at >= 24h</code>, automatically switches from free-form message to Meta pre-approved <strong>Utility Template</strong> (<code>scheduled_reminder_cta_v1</code>).
+          </div>
+        </div>
+      </section>
+
+      <!-- 16. NFRs -->
+      <section id="frd-nfr" class="glass-card rounded-2xl p-6 sm:p-8 space-y-4">
+        <h3 class="text-xl font-bold text-white">16. Non-Functional Requirements (NFRs)</h3>
+        <div class="grid grid-cols-2 sm:grid-cols-3 gap-4 text-xs">
+          <div class="p-3 rounded-lg bg-slate-900 border border-slate-800">
+            <span class="text-slate-400 block">Dispatch Latency</span>
+            <span class="font-bold text-emerald-400 text-sm">&lt; 1.0 second lag</span>
+          </div>
+          <div class="p-3 rounded-lg bg-slate-900 border border-slate-800">
+            <span class="text-slate-400 block">System Throughput</span>
+            <span class="font-bold text-white text-sm">10,000 msgs / hour</span>
+          </div>
+          <div class="p-3 rounded-lg bg-slate-900 border border-slate-800">
+            <span class="text-slate-400 block">System Availability</span>
+            <span class="font-bold text-white text-sm">99.95% SLA</span>
+          </div>
+          <div class="p-3 rounded-lg bg-slate-900 border border-slate-800">
+            <span class="text-slate-400 block">Poller Scan Duration</span>
+            <span class="font-bold text-emerald-400 text-sm">&lt; 0.2 ms / scan</span>
+          </div>
+          <div class="p-3 rounded-lg bg-slate-900 border border-slate-800">
+            <span class="text-slate-400 block">Security Standard</span>
+            <span class="font-bold text-purple-400 text-sm">AES-256-GCM Vault</span>
+          </div>
+          <div class="p-3 rounded-lg bg-slate-900 border border-slate-800">
+            <span class="text-slate-400 block">Buffer RAM Overhead</span>
+            <span class="font-bold text-sky-400 text-sm">&lt; 250 KB (BullMQ)</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- 17. Traceability Matrix -->
+      <section id="frd-rtm" class="glass-card rounded-2xl p-6 sm:p-8 space-y-4">
+        <h3 class="text-xl font-bold text-white">17. Requirements Traceability Matrix (RTM)</h3>
+        <div class="overflow-x-auto rounded-xl border border-slate-800">
+          <table class="w-full text-left border-collapse text-xs">
+            <thead>
+              <tr class="bg-slate-900/90 text-slate-200 border-b border-slate-800">
+                <th class="p-3 font-semibold">Business Goal (BRD)</th>
+                <th class="p-3 font-semibold">Functional Requirements (FRD)</th>
+                <th class="p-3 font-semibold">Test & Verification Strategy</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-slate-800/70 text-slate-300">
+              <tr>
+                <td class="p-3 font-medium text-white">BO-01: In-App Scheduling</td>
+                <td class="p-3 font-mono text-emerald-400">FR-WIZ-01..05, FR-CLI-01</td>
+                <td class="p-3">Automated Cypress & Vitest wizard and CLI grammar test suites</td>
+              </tr>
+              <tr>
+                <td class="p-3 font-medium text-white">BO-02: Zero Double-Sends</td>
+                <td class="p-3 font-mono text-emerald-400">FR-REL-01, FR-REL-02, FR-SCHED-04</td>
+                <td class="p-3">Chaos worker SIGKILL simulation during TCP socket transmission</td>
+              </tr>
+              <tr>
+                <td class="p-3 font-medium text-white">BO-03: Account Anti-Ban</td>
+                <td class="p-3 font-mono text-emerald-400">FR-AUTH-04, FR-REL-03</td>
+                <td class="p-3">500-message burst pacing run; automated typing telemetry audit</td>
+              </tr>
+              <tr>
+                <td class="p-3 font-medium text-white">BO-04: Sub-Second Timing</td>
+                <td class="p-3 font-mono text-emerald-400">FR-SCHED-02, FR-SCHED-03</td>
+                <td class="p-3">Prometheus histogram telemetry: <code>job_trigger_drift_ms &lt; 1000</code></td>
+              </tr>
+              <tr>
+                <td class="p-3 font-medium text-white">BO-05: Unit Economics</td>
+                <td class="p-3 font-mono text-emerald-400">FR-META-02, FR-SCHED-01</td>
+                <td class="p-3">Utility Template routing verification & S3 24h TTL garbage collection</td>
+              </tr>
+              <tr>
+                <td class="p-3 font-medium text-white">BO-06: DST Invariance</td>
+                <td class="p-3 font-mono text-emerald-400">FR-REC-02, FR-REC-03</td>
+                <td class="p-3">39/39 assertion suite covering Spring/Fall DST and Feb 28 anchor shifts</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+    </main>
+  </div>
+
+  <footer class="border-t border-slate-800/80 py-6 text-center text-xs text-slate-500">
+    WhatsApp Message Scheduler Bot — Business & Functional Requirements Specification (BRD & FRD) • Approved 2026
+  </footer>
+
+</body>
+</html>

@@ -1,0 +1,8 @@
+Command exited with code 0.
+
+Command output:
+Generated HTML at: C:\Users\Lenovo\teamwork_projects\whatsapp_scheduler_bot\WhatsApp_Scheduler_Master_Technical_Plan.html
+Executing Chrome headless print-to-pdf...
+Chrome return code: 0
+Successfully generated PDF: C:\Users\Lenovo\teamwork_projects\whatsapp_scheduler_bot\WhatsApp_Scheduler_Master_Technical_Plan.pdf (770.7 KB)
+Copied to artifact directory: C:\Users\Lenovo\.gemini\antigravity\brain\509c36c6-11b3-438e-94fd-89af46ad744c\WhatsApp_Scheduler_Master_Technical_Plan.pdf

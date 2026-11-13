@@ -1,0 +1,41 @@
+The search for ""Signal" app schedule send message native feature" returned the following summary:
+Signal features a **native message scheduling** option, though its availability depends on your operating system[1]. 
+
+### Platform Availability
+* **Android:** Fully supported natively[1].
+* **iOS / Desktop:** The native scheduling feature is primarily built around Android’s local alarm/background system[2]. 
+
+---
+
+### How to Use Native Message Scheduling (Android)
+
+#### 1. To Schedule a Text Message:
+1. Open a chat and type your message[3].
+2. **Long-press (tap and hold) the Send icon**[3]. A popup will appear showing time presets as well as a **"Pick Date & Time"** option[1].
+3. Select your desired delivery time and tap **Schedule send**[3].
+
+#### 2. To Schedule Media (Images or Videos):
+1. Tap the **`+`** icon in the chat and select **Gallery**[3].
+2. Choose the photo or video you want to send[3].
+3. **Long-press (tap and hold) the Send icon**, choose your time, and tap **Schedule send**[3].
+
+#### 3. How to Manage, Cancel, or Reschedule:
+* If you have pending scheduled messages, a notification banner or counter will appear right above your text input field. 
+* Tap **See all** to view the list of queued messages[3].
+* From there, you can delete/cancel them or tap the calendar icon next to a message to **Reschedule** it for a different time[3].
+
+---
+
+### Important Technical Details to Keep in Mind:
+* **Local Queuing:** Because Signal is heavily focused on end-to-end encryption and privacy, scheduled messages are **stored locally on your device**, not on Signal's servers[4][5]. 
+* **Internet Requirement:** Your phone **must be turned on and connected to the internet** at the exact time the message is scheduled to go out[3]. If your phone is offline or dead at that moment, the message will automatically send the next time your device reconnects[3].
+* **System Permissions:** If the feature isn't working or failing to send, check your device settings to ensure Signal is allowed to set alarms and reminders (e.g., *Android Settings > Apps > Signal > Allow setting alarms and reminders*)[3], and that your phone is set to automatic date, time, and time zone[3].
+
+Sources:
+[1] [alternativeto.net](https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQEfaPDi6Kd7h9Hx3gMz-wzuxuvmV-W5pK8w4IfSVCACVbQks5M7W3OQ5C4nozqy5bz-85Mw6V0cdENu1XZ1QwmH8mHlhXD1Cz8H7iZwUZ1LvbrCgoxyg0kQeBiXMb4F9-8zJF-tBptR-GsCGlWpgi4mCt_-rXXWTxoh4h5q1YIT6NzGMtiMkrWB6whH46c=)
+[2] [reddit.com](https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQH0FiNogGTwfV1k_KVYYBDoYylwIAFIVeDA7-weKgx3TNqxE0Mwa9WfKyPtCyfNPKOIbcEHoQGtEUkHGhFZGuInhaPqNB_LVQQ0j4_WawUnYDjMwvRDESLmgCEWD95jLk_luj2v6eulAh61sSzjn1qr3Co2u0DaJq5dow==)
+[3] [signal.org](https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQGGMydFF7hGT0xLcpiNyFc8RnLKnWoKC_gWOu9zKSfCYVEuxLQc52Oevo88sCUvy_b92D6SPto5FUQn6_eQp-1E31ecHVCmmktQvSSCP94GVm0Bux1_Mm02dJdS6GiN2jwZxLUgGFaWruHfAbZHt5aaDCr3bKNEA0-MuNev8Z8y38pm_eSYWVoejKS2xaIwH2sUdu0yRQ==)
+[4] [miraheze.org](https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQEdYsMm2KPpXOS5nXPNeUsJNXd5W38v4G00T57pmVaM1il_ITioUnvLIsnbvNzBQ5ocFhOh-Tp1CFtJ2DgSpgJm4i0CKXVoh1iv3Dk6pzBk1wwrH3D0rU0laGrM0VX0pqns6lUd9YqjrEE=)
+[5] [reddit.com](https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQH1221DI4q_yG7Gkt-fjGdvSsc0fBlPJ5RY8WOksG3N4Hote8k53dxTrWiSdmMBLXeaOAs_MmhkYAWFiuz3_6ZGlfbBLiVfYT7mhHJqRs6zA-5eLdK0AX0x23peTtYZyiHqi9kFAGivefAu1EW9d34jTX8eJ4j3n-xYmghBZ7PaxJoCtiWDuv59d33CvYdIVds-N5DNns-95JM=)
+
+Note: Source URLs are HTTP redirects; check where they resolve if you need the direct link.

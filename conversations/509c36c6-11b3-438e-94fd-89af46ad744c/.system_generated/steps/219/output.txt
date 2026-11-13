@@ -1,0 +1,11 @@
+Command exited with code 0.
+
+Command output:
+Written workspace file: C:\Users\Lenovo\teamwork_projects\whatsapp_scheduler_bot\Omnichannel_Scheduler_BRD_FRD_ScaleOut.html
+Written artifact file: C:\Users\Lenovo\.gemini\antigravity\brain\509c36c6-11b3-438e-94fd-89af46ad744c\Omnichannel_Scheduler_BRD_FRD_ScaleOut.html
+Found Chrome at: C:\Program Files\Google\Chrome\Application\chrome.exe
+Chrome output:  [22828:21088:1112/124146.621:ERROR:chrome\browser\extensions\external_registry_loader_win.cc:147] Missing value path for key Software\Google\Chrome\Extensions\dngcpimnedloihjnnfngkgjoidhnaolf.
+[22828:21088:1112/124146.621:ERROR:chrome\browser\extensions\external_registry_loader_win.cc:147] Missing value path for key Software\Google\Chrome\Extensions\fcoeoabgfenejglbffodgkkbkcdhcgfn.
+1221897 bytes written to file C:\Users\Lenovo\teamwork_projects\whatsapp_scheduler_bot\Omnichannel_Scheduler_BRD_FRD_ScaleOut.pdf
+
+Successfully generated PDF: C:\Users\Lenovo\teamwork_projects\whatsapp_scheduler_bot\Omnichannel_Scheduler_BRD_FRD_ScaleOut.pdf & C:\Users\Lenovo\.gemini\antigravity\brain\509c36c6-11b3-438e-94fd-89af46ad744c\Omnichannel_Scheduler_BRD_FRD_ScaleOut.pdf

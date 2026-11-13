@@ -1,0 +1,23 @@
+Command exited with code 0.
+
+Command output:
+
+      <!-- Section 5: HLD Topology -->
+      <!-- Section 6: HLD Subsystem Tiers -->
+      <!-- Section 7: HLD Dataflow Pipelines -->
+      <!-- Section 2: Trade-off Matrix -->
+      <!-- Section 3: Dual Delivery -->
+      <!-- Section 4: Unit Economics -->
+      <!-- Section 8: LLD Design Patterns -->
+      <!-- Section 9: LLD FSM State Transition Matrix -->
+      <!-- Section 10: WhatsApp Mobile Simulator -->
+      <!-- Section 11: LLD Algorithms -->
+      <!-- Section 12: LLD Hybrid Queue Engine -->
+      <!-- Section 13: Visual ER Diagram -->
+      <!-- Section 14: Schema Table Cards -->
+      <!-- Section 15: Partitioning & Indexing Graphic -->
+      <!-- Section 10: Zero-Double-Send -->
+      <!-- Section 11: Anti-Ban -->
+      <!-- Section 12: Roadmap -->
+
+

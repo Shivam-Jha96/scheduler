@@ -1,0 +1,1103 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>WhatsApp Message Scheduler Bot — Master Technical Implementation Plan (V2.0)</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <script type="module">
+    import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs';
+    mermaid.initialize({
+      startOnLoad: true,
+      theme: 'dark',
+      themeVariables: {
+        primaryColor: '#10b981',
+        primaryTextColor: '#f8fafc',
+        primaryBorderColor: '#059669',
+        lineColor: '#64748b',
+        secondaryColor: '#1e293b',
+        tertiaryColor: '#0f172a'
+      }
+    });
+  </script>
+  <style>
+    body {
+      font-family: 'Inter', sans-serif;
+      background-color: #0b0f19;
+      color: #e2e8f0;
+    }
+    code, pre {
+      font-family: 'JetBrains Mono', monospace;
+    }
+    ::-webkit-scrollbar {
+      width: 8px;
+      height: 8px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #0f172a;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #334155;
+      border-radius: 4px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: #475569;
+    }
+    .glass-card {
+      background: rgba(15, 23, 42, 0.75);
+      backdrop-filter: blur(12px);
+      border: 1px solid rgba(51, 65, 85, 0.6);
+    }
+    .badge-fix {
+      background: rgba(16, 185, 129, 0.15);
+      color: #34d399;
+      border: 1px solid rgba(16, 185, 129, 0.4);
+    }
+    .badge-warn {
+      background: rgba(245, 158, 11, 0.15);
+      color: #fbbf24;
+      border: 1px solid rgba(245, 158, 11, 0.4);
+    }
+    .badge-crit {
+      background: rgba(239, 68, 68, 0.15);
+      color: #f87171;
+      border: 1px solid rgba(239, 68, 68, 0.4);
+    }
+  </style>
+</head>
+<body class="antialiased selection:bg-emerald-500 selection:text-white">
+
+  <!-- Top Banner -->
+  <header class="sticky top-0 z-50 border-b border-slate-800 bg-slate-950/90 backdrop-blur-md">
+    <div class="max-w-7xl mx-auto px-6 py-3 flex items-center justify-between">
+      <div class="flex items-center space-x-3">
+        <span class="h-3 w-3 rounded-full bg-emerald-500 animate-pulse"></span>
+        <span class="font-bold tracking-tight text-white text-sm md:text-base">WHATSAPP-SCHEDULER-TECH-PLAN-V2.0</span>
+        <span class="text-xs px-2.5 py-0.5 rounded-full badge-fix font-medium">Audit Rectified & Production Hardened</span>
+      </div>
+      <div class="text-xs text-slate-400 hidden sm:block">
+        Updated: November 2026 | Target: Dual-Mode Hybrid Scheduler Engine
+      </div>
+    </div>
+  </header>
+
+  <div class="max-w-7xl mx-auto px-6 py-8 grid grid-cols-1 lg:grid-cols-12 gap-8">
+
+    <!-- Sidebar Navigation -->
+    <aside class="lg:col-span-3 hidden lg:block">
+      <nav class="sticky top-20 space-y-1 text-sm border-r border-slate-800 pr-4">
+        <p class="text-xs font-semibold uppercase tracking-wider text-slate-400 mb-3">Master Specification</p>
+        <a href="#exec-summary" class="block py-1.5 px-3 rounded hover:bg-slate-800/60 text-slate-300 hover:text-emerald-400 transition">Executive Summary</a>
+        <a href="#audit-rectifications" class="block py-1.5 px-3 rounded bg-emerald-950/40 border border-emerald-800/50 text-emerald-300 font-medium transition">★ V2.0 Audit & Gap Fixes (10)</a>
+        <p class="text-xs font-semibold uppercase tracking-wider text-slate-400 mt-5 mb-2">Part I: Platform & Policy</p>
+        <a href="#sec-1" class="block py-1.5 px-3 rounded hover:bg-slate-800/60 text-slate-300 hover:text-white transition">1. The Architectural Paradox</a>
+        <a href="#sec-2" class="block py-1.5 px-3 rounded hover:bg-slate-800/60 text-slate-300 hover:text-white transition">2. Multi-Dimensional Matrix</a>
+        <a href="#sec-3" class="block py-1.5 px-3 rounded hover:bg-slate-800/60 text-slate-300 hover:text-white transition">3. Dual Delivery Mechanisms</a>
+        <a href="#sec-4" class="block py-1.5 px-3 rounded hover:bg-slate-800/60 text-slate-300 hover:text-white transition">4. Unit Economics & Scaling</a>
+        <p class="text-xs font-semibold uppercase tracking-wider text-slate-400 mt-5 mb-2">Part II: Core Engineering</p>
+        <a href="#sec-5" class="block py-1.5 px-3 rounded hover:bg-slate-800/60 text-slate-300 hover:text-white transition">5. End-to-End System Topology</a>
+        <a href="#sec-6" class="block py-1.5 px-3 rounded hover:bg-slate-800/60 text-slate-300 hover:text-white transition">6. Conversational UX & FSM</a>
+        <a href="#sec-7" class="block py-1.5 px-3 rounded hover:bg-slate-800/60 text-slate-300 hover:text-white transition">7. Rectified PostgreSQL 14+ DDL</a>
+        <a href="#sec-8" class="block py-1.5 px-3 rounded hover:bg-slate-800/60 text-slate-300 hover:text-white transition">8. Two-Tier Hybrid Queue Engine</a>
+        <a href="#sec-9" class="block py-1.5 px-3 rounded hover:bg-slate-800/60 text-slate-300 hover:text-white transition">9. DST-Safe Recurrence Engine</a>
+        <a href="#sec-10" class="block py-1.5 px-3 rounded hover:bg-slate-800/60 text-slate-300 hover:text-white transition">10. Zero-Double-Send & Recovery</a>
+        <a href="#sec-11" class="block py-1.5 px-3 rounded hover:bg-slate-800/60 text-slate-300 hover:text-white transition">11. Anti-Ban & Security Envelope</a>
+        <a href="#sec-12" class="block py-1.5 px-3 rounded hover:bg-slate-800/60 text-slate-300 hover:text-white transition">12. Phased Roadmap & Matrix</a>
+      </nav>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="lg:col-span-9 space-y-12">
+
+      <!-- Title Block -->
+      <section class="glass-card rounded-2xl p-8 border-l-4 border-l-emerald-500 shadow-2xl">
+        <div class="flex flex-wrap gap-2 mb-4">
+          <span class="text-xs font-semibold uppercase tracking-wider px-2.5 py-1 rounded bg-slate-800 text-slate-300">Doc ID: WHATSAPP-SCHEDULER-TECH-PLAN-V2</span>
+          <span class="text-xs font-semibold uppercase tracking-wider px-2.5 py-1 rounded badge-fix">Status: Architecture Rectified</span>
+        </div>
+        <h1 class="text-3xl sm:text-4xl font-extrabold text-white tracking-tight leading-tight mb-4">
+          WhatsApp Message Scheduler Bot: Master Technical Implementation Plan & Architectural Specification
+        </h1>
+        <p class="text-slate-300 text-base leading-relaxed mb-6">
+          Authoritative system design and engineering specification for an <strong>In-WhatsApp Conversational Message Scheduler</strong>. Synthesizes Meta Cloud API compliance, Baileys Multi-Device Companion automation, distributed hybrid queuing (PostgreSQL 14+ & BullMQ), wall-clock DST recurrence mathematics, and cryptographic zero-double-send guarantees.
+        </p>
+        <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 pt-4 border-t border-slate-800/80 text-xs">
+          <div>
+            <span class="text-slate-400 block">Target Runtime</span>
+            <span class="font-semibold text-white">Node.js 22 LTS / TypeScript 5.x</span>
+          </div>
+          <div>
+            <span class="text-slate-400 block">Primary Storage & Queue</span>
+            <span class="font-semibold text-white">PostgreSQL 16 + Redis 7.2 (BullMQ)</span>
+          </div>
+          <div>
+            <span class="text-slate-400 block">WhatsApp Transports</span>
+            <span class="font-semibold text-white">Cloud API v21.0 + Baileys v6.7+</span>
+          </div>
+          <div>
+            <span class="text-slate-400 block">Security Standard</span>
+            <span class="font-semibold text-white">AES-256-GCM Signal Key Vault</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- Executive Summary -->
+      <section id="exec-summary" class="space-y-4">
+        <h2 class="text-2xl font-bold text-white border-b border-slate-800 pb-2">Executive Summary</h2>
+        <p class="text-slate-300 leading-relaxed">
+          The <strong>In-WhatsApp Message Scheduler Chatbot</strong> enables any WhatsApp user (<strong>Alice</strong>) to message a bot conversationally inside WhatsApp to schedule text, media, or recurring reminders for future delivery to personal contacts or group chats (<strong>Bob</strong>).
+        </p>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mt-4">
+          <div class="glass-card p-5 rounded-xl border-t-2 border-t-amber-500">
+            <h3 class="font-semibold text-white text-sm mb-2">1. The Sender Identity Paradox</h3>
+            <p class="text-xs text-slate-300 leading-relaxed">
+              Meta's official Cloud API dispatches messages from a corporate WABA phone number, not Alice's personal SIM—violating peer-to-peer expectations and triggering the strict 24-hour customer service window barrier (<code>Error 131047</code>).
+            </p>
+          </div>
+          <div class="glass-card p-5 rounded-xl border-t-2 border-t-rose-500">
+            <h3 class="font-semibold text-white text-sm mb-2">2. Companion Anti-Ban & Session Security</h3>
+            <p class="text-xs text-slate-300 leading-relaxed">
+              Reverse-engineered WebSocket engines (<code>@whiskeysockets/baileys</code>) deliver authentic P2P messages from Alice's number, but require strict presence state machines, head-of-line per-JID pacing, and encrypted E2EE Signal key persistence.
+            </p>
+          </div>
+          <div class="glass-card p-5 rounded-xl border-t-2 border-t-emerald-500">
+            <h3 class="font-semibold text-white text-sm mb-2">3. Distributed Hybrid Scheduling</h3>
+            <p class="text-xs text-slate-300 leading-relaxed">
+              Combining durable PostgreSQL storage with a 60s Look-Ahead Feeder and a 5-minute BullMQ delayed buffer yields sub-second execution precision with <250 KB Redis RAM overhead and atomic cancellation semantics.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <!-- V2.0 Audit & Architectural Rectifications -->
+      <section id="audit-rectifications" class="glass-card rounded-2xl p-6 sm:p-8 border border-emerald-500/40 bg-emerald-950/10 space-y-6">
+        <div class="flex items-center justify-between flex-wrap gap-2 border-b border-emerald-800/40 pb-4">
+          <div>
+            <span class="text-xs font-bold uppercase tracking-wider text-emerald-400 block mb-1">Engineering Scrutiny Report</span>
+            <h2 class="text-2xl font-bold text-white">V2.0 Architectural Audit: 10 Critical Gaps Identified & Rectified</h2>
+          </div>
+          <span class="text-xs px-3 py-1 rounded-full badge-fix font-mono">10 / 10 Resolved in V2 Spec</span>
+        </div>
+
+        <p class="text-sm text-slate-300 leading-relaxed">
+          A deep-dive technical audit of the V1 specification revealed <strong>10 subtle but production-breaking bugs</strong> across the Baileys protocol layer, PostgreSQL state transitions, BullMQ race conditions, and cryptographic storage. All 10 have been rectified directly in this V2 Master Plan:
+        </p>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs">
+          <div class="p-4 rounded-xl bg-slate-900/90 border border-slate-800 space-y-1.5">
+            <div class="flex items-center justify-between">
+              <span class="font-bold text-emerald-400">1. Baileys Deterministic Message ID Collision</span>
+              <span class="px-2 py-0.5 rounded badge-crit">Protocol Bug</span>
+            </div>
+            <p class="text-slate-300"><strong>V1 Flaw:</strong> Passed a 64-char SHA-256 hex string directly as <code>{ messageId: idempotencyKey }</code>. WhatsApp multi-device servers expect a compact uppercase stanza ID (typically <code>3EB0...</code>, 16–22 hex chars) and silently drop or flag malformed 64-char IDs.</p>
+            <p class="text-emerald-300"><strong>V2 Fix:</strong> Deterministically derive <code>WA_MSG_ID = "3EB0" + SHA256(job_uid + ":" + next_run_iso).slice(0, 18).toUpperCase()</code> (22 chars).</p>
+          </div>
+
+          <div class="p-4 rounded-xl bg-slate-900/90 border border-slate-800 space-y-1.5">
+            <div class="flex items-center justify-between">
+              <span class="font-bold text-emerald-400">2. Sweeper Premature Re-Queue Race Condition</span>
+              <span class="px-2 py-0.5 rounded badge-crit">Concurrency Bug</span>
+            </div>
+            <p class="text-slate-300"><strong>V1 Flaw:</strong> Look-Ahead Feeder stages jobs due in <code>NOW() + 5m</code> (`QUEUED`), while the Sweeper resets any `QUEUED` row where <code>updated_at < NOW() - 5m</code>. A job staged at <code>T=4m59s</code> is falsely flagged as orphaned right as BullMQ fires it!</p>
+            <p class="text-emerald-300"><strong>V2 Fix:</strong> Sweeper predicates on <code>next_run_at_utc < NOW() - INTERVAL '3 minutes'</code> for `QUEUED` jobs, never <code>updated_at</code>.</p>
+          </div>
+
+          <div class="p-4 rounded-xl bg-slate-900/90 border border-slate-800 space-y-1.5">
+            <div class="flex items-center justify-between">
+              <span class="font-bold text-emerald-400">3. User Edit / Cancel Race During 5-Min Buffer</span>
+              <span class="px-2 py-0.5 rounded badge-crit">Data Integrity</span>
+            </div>
+            <p class="text-slate-300"><strong>V1 Flaw:</strong> If Alice runs <code>/cancel</code> or <code>/edit</code> when her job is already `QUEUED` inside BullMQ (T-4 mins), updating PostgreSQL alone fails to stop the in-flight Redis timer from firing stale data.</p>
+            <p class="text-emerald-300"><strong>V2 Fix:</strong> Synchronous BullMQ <code>queue.getJob(idempotencyKey)?.remove()</code> on `/cancel` or `/edit` + mandatory worker DB state re-verification before socket write.</p>
+          </div>
+
+          <div class="p-4 rounded-xl bg-slate-900/90 border border-slate-800 space-y-1.5">
+            <div class="flex items-center justify-between">
+              <span class="font-bold text-emerald-400">4. Baileys Pairing Code Flow (Single-Phone UX)</span>
+              <span class="px-2 py-0.5 rounded badge-warn">UX Blocker</span>
+            </div>
+            <p class="text-slate-300"><strong>V1 Flaw:</strong> Relied solely on QR Code scanning to link Baileys. A user chatting with the bot on their smartphone cannot scan a QR code displayed inside a WhatsApp message on that same screen.</p>
+            <p class="text-emerald-300"><strong>V2 Fix:</strong> Primary onboarding uses WhatsApp's <strong>8-Character Alphanumeric Pairing Code</strong> (<code>sock.requestPairingCode(phoneNumber)</code>) sent directly in chat.</p>
+          </div>
+
+          <div class="p-4 rounded-xl bg-slate-900/90 border border-slate-800 space-y-1.5">
+            <div class="flex items-center justify-between">
+              <span class="font-bold text-emerald-400">5. Per-User Head-of-Line Blocking in Anti-Ban</span>
+              <span class="px-2 py-0.5 rounded badge-warn">Throughput Bug</span>
+            </div>
+            <p class="text-slate-300"><strong>V1 Flaw:</strong> If Alice schedules 5 messages at 9:00 AM, concurrent BullMQ workers simultaneously send overlapping <code>composing</code> frames from Alice's account, triggering instant Meta automated behavior flags.</p>
+            <p class="text-emerald-300"><strong>V2 Fix:</strong> Per-Sender Redis Serialization Lock (<code>pacing:user:<user_id></code>) enforcing strictly sequential typing + 8–15s jitter per sender account.</p>
+          </div>
+
+          <div class="p-4 rounded-xl bg-slate-900/90 border border-slate-800 space-y-1.5">
+            <div class="flex items-center justify-between">
+              <span class="font-bold text-emerald-400">6. Assistive Model 24h Self-Lockout Paradox</span>
+              <span class="px-2 py-0.5 rounded badge-crit">Policy Bug</span>
+            </div>
+            <p class="text-slate-300"><strong>V1 Flaw:</strong> Section 3.1 claimed messaging Alice in the Assistive Reminder Model is always free-form compliant. If Alice schedules a message 3 days ahead and goes silent, Alice's own 24h window with the Bot expires!</p>
+            <p class="text-emerald-300"><strong>V2 Fix:</strong> Pre-approved Meta <strong>Utility Template</strong> (<code>scheduled_reminder_cta_v1</code>) with dynamic CTA URL variable when <code>now - alice_last_msg > 24h</code>.</p>
+          </div>
+
+          <div class="p-4 rounded-xl bg-slate-900/90 border border-slate-800 space-y-1.5">
+            <div class="flex items-center justify-between">
+              <span class="font-bold text-emerald-400">7. Envelope Encryption for E2EE Signal Keys</span>
+              <span class="px-2 py-0.5 rounded badge-crit">Security Vulnerability</span>
+            </div>
+            <p class="text-slate-300"><strong>V1 Flaw:</strong> Stored raw Baileys <code>creds JSONB</code> and <code>whatsapp_signal_keys BYTEA</code> unencrypted in PostgreSQL. A database read compromise hijacks every user's personal WhatsApp identity.</p>
+            <p class="text-emerald-300"><strong>V2 Fix:</strong> AES-256-GCM application-layer envelope encryption using KMS-backed Master Keys with per-row random 96-bit IV and authentication tags.</p>
+          </div>
+
+          <div class="p-4 rounded-xl bg-slate-900/90 border border-slate-800 space-y-1.5">
+            <div class="flex items-center justify-between">
+              <span class="font-bold text-emerald-400">8. DST Spring-Forward & Fall-Back Ambiguity</span>
+              <span class="px-2 py-0.5 rounded badge-warn">Temporal Edge Case</span>
+            </div>
+            <p class="text-slate-300"><strong>V1 Flaw:</strong> Did not define behavior when a recurring 2:30 AM job lands on a DST Spring-Forward gap (2:30 AM doesn't exist) or Fall-Back fold (2:30 AM occurs twice).</p>
+            <p class="text-emerald-300"><strong>V2 Fix:</strong> Deterministic Luxon disambiguation: shift forward on non-existent spring-forward gaps; pin to first occurrence (<code>offset: 'earlier'</code>) on fall-back folds.</p>
+          </div>
+
+          <div class="p-4 rounded-xl bg-slate-900/90 border border-slate-800 space-y-1.5">
+            <div class="flex items-center justify-between">
+              <span class="font-bold text-emerald-400">9. Group Chat Membership & Admin Pre-Flight</span>
+              <span class="px-2 py-0.5 rounded badge-warn">Delivery Failure</span>
+            </div>
+            <p class="text-slate-300"><strong>V1 Flaw:</strong> Allowed scheduling to <code>@g.us</code> group JIDs without verifying if Alice was removed from the group or if the group was switched to "Only Admins Can Send" (<code>announce: true</code>).</p>
+            <p class="text-emerald-300"><strong>V2 Fix:</strong> Pre-flight <code>groupMetadata(jid)</code> check at T-60s staging; auto-transitions to <code>FAILED (GROUP_RESTRICTED)</code> and alerts Alice.</p>
+          </div>
+
+          <div class="p-4 rounded-xl bg-slate-900/90 border border-slate-800 space-y-1.5">
+            <div class="flex items-center justify-between">
+              <span class="font-bold text-emerald-400">10. Media Payload Lifecycle & CDN Pre-Warming</span>
+              <span class="px-2 py-0.5 rounded badge-warn">Storage & Latency</span>
+            </div>
+            <p class="text-slate-300"><strong>V1 Flaw:</strong> Stored media indefinitely in S3 and uploaded multi-megabyte videos to WhatsApp servers at the exact second of scheduled execution, causing 10–30s delivery lag.</p>
+            <p class="text-emerald-300"><strong>V2 Fix:</strong> Pre-warm/encrypt media attachments during the T-5m Look-Ahead staging window + automated S3 Object Lifecycle TTL cleanup 24h after final execution.</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- PART I -->
+      <div class="pt-4">
+        <span class="text-xs font-bold uppercase tracking-widest text-emerald-400">Part I</span>
+        <h2 class="text-3xl font-extrabold text-white mt-1">Platform Feasibility, Policy Compliance & Architectural Comparison</h2>
+      </div>
+
+      <!-- Section 1 -->
+      <section id="sec-1" class="glass-card rounded-2xl p-6 sm:p-8 space-y-6">
+        <h3 class="text-xl font-bold text-white">1. The In-WhatsApp Scheduler Concept & Architectural Paradox</h3>
+        <p class="text-sm text-slate-300 leading-relaxed">
+          When Alice schedules a message to Bob inside WhatsApp, a fundamental conflict arises between <strong>Peer-to-Peer (P2P) user expectations</strong> and <strong>Meta's Business-to-Consumer (B2C) platform rules</strong>:
+        </p>
+
+        <div class="bg-slate-950/80 p-4 rounded-xl border border-slate-800 overflow-x-auto">
+          <div class="mermaid">
+flowchart LR
+    Alice["Alice (Scheduler User)"] -->|"1. Schedule Report<br/>to Bob tomorrow at 9 AM"| Bot["Scheduler Ingress and FSM"]
+    Bot -->|"2. ACID Commit"| DB[("PostgreSQL 16<br/>Master Ledger")]
+    DB -->|"3. T-5m Look-Ahead"| Redis[("Redis / BullMQ<br/>Delayed Buffer")]
+    Redis -->|"4a. Mode A: Assistive CTA<br/>(Utility Template if past 24h)"| Alice
+    Alice -.->|"Taps 1-Click wa.me Redirect"| Bob["Bob (Recipient Contact)"]
+    Redis -->|"4b. Mode B: Baileys Companion<br/>(Direct P2P from Alice JID)"| Bob
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs">
+          <div class="p-4 rounded-lg bg-slate-900/70 border border-slate-800">
+            <h4 class="font-bold text-white mb-2">Why Official Cloud API Direct Relay Fails P2P</h4>
+            <ul class="space-y-1.5 text-slate-300 list-disc list-inside">
+              <li><strong>Wrong Sender Identity:</strong> Messages arrive from the Bot's corporate WABA number, confusing Bob.</li>
+              <li><strong>Error 131047 (24h Window):</strong> Because Bob hasn't messaged the Bot in the last 24 hours, free-form messages are hard-blocked by Meta's Graph API.</li>
+              <li><strong>Spam & Quality Degradation:</strong> Unsolicited third-party template relays cause recipients to tap <em>Report Spam</em>, dropping WABA Quality Rating to RED.</li>
+            </ul>
+          </div>
+          <div class="p-4 rounded-lg bg-slate-900/70 border border-slate-800">
+            <h4 class="font-bold text-white mb-2">How Our Dual-Transport Architecture Solves It</h4>
+            <ul class="space-y-1.5 text-slate-300 list-disc list-inside">
+              <li><strong>Mode A (Cloud API Assistive Redirector):</strong> 100% policy-compliant. Sends Alice a 1-tap deep-link reminder at execution time that opens Bob's chat pre-filled.</li>
+              <li><strong>Mode B (Baileys Multi-Device Companion):</strong> Links as a companion device via an <strong>8-digit in-chat Pairing Code</strong>. Sends autonomously from Alice's real number.</li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <!-- Section 2 -->
+      <section id="sec-2" class="glass-card rounded-2xl p-6 sm:p-8 space-y-6">
+        <h3 class="text-xl font-bold text-white">2. Comprehensive Multi-Dimensional Trade-Off Matrix</h3>
+        <div class="overflow-x-auto rounded-xl border border-slate-800">
+          <table class="w-full text-left border-collapse text-xs">
+            <thead>
+              <tr class="bg-slate-900/90 text-slate-200 border-b border-slate-800">
+                <th class="p-3.5 font-semibold">Evaluation Criteria</th>
+                <th class="p-3.5 font-semibold text-emerald-400">WhatsApp Cloud API (v21.0)</th>
+                <th class="p-3.5 font-semibold text-sky-400">Baileys (v6.7+ WebSocket)</th>
+                <th class="p-3.5 font-semibold text-amber-400">whatsapp-web.js</th>
+                <th class="p-3.5 font-semibold text-rose-400">WPPConnect / Open-WA</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-slate-800/70 text-slate-300">
+              <tr class="hover:bg-slate-900/40">
+                <td class="p-3 font-medium text-white">Architectural Type</td>
+                <td class="p-3">Official REST Webhook</td>
+                <td class="p-3">Pure WebSocket Multi-Device</td>
+                <td class="p-3">Puppeteer DOM Injection</td>
+                <td class="p-3">Puppeteer + REST Wrapper</td>
+              </tr>
+              <tr class="hover:bg-slate-900/40">
+                <td class="p-3 font-medium text-white">Protocol / Transport</td>
+                <td class="p-3">HTTPS / JSON (Graph API)</td>
+                <td class="p-3">Noise_XX_25519 + Protobufs</td>
+                <td class="p-3">CDP / Webpack Store Hooks</td>
+                <td class="p-3">CDP / WA-JS Injection</td>
+              </tr>
+              <tr class="hover:bg-slate-900/40">
+                <td class="p-3 font-medium text-white">Idle RAM per Session</td>
+                <td class="p-3 text-emerald-400 font-semibold">0 MB (Stateless)</td>
+                <td class="p-3 text-sky-400 font-semibold">30 MB – 60 MB</td>
+                <td class="p-3">150 MB – 350 MB</td>
+                <td class="p-3">250 MB – 500 MB</td>
+              </tr>
+              <tr class="hover:bg-slate-900/40">
+                <td class="p-3 font-medium text-white">Concurrency (4GB VPS)</td>
+                <td class="p-3">10,000+ Req/sec</td>
+                <td class="p-3">60 – 100 Active Sessions</td>
+                <td class="p-3">10 – 14 Active Sessions</td>
+                <td class="p-3">6 – 8 Active Sessions</td>
+              </tr>
+              <tr class="hover:bg-slate-900/40">
+                <td class="p-3 font-medium text-white">Mobile Linking UX</td>
+                <td class="p-3">Zero Linking Needed</td>
+                <td class="p-3 text-sky-400 font-semibold">8-Char Pairing Code + QR</td>
+                <td class="p-3">QR or Pairing Code</td>
+                <td class="p-3">QR or Pairing Code</td>
+              </tr>
+              <tr class="hover:bg-slate-900/40">
+                <td class="p-3 font-medium text-white">Sender Identity</td>
+                <td class="p-3">Bot's WABA Business Number</td>
+                <td class="p-3 text-emerald-400 font-semibold">User's Personal Phone</td>
+                <td class="p-3">User's Personal Phone</td>
+                <td class="p-3">User's Personal Phone</td>
+              </tr>
+              <tr class="hover:bg-slate-900/40">
+                <td class="p-3 font-medium text-white">Autonomous Send</td>
+                <td class="p-3">Assistive CTA (1-Tap) or Template</td>
+                <td class="p-3 text-emerald-400 font-semibold">100% Autonomous P2P</td>
+                <td class="p-3">100% Autonomous P2P</td>
+                <td class="p-3">100% Autonomous P2P</td>
+              </tr>
+              <tr class="hover:bg-slate-900/40">
+                <td class="p-3 font-medium text-white">24h Window Enforced</td>
+                <td class="p-3 text-amber-400">YES (Error 131047)</td>
+                <td class="p-3 text-emerald-400">NO</td>
+                <td class="p-3">NO</td>
+                <td class="p-3">NO</td>
+              </tr>
+              <tr class="hover:bg-slate-900/40">
+                <td class="p-3 font-medium text-white">Meta Account Ban Risk</td>
+                <td class="p-3 text-emerald-400 font-semibold">Zero (Policy Compliant)</td>
+                <td class="p-3 text-amber-400">Moderate (Mitigated via Pacing)</td>
+                <td class="p-3 text-rose-400">High (DOM Fingerprinting)</td>
+                <td class="p-3 text-rose-400">High (DOM Fingerprinting)</td>
+              </tr>
+              <tr class="hover:bg-slate-900/40">
+                <td class="p-3 font-medium text-white">Per-Message Meta Fee</td>
+                <td class="p-3">$0.00 (Service) / $0.004–$0.038 (Utility)</td>
+                <td class="p-3 text-emerald-400 font-semibold">$0.00 Meta Fees</td>
+                <td class="p-3">$0.00 Meta Fees</td>
+                <td class="p-3">$0.00 Meta Fees</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- Section 3 -->
+      <section id="sec-3" class="glass-card rounded-2xl p-6 sm:p-8 space-y-6">
+        <h3 class="text-xl font-bold text-white">3. Dual Operational Delivery Mechanisms (Rectified for V2)</h3>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <!-- Mode A -->
+          <div class="p-5 rounded-xl bg-slate-900/80 border border-slate-800 space-y-3">
+            <div class="flex items-center justify-between">
+              <span class="text-xs font-bold uppercase tracking-wider px-2.5 py-0.5 rounded bg-emerald-500/20 text-emerald-300">Architecture A</span>
+              <span class="text-xs text-slate-400">100% Meta Compliant</span>
+            </div>
+            <h4 class="text-base font-bold text-white">Cloud API Assistive Reminder Model</h4>
+            <p class="text-xs text-slate-300 leading-relaxed">
+              Instead of messaging Bob directly from the WABA number, the bot dispatches an interactive reminder to <strong>Alice</strong> at the scheduled timestamp with a 1-click redirector button (<code>https://sched.app/r/{{job_uid}}</code>) that issues an <code>HTTP 302</code> to:
+            </p>
+            <pre class="bg-slate-950 p-2.5 rounded text-[11px] text-emerald-300 overflow-x-auto">whatsapp://send?phone=919876543210&text=Hey%20Bob%2C%20here%20is%20the%20report</pre>
+            <div class="p-3 rounded bg-amber-950/30 border border-amber-700/40 text-xs text-amber-200">
+              <strong>★ V2 Rectification (24h Window Expiration Fix):</strong> If Alice schedules a message >24 hours in the future and does not interact with the bot in the meantime, Alice's own 24-hour customer service window closes! The worker automatically checks <code>NOW() - users.last_inbound_at</code>:
+              <ul class="list-disc list-inside mt-1 space-y-0.5 text-[11px]">
+                <li><strong>< 24 Hours:</strong> Dispatches free-form Interactive CTA URL Message ($0.00 Meta fee).</li>
+                <li><strong>≥ 24 Hours:</strong> Dispatches pre-approved Meta <strong>Utility Template</strong> <code>scheduled_reminder_cta_v1</code> with dynamic button suffix <code>{{1}} = job_uid</code>.</li>
+              </ul>
+            </div>
+          </div>
+
+          <!-- Mode B -->
+          <div class="p-5 rounded-xl bg-slate-900/80 border border-slate-800 space-y-3">
+            <div class="flex items-center justify-between">
+              <span class="text-xs font-bold uppercase tracking-wider px-2.5 py-0.5 rounded bg-sky-500/20 text-sky-300">Architecture B</span>
+              <span class="text-xs text-slate-400">100% Autonomous P2P</span>
+            </div>
+            <h4 class="text-base font-bold text-white">Baileys Multi-Device Companion Node</h4>
+            <p class="text-xs text-slate-300 leading-relaxed">
+              Alice links her personal WhatsApp account as an official Multi-Device Companion using <code>@whiskeysockets/baileys</code>. Messages are dispatched autonomously in the background directly from Alice's phone number.
+            </p>
+            <div class="p-3 rounded bg-sky-950/30 border border-sky-700/40 text-xs text-sky-200">
+              <strong>★ V2 Rectification (Single-Phone Pairing Code UX):</strong> Users messaging the bot on their phone cannot scan a QR code displayed on the same phone screen. Onboarding defaults to <strong>WhatsApp 8-Character Pairing Codes</strong>:
+              <ol class="list-decimal list-inside mt-1 space-y-0.5 text-[11px]">
+                <li>User types <code>/link</code> in chat.</li>
+                <li>Bot invokes <code>const code = await sock.requestPairingCode(userPhone)</code>.</li>
+                <li>Bot sends copyable code (e.g., <code>K9X4-M2P7</code>) and user taps the native WhatsApp "Enter code to link new device" push notification.</li>
+              </ol>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Section 4 -->
+      <section id="sec-4" class="glass-card rounded-2xl p-6 sm:p-8 space-y-4">
+        <h3 class="text-xl font-bold text-white">4. Unit Economics & Cost Scaling Analysis</h3>
+        <p class="text-xs text-slate-300">
+          Assuming 70% of Assistive Reminders fall outside the 24-hour service window (requiring a paid Utility Template at ~$0.0042–$0.015 depending on region, e.g., India vs. North America) and 30% fall inside ($0.00 Service message):
+        </p>
+        <div class="overflow-x-auto rounded-xl border border-slate-800">
+          <table class="w-full text-left border-collapse text-xs">
+            <thead>
+              <tr class="bg-slate-900/90 text-slate-200 border-b border-slate-800">
+                <th class="p-3 font-semibold">Monthly Scheduled Volume</th>
+                <th class="p-3 font-semibold">Cloud API (Assistive Model — IN/APAC)</th>
+                <th class="p-3 font-semibold">Cloud API (Assistive Model — US/EU)</th>
+                <th class="p-3 font-semibold text-emerald-400">Baileys Companion Node (Self-Hosted VPS)</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-slate-800/70 text-slate-300">
+              <tr>
+                <td class="p-3 font-medium text-white">1,000 Messages / mo</td>
+                <td class="p-3">$1.26 Meta + $5.00 VPS = <strong>$6.26</strong></td>
+                <td class="p-3">$10.50 Meta + $5.00 VPS = <strong>$15.50</strong></td>
+                <td class="p-3">$0.00 Meta + $12.00 VPS = <strong>$12.00</strong></td>
+              </tr>
+              <tr>
+                <td class="p-3 font-medium text-white">10,000 Messages / mo</td>
+                <td class="p-3">$12.60 Meta + $15.00 VPS = <strong>$27.60</strong></td>
+                <td class="p-3">$105.00 Meta + $15.00 VPS = <strong>$120.00</strong></td>
+                <td class="p-3">$0.00 Meta + $28.00 VPS = <strong>$28.00</strong></td>
+              </tr>
+              <tr>
+                <td class="p-3 font-medium text-white">100,000 Messages / mo</td>
+                <td class="p-3">$126.00 Meta + $80.00 Infra = <strong>$206.00</strong></td>
+                <td class="p-3">$1,050.00 Meta + $80.00 Infra = <strong>$1,130.00</strong></td>
+                <td class="p-3 text-emerald-400 font-semibold">$0.00 Meta + $160.00 Infra = <strong>$160.00</strong></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- PART II -->
+      <div class="pt-4">
+        <span class="text-xs font-bold uppercase tracking-widest text-emerald-400">Part II</span>
+        <h2 class="text-3xl font-extrabold text-white mt-1">System Design, Conversational UX & Hybrid Scheduling Engine</h2>
+      </div>
+
+      <!-- Section 5 -->
+      <section id="sec-5" class="glass-card rounded-2xl p-6 sm:p-8 space-y-6">
+        <h3 class="text-xl font-bold text-white">5. End-to-End System Topology</h3>
+        <p class="text-xs text-slate-300 leading-relaxed">
+          The production architecture decouples ingress dialog handling, durable relational persistence, look-ahead staging, and rate-limited delivery workers:
+        </p>
+        <div class="bg-slate-950/80 p-4 rounded-xl border border-slate-800 overflow-x-auto">
+          <div class="mermaid">
+flowchart TB
+    subgraph ClientTier["1. WhatsApp Client Layer"]
+        AliceApp["Alice (Scheduler User)<br/>Interactive Wizard / Fast-Path CLI"]
+        BobApp["Bob (Target Recipient / Group)<br/>Native Chat Thread"]
+    end
+
+    subgraph IngressTier["2. Ingress and Conversational FSM Tier"]
+        Webhook["Ingress Gateway<br/>Cloud API Webhook + Baileys Socket"]
+        FSM["Conversational FSM and Router<br/>chrono-node + libphonenumber-js"]
+        RedisSession[("Redis Session Store<br/>session:usr:jid (TTL 15m)")]
+        S3Vault[("S3 Media Vault<br/>Pre-Stage + 24h Lifecycle TTL")]
+    end
+
+    subgraph StorageTier["3. Durable Persistence Tier (PostgreSQL 16)"]
+        PG[("PostgreSQL Primary<br/>- users and contacts<br/>- scheduled_jobs (Partial Index)<br/>- job_execution_logs<br/>- AES-256-GCM whatsapp_sessions")]
+    end
+
+    subgraph ExecutionTier["4. Hybrid Scheduling and Delivery Tier"]
+        Feeder["Look-Ahead Feeder Daemon<br/>60s Poll (FOR UPDATE SKIP LOCKED)"]
+        Sweeper["Dead-Mans-Switch Sweeper<br/>2m Orphan and Crash Recovery"]
+        BullMQ[("BullMQ Delayed ZSET<br/>5-Minute Sliding Buffer")]
+        Workers["Delivery Worker Pool<br/>- 22-Char Deterministic WA_MSG_ID<br/>- Per-Sender Pacing Mutex<br/>- Gaussian Typing Simulator"]
+    end
+
+    AliceApp <-->|"Inbound Commands / Wizard"| Webhook
+    Webhook <--> FSM
+    FSM <--> RedisSession
+    FSM -->|"Stream Media"| S3Vault
+    FSM -->|"ACID INSERT / Cancel Sync"| PG
+    FSM -->|"Immediate Remove on /cancel"| BullMQ
+    PG -->|"Due within 5 Minutes"| Feeder
+    Feeder -->|"addBulk(jobId: idempotencyKey)"| BullMQ
+    Sweeper <-->|"Recover Stale PROCESSING / QUEUED"| PG
+    BullMQ -->|"Millisecond Trigger"| Workers
+    Workers -->|"Verify Status == QUEUED and Update Next Run"| PG
+    Workers -->|"P2P Companion or Assistive CTA Dispatch"| BobApp
+          </div>
+        </div>
+      </section>
+
+      <!-- Section 6 -->
+      <section id="sec-6" class="glass-card rounded-2xl p-6 sm:p-8 space-y-6">
+        <h3 class="text-xl font-bold text-white">6. Conversational State Machine & WhatsApp Interaction UX</h3>
+        <p class="text-xs text-slate-300 leading-relaxed">
+          Supports both a <strong>5-Step Guided Interactive Wizard</strong> (optimized for mobile thumb navigation via WhatsApp Reply Buttons, List Messages, and vCard contact attachments) and a <strong>Fast-Path Single-Line CLI</strong> for power users.
+        </p>
+
+        <div class="bg-slate-950/80 p-4 rounded-xl border border-slate-800 overflow-x-auto">
+          <div class="mermaid">
+stateDiagram-v2
+    [*] --> IDLE
+    IDLE --> STEP1_RECIPIENT : User sends schedule or taps Menu
+    STEP1_RECIPIENT --> STEP2_PAYLOAD : Valid vCard / E.164 / Saved Alias
+    STEP2_PAYLOAD --> STEP3_TIMING : Text or S3 Media Streamed
+    STEP3_TIMING --> STEP3_TIMING : Past Time (Under 60s in future) - Reprompt with TZ
+    STEP3_TIMING --> STEP4_RECURRENCE : Valid Future Timestamp
+    STEP4_RECURRENCE --> STEP5_CONFIRM : Select Recurrence
+    STEP5_CONFIRM --> EDIT_ROUTER : Tap Edit
+    EDIT_ROUTER --> STEP1_RECIPIENT : Change Recipient
+    EDIT_ROUTER --> STEP2_PAYLOAD : Change Message
+    EDIT_ROUTER --> STEP3_TIMING : Change Time
+    STEP5_CONFIRM --> IDLE : Tap Confirm - ACID Commit
+    STEP5_CONFIRM --> IDLE : Tap Cancel - Purge Redis Draft
+          </div>
+        </div>
+
+        <div class="overflow-x-auto rounded-xl border border-slate-800">
+          <table class="w-full text-left border-collapse text-xs">
+            <thead>
+              <tr class="bg-slate-900/90 text-slate-200 border-b border-slate-800">
+                <th class="p-3 font-semibold">Fast-Path CLI Command</th>
+                <th class="p-3 font-semibold">Example Invocation</th>
+                <th class="p-3 font-semibold">Execution Behavior & Queue Sync</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-slate-800/70 text-slate-300">
+              <tr>
+                <td class="p-3 font-mono text-emerald-400">/schedule <target> <time> | <msg></td>
+                <td class="p-3 font-mono">/schedule @bob tomorrow 9am | Send deck</td>
+                <td class="p-3">Parses alias/phone, resolves NLP time in user's IANA timezone, commits `ONCE` job.</td>
+              </tr>
+              <tr>
+                <td class="p-3 font-mono text-emerald-400">/schedule --repeat <rule> ...</td>
+                <td class="p-3 font-mono">/schedule --repeat weekdays @team 9:30am | Standup</td>
+                <td class="p-3">Creates recurring job with anchor timestamp and wall-clock DST invariance.</td>
+              </tr>
+              <tr>
+                <td class="p-3 font-mono text-emerald-400">/list [status] [page]</td>
+                <td class="p-3 font-mono">/list pending 1</td>
+                <td class="p-3">Returns paginated interactive list with job UIDs, local run times, and status badges.</td>
+              </tr>
+              <tr>
+                <td class="p-3 font-mono text-emerald-400">/cancel <job_uid></td>
+                <td class="p-3 font-mono">/cancel sch_9f8a2b1c</td>
+                <td class="p-3"><strong>Atomic Cancel:</strong> Sets DB <code>status='CANCELLED'</code> AND invokes <code>bullQueue.remove(idempotencyKey)</code>.</td>
+              </tr>
+              <tr>
+                <td class="p-3 font-mono text-emerald-400">/edit <job_uid> <field> <val></td>
+                <td class="p-3 font-mono">/edit sch_9f8a2b1c time Friday 4pm</td>
+                <td class="p-3">Evicts any staged BullMQ job, recalculates <code>idempotency_key</code> & <code>next_run_at_utc</code>, resets to <code>PENDING</code>.</td>
+              </tr>
+              <tr>
+                <td class="p-3 font-mono text-emerald-400">/link</td>
+                <td class="p-3 font-mono">/link</td>
+                <td class="p-3">Generates 8-character WhatsApp Multi-Device Pairing Code for single-phone linking.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- Section 7 -->
+      <section id="sec-7" class="glass-card rounded-2xl p-6 sm:p-8 space-y-4">
+        <div class="flex items-center justify-between flex-wrap gap-2">
+          <h3 class="text-xl font-bold text-white">7. Rectified Relational Data Model (PostgreSQL 14+ DDL)</h3>
+          <span class="text-xs px-2.5 py-0.5 rounded badge-fix font-mono">Includes AES-256-GCM Columns & Delivery Mode</span>
+        </div>
+        <pre class="bg-slate-950 p-4 rounded-xl border border-slate-800 text-xs text-slate-200 overflow-x-auto leading-relaxed"><code>-- Production PostgreSQL 14+ DDL Schema (V2.0 Rectified)
+CREATE EXTENSION IF NOT EXISTS "pgcrypto";
+
+CREATE TYPE user_status_enum AS ENUM ('ACTIVE', 'SUSPENDED', 'BLOCKED');
+CREATE TYPE delivery_mode_enum AS ENUM ('ASSISTIVE_CLOUD_API', 'BAILEYS_COMPANION');
+CREATE TYPE recipient_type_enum AS ENUM ('INDIVIDUAL', 'GROUP');
+CREATE TYPE message_type_enum AS ENUM ('TEXT', 'IMAGE', 'DOCUMENT', 'AUDIO', 'VIDEO', 'TEMPLATE');
+CREATE TYPE recurrence_type_enum AS ENUM ('ONCE', 'DAILY', 'WEEKDAYS', 'WEEKLY', 'MONTHLY', 'CRON');
+CREATE TYPE job_status_enum AS ENUM ('PENDING', 'QUEUED', 'PROCESSING', 'SENT', 'FAILED', 'CANCELLED', 'PAUSED');
+CREATE TYPE misfire_policy_enum AS ENUM ('FIRE_IMMEDIATELY', 'SKIP', 'NOTIFY_USER');
+CREATE TYPE execution_status_enum AS ENUM ('SUCCESS', 'FAILURE', 'RETRYING', 'MISFIRED');
+
+-- 1. Users Table (Tracks 24h Meta Service Window & Preferred Transport)
+CREATE TABLE users (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    phone_jid VARCHAR(64) NOT NULL UNIQUE,
+    display_name VARCHAR(128),
+    timezone VARCHAR(64) NOT NULL DEFAULT 'Asia/Kolkata',
+    locale VARCHAR(16) NOT NULL DEFAULT 'en-IN',
+    delivery_mode delivery_mode_enum NOT NULL DEFAULT 'ASSISTIVE_CLOUD_API',
+    last_inbound_at TIMESTAMPTZ NOT NULL DEFAULT NOW(), -- Used to detect >24h Meta window expiry
+    status user_status_enum NOT NULL DEFAULT 'ACTIVE',
+    created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+
+-- 2. Contacts / Saved Recipient Aliases
+CREATE TABLE contacts (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    contact_jid VARCHAR(64) NOT NULL,
+    alias VARCHAR(64) NOT NULL,
+    display_name VARCHAR(128),
+    recipient_type recipient_type_enum NOT NULL DEFAULT 'INDIVIDUAL',
+    created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    CONSTRAINT uq_user_alias UNIQUE (user_id, alias)
+);
+
+-- 3. Scheduled Jobs (Master Durable Queue)
+CREATE TABLE scheduled_jobs (
+    id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    job_uid VARCHAR(32) NOT NULL UNIQUE,
+    user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    recipient_jid VARCHAR(64) NOT NULL,
+    recipient_type recipient_type_enum NOT NULL DEFAULT 'INDIVIDUAL',
+    message_type message_type_enum NOT NULL DEFAULT 'TEXT',
+    payload JSONB NOT NULL, -- { text, media_s3_key, media_mime, prewarmed_wa_media_url }
+    user_timezone VARCHAR(64) NOT NULL,
+    recurrence_type recurrence_type_enum NOT NULL DEFAULT 'ONCE',
+    recurrence_rule VARCHAR(256),
+    scheduled_at_utc TIMESTAMPTZ NOT NULL, -- Immutable anchor timestamp for MONTHLY day-of-month math
+    next_run_at_utc TIMESTAMPTZ,           -- Indexed next firing timestamp
+    misfire_policy misfire_policy_enum NOT NULL DEFAULT 'FIRE_IMMEDIATELY',
+    misfire_grace_period_sec INT NOT NULL DEFAULT 3600,
+    status job_status_enum NOT NULL DEFAULT 'PENDING',
+    retry_count INT NOT NULL DEFAULT 0,
+    max_retries INT NOT NULL DEFAULT 3,
+    last_error TEXT,
+    idempotency_key VARCHAR(64) NOT NULL UNIQUE, -- SHA-256 hex digest
+    wa_client_msg_id VARCHAR(24) NOT NULL,       -- "3EB0" + 18-char uppercase hex stanza ID
+    locked_at TIMESTAMPTZ,
+    locked_by VARCHAR(64),
+    created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+
+-- Partial B-Tree Index for Sub-Millisecond Feeder & Sweeper Scans
+CREATE INDEX idx_scheduled_jobs_polling
+ON scheduled_jobs (next_run_at_utc ASC)
+WHERE status IN ('PENDING', 'QUEUED', 'PROCESSING');
+
+CREATE INDEX idx_scheduled_jobs_user_list
+ON scheduled_jobs (user_id, status, next_run_at_utc ASC);
+
+-- 4. Execution Audit Ledger
+CREATE TABLE job_execution_logs (
+    id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    job_id BIGINT NOT NULL REFERENCES scheduled_jobs(id) ON DELETE CASCADE,
+    executed_at_utc TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    status execution_status_enum NOT NULL,
+    whatsapp_message_id VARCHAR(128),
+    error_details TEXT,
+    duration_ms INT,
+    delivery_receipt JSONB
+);
+
+CREATE INDEX idx_execution_logs_job_id ON job_execution_logs (job_id, executed_at_utc DESC);
+
+-- 5. Baileys Companion Sessions (AES-256-GCM Envelope Encrypted)
+CREATE TABLE whatsapp_sessions (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    user_id UUID NOT NULL UNIQUE REFERENCES users(id) ON DELETE CASCADE,
+    phone_number VARCHAR(32) NOT NULL,
+    encrypted_creds BYTEA NOT NULL, -- AES-256-GCM ciphertext of Baileys AuthenticationCreds
+    creds_iv BYTEA NOT NULL,        -- 12-byte GCM initialization vector
+    creds_auth_tag BYTEA NOT NULL,  -- 16-byte GCM integrity tag
+    kms_key_version VARCHAR(32) NOT NULL DEFAULT 'v1',
+    is_active BOOLEAN NOT NULL DEFAULT FALSE,
+    last_disconnect_code INT,
+    connected_at TIMESTAMPTZ,
+    disconnected_at TIMESTAMPTZ,
+    updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+
+-- 6. Baileys Signal Cryptographic Pre-Keys & Sender Keys (AES-256-GCM Encrypted)
+CREATE TABLE whatsapp_signal_keys (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    session_id UUID NOT NULL REFERENCES whatsapp_sessions(id) ON DELETE CASCADE,
+    key_type VARCHAR(32) NOT NULL,  -- 'pre-key', 'session', 'sender-key', 'app-state-sync-key'
+    key_id VARCHAR(128) NOT NULL,
+    encrypted_key_data BYTEA NOT NULL,
+    key_iv BYTEA NOT NULL,
+    key_auth_tag BYTEA NOT NULL,
+    updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    CONSTRAINT uq_session_key UNIQUE (session_id, key_type, key_id)
+);</code></pre>
+      </section>
+
+      <!-- Section 8 -->
+      <section id="sec-8" class="glass-card rounded-2xl p-6 sm:p-8 space-y-6">
+        <h3 class="text-xl font-bold text-white">8. Two-Tier Hybrid Scheduling Engine & Queue Synchronization</h3>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-xs">
+          <div class="p-4 rounded-xl bg-slate-900/80 border border-slate-800">
+            <h4 class="font-bold text-rose-400 mb-1">Why Pure Redis Fails</h4>
+            <p class="text-slate-300">Holding 1M jobs scheduled months ahead in Redis ZSETs consumes ~1.8 GB of unpageable RAM and risks catastrophic loss on non-AOF restarts.</p>
+          </div>
+          <div class="p-4 rounded-xl bg-slate-900/80 border border-slate-800">
+            <h4 class="font-bold text-amber-400 mb-1">Why Pure DB Polling Fails</h4>
+            <p class="text-slate-300">20 workers polling PostgreSQL every 1s generate 1.72M queries/day, causing index contention and noisy sub-second jitter.</p>
+          </div>
+          <div class="p-4 rounded-xl bg-slate-900/80 border border-emerald-700/50">
+            <h4 class="font-bold text-emerald-400 mb-1">Two-Tier Hybrid Winner</h4>
+            <p class="text-slate-300">PostgreSQL holds long-term state (0 MB Redis RAM). A 60s Feeder stages only the next 5 minutes of jobs into BullMQ (<250 KB RAM).</p>
+          </div>
+        </div>
+
+        <h4 class="text-sm font-bold text-white pt-2">Production Look-Ahead Feeder & Atomic Cancel/Edit Sync (TypeScript)</h4>
+        <pre class="bg-slate-950 p-4 rounded-xl border border-slate-800 text-xs text-slate-200 overflow-x-auto leading-relaxed"><code>import { Queue } from 'bullmq';
+import { Pool } from 'pg';
+import crypto from 'crypto';
+
+export function generateDeterministicIds(jobUid: string, nextRunUtcIso: string) {
+  const sha256 = crypto.createHash('sha256').update(`${jobUid}_${nextRunUtcIso}`).digest('hex');
+  // WhatsApp multi-device stanza IDs require '3EB0' prefix + 18 uppercase hex chars (22 chars total)
+  const waClientMsgId = `3EB0${sha256.slice(0, 18).toUpperCase()}`;
+  return { idempotencyKey: sha256, waClientMsgId };
+}
+
+export async function runLookAheadFeederTick(pgPool: Pool, bullQueue: Queue, workerId: string) {
+  const client = await pgPool.connect();
+  try {
+    await client.query('BEGIN');
+
+    // Claim up to 500 PENDING jobs maturing within the next 5 minutes
+    const { rows } = await client.query(`
+      SELECT id, job_uid, next_run_at_utc, idempotency_key, wa_client_msg_id
+      FROM scheduled_jobs
+      WHERE status = 'PENDING'
+        AND next_run_at_utc <= (NOW() + INTERVAL '5 minutes')
+      ORDER BY next_run_at_utc ASC
+      LIMIT 500
+      FOR UPDATE SKIP LOCKED
+    `);
+
+    if (rows.length === 0) {
+      await client.query('COMMIT');
+      return 0;
+    }
+
+    const nowMs = Date.now();
+    const bulkJobs = rows.map((row) => {
+      const targetMs = new Date(row.next_run_at_utc).getTime();
+      const delayMs = Math.max(0, targetMs - nowMs);
+      return {
+        name: 'dispatch-whatsapp-job',
+        data: {
+          jobId: row.id,
+          jobUid: row.job_uid,
+          idempotencyKey: row.idempotency_key,
+          waClientMsgId: row.wa_client_msg_id,
+          expectedRunAtIso: new Date(row.next_run_at_utc).toISOString(),
+        },
+        opts: {
+          jobId: row.idempotency_key, // Deduplicates inside Redis ZSET
+          delay: delayMs,
+          removeOnComplete: true,
+          removeOnFail: 1000,
+        },
+      };
+    });
+
+    const ids = rows.map((r) => r.id);
+    await client.query(`
+      UPDATE scheduled_jobs
+      SET status = 'QUEUED', locked_by = $1, locked_at = NOW(), updated_at = NOW()
+      WHERE id = ANY($2::bigint[])
+    `, [workerId, ids]);
+
+    // Stage into BullMQ before committing DB transaction
+    await bullQueue.addBulk(bulkJobs);
+    await client.query('COMMIT');
+    return rows.length;
+  } catch (err) {
+    await client.query('ROLLBACK');
+    throw err;
+  } finally {
+    client.release();
+  }
+}
+
+/**
+ * Atomic User Cancellation: Prevents stale execution if job is already staged in BullMQ's 5-min window
+ */
+export async function cancelScheduledJob(pgPool: Pool, bullQueue: Queue, userId: string, jobUid: string) {
+  const { rows } = await pgPool.query(`
+    UPDATE scheduled_jobs
+    SET status = 'CANCELLED', updated_at = NOW()
+    WHERE job_uid = $1 AND user_id = $2 AND status IN ('PENDING', 'QUEUED', 'PAUSED')
+    RETURNING idempotency_key
+  `, [jobUid, userId]);
+
+  if (rows.length > 0) {
+    const stagedJob = await bullQueue.getJob(rows[0].idempotency_key);
+    if (stagedJob) await stagedJob.remove();
+    return true;
+  }
+  return false;
+}</code></pre>
+      </section>
+
+      <!-- Section 9 -->
+      <section id="sec-9" class="glass-card rounded-2xl p-6 sm:p-8 space-y-6">
+        <h3 class="text-xl font-bold text-white">9. Recurrence Engine & DST-Safe Wall-Clock Calculation</h3>
+        <p class="text-xs text-slate-300 leading-relaxed">
+          Maintains <strong>Single Active Row Recurrence</strong> in <code>scheduled_jobs</code>. By converting UTC to the user's local IANA zone via Luxon, adding calendar intervals, and preserving the anchor day-of-month, a 9:00 AM reminder never drifts during seasonal DST transitions and never loses its 31st-of-the-month anchor after February.
+        </p>
+
+        <pre class="bg-slate-950 p-4 rounded-xl border border-slate-800 text-xs text-slate-200 overflow-x-auto leading-relaxed"><code>import { DateTime } from 'luxon';
+import { parseExpression } from 'cron-parser';
+
+export function computeNextLocalOccurrence(
+  lastUtc: Date,
+  anchorScheduledAtUtc: Date,
+  userTz: string,
+  type: string,
+  recurrenceRule?: string | null
+): { nextRunUtc: Date | null; isCompleted: boolean } {
+  if (type === 'ONCE') return { nextRunUtc: null, isCompleted: true };
+
+  if (type === 'CRON' && recurrenceRule) {
+    try {
+      const interval = parseExpression(recurrenceRule, { currentDate: lastUtc, tz: userTz });
+      return { nextRunUtc: interval.next().toDate(), isCompleted: false };
+    } catch {
+      return { nextRunUtc: null, isCompleted: true };
+    }
+  }
+
+  const local = DateTime.fromJSDate(lastUtc, { zone: userTz });
+  const anchorLocal = DateTime.fromJSDate(anchorScheduledAtUtc, { zone: userTz });
+  if (!local.isValid || !anchorLocal.isValid) return { nextRunUtc: null, isCompleted: true };
+
+  let nextLocal: DateTime;
+
+  switch (type) {
+    case 'DAILY':
+      nextLocal = local.plus({ days: 1 });
+      break;
+    case 'WEEKDAYS':
+      nextLocal = local.weekday === 5 ? local.plus({ days: 3 })
+                : local.weekday === 6 ? local.plus({ days: 2 })
+                : local.plus({ days: 1 });
+      break;
+    case 'WEEKLY':
+      nextLocal = local.plus({ weeks: 1 });
+      break;
+    case 'MONTHLY': {
+      // Anchor Day Preservation: Jan 31 -> Feb 28 -> Mar 31 -> Apr 30 -> May 31
+      const anchorDay = anchorLocal.day;
+      const targetMonth = local.plus({ months: 1 });
+      const maxDays = targetMonth.daysInMonth || 30;
+      nextLocal = targetMonth.set({
+        day: Math.min(anchorDay, maxDays),
+        hour: anchorLocal.hour,
+        minute: anchorLocal.minute,
+        second: anchorLocal.second,
+        millisecond: 0,
+      });
+      break;
+    }
+    default:
+      throw new Error(`Unsupported recurrence type: ${type}`);
+  }
+
+  return { nextRunUtc: nextLocal.toUTC().toJSDate(), isCompleted: false };
+}
+
+/**
+ * Reboot Fast-Forwarding: Steps overdue recurring jobs past nowUtc so server downtime
+ * never triggers a burst of historical spam messages upon recovery.
+ */
+export function computeNextOccurrencePastNow(
+  lastUtc: Date,
+  anchorScheduledAtUtc: Date,
+  userTz: string,
+  type: string,
+  recurrenceRule: string | null = null,
+  nowUtc: Date = new Date()
+): { nextRunUtc: Date | null; isCompleted: boolean } {
+  let currentRun = lastUtc;
+  let result = { nextRunUtc: null as Date | null, isCompleted: false };
+  let iterations = 0;
+
+  do {
+    result = computeNextLocalOccurrence(currentRun, anchorScheduledAtUtc, userTz, type, recurrenceRule);
+    if (result.isCompleted || !result.nextRunUtc) break;
+    currentRun = result.nextRunUtc;
+    iterations++;
+  } while (result.nextRunUtc <= nowUtc && iterations < 1000);
+
+  return result;
+}</code></pre>
+      </section>
+
+      <!-- Section 10 -->
+      <section id="sec-10" class="glass-card rounded-2xl p-6 sm:p-8 space-y-6">
+        <div class="flex items-center justify-between flex-wrap gap-2">
+          <h3 class="text-xl font-bold text-white">10. Zero-Double-Send Guarantee & Rectified Crash Recovery</h3>
+          <span class="text-xs px-2.5 py-0.5 rounded badge-fix font-mono">Fixed Sweeper SQL Predicate</span>
+        </div>
+
+        <div class="space-y-4 text-xs text-slate-300">
+          <p class="leading-relaxed">
+            Every execution attempt is protected by a <strong>4-Layer Deduplication Guard</strong>:
+          </p>
+          <ol class="list-decimal list-inside space-y-1.5">
+            <li><strong>BullMQ Job ID Uniqueness:</strong> Staged with <code>opts: { jobId: idempotency_key }</code> so overlapping Feeder ticks cannot enqueue duplicate timers.</li>
+            <li><strong>Redis Distributed Mutex & 24h Done Marker:</strong> Worker acquires <code>SET lock:job:<idempotency_key> NX EX 60</code> and checks <code>GET done:job:<idempotency_key></code> before touching the socket.</li>
+            <li><strong>PostgreSQL Pre-Flight State Verification:</strong> Worker executes <code>UPDATE scheduled_jobs SET status='PROCESSING' WHERE id=$1 AND status='QUEUED' AND idempotency_key=$2</code>. If Alice cancelled or edited the job during the 5-minute staging window, 0 rows match and the worker aborts cleanly.</li>
+            <li><strong>22-Char Deterministic Stanza ID:</strong> Passed via <code>sock.sendMessage(jid, payload, { messageId: waClientMsgId })</code> (e.g. <code>3EB09F8A2B1C4D5E6F7A8B</code>). If a worker crashes mid-TCP ACK and retries, WhatsApp's server deduplicates the retry by stanza ID.</li>
+          </ol>
+        </div>
+
+        <h4 class="text-sm font-bold text-white pt-2">Rectified Dead-Man's-Switch Sweeper Query (Runs Every 2 Minutes)</h4>
+        <pre class="bg-slate-950 p-4 rounded-xl border border-slate-800 text-xs text-slate-200 overflow-x-auto leading-relaxed"><code>-- V2.0 RECTIFIED SWEEPER:
+-- 1. Recovers crashed PROCESSING workers whose lock_at is older than 5 minutes.
+-- 2. Recovers orphaned QUEUED jobs ONLY when next_run_at_utc is >3 minutes in the past
+--    (Prevents the V1 bug where jobs staged 5 minutes ahead were prematurely reset before firing!)
+WITH stale_jobs AS (
+    SELECT id, retry_count, max_retries, job_uid, status
+    FROM scheduled_jobs
+    WHERE (
+        status = 'PROCESSING'
+        AND locked_at < (NOW() - INTERVAL '5 minutes')
+    ) OR (
+        status = 'QUEUED'
+        AND next_run_at_utc < (NOW() - INTERVAL '3 minutes')
+    )
+    FOR UPDATE SKIP LOCKED
+)
+UPDATE scheduled_jobs
+SET status = CASE
+        WHEN stale_jobs.status = 'PROCESSING' AND stale_jobs.retry_count + 1 >= stale_jobs.max_retries
+        THEN 'FAILED'::job_status_enum
+        ELSE 'PENDING'::job_status_enum
+    END,
+    retry_count = CASE
+        WHEN stale_jobs.status = 'PROCESSING' THEN stale_jobs.retry_count + 1
+        ELSE stale_jobs.retry_count
+    END,
+    locked_at = NULL,
+    locked_by = NULL,
+    last_error = CASE
+        WHEN stale_jobs.status = 'QUEUED'
+        THEN 'Recovered orphaned QUEUED job past scheduled execution window (Redis flush/stall)'
+        ELSE 'Stale PROCESSING lock recovered: Worker heartbeat expired after 5 minutes'
+    END,
+    updated_at = NOW()
+FROM stale_jobs
+WHERE scheduled_jobs.id = stale_jobs.id;</code></pre>
+      </section>
+
+      <!-- Section 11 -->
+      <section id="sec-11" class="glass-card rounded-2xl p-6 sm:p-8 space-y-6">
+        <h3 class="text-xl font-bold text-white">11. Anti-Ban Heuristics, Per-Sender Serialization & Key Vault</h3>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 text-xs">
+          <div class="p-5 rounded-xl bg-slate-900/80 border border-slate-800 space-y-2.5">
+            <h4 class="font-bold text-emerald-400 text-sm">Per-User Outbound Serialization & Presence Pacing</h4>
+            <p class="text-slate-300 leading-relaxed">
+              A human cannot type in two chats simultaneously. Before dispatching via Baileys, the worker acquires a per-sender Redis token lock <code>pacing:sender:<user_id></code>:
+            </p>
+            <ul class="list-disc list-inside space-y-1 text-slate-300">
+              <li><strong>Step 1:</strong> Send <code>sock.sendPresenceUpdate('available', jid)</code>.</li>
+              <li><strong>Step 2:</strong> Send <code>sock.sendPresenceUpdate('composing', jid)</code>.</li>
+              <li><strong>Step 3:</strong> Hold Gaussian typing delay: $T_{\text{type}} = \min(5.0, \text{len} \times 0.04 + \mathcal{N}(1.5, 0.4))\text{ s}$.</li>
+              <li><strong>Step 4:</strong> Send <code>sock.sendPresenceUpdate('paused', jid)</code> & transmit message with <code>waClientMsgId</code>.</li>
+              <li><strong>Step 5:</strong> Hold cooldown lock for 8–15s jitter before releasing <code>pacing:sender:<user_id></code>.</li>
+            </ul>
+          </div>
+
+          <div class="p-5 rounded-xl bg-slate-900/80 border border-slate-800 space-y-2.5">
+            <h4 class="font-bold text-sky-400 text-sm">AES-256-GCM Envelope Encryption for Signal Keys</h4>
+            <p class="text-slate-300 leading-relaxed">
+              Baileys auth credentials and Signal pre-keys are encrypted before PostgreSQL persistence using a 256-bit Master Key injected via environment KMS:
+            </p>
+            <pre class="bg-slate-950 p-3 rounded text-[11px] text-sky-300 overflow-x-auto"><code>export function encryptSignalBlob(plainBuf: Buffer, masterKey: Buffer) {
+  const iv = crypto.randomBytes(12);
+  const cipher = crypto.createCipheriv('aes-256-gcm', masterKey, iv);
+  const encrypted = Buffer.concat([cipher.update(plainBuf), cipher.final()]);
+  return { encrypted, iv, authTag: cipher.getAuthTag() };
+}</code></pre>
+          </div>
+        </div>
+      </section>
+
+      <!-- Section 12 -->
+      <section id="sec-12" class="glass-card rounded-2xl p-6 sm:p-8 space-y-6">
+        <h3 class="text-xl font-bold text-white">12. Phased Implementation Roadmap & Verification Matrix</h3>
+
+        <div class="overflow-x-auto rounded-xl border border-slate-800">
+          <table class="w-full text-left border-collapse text-xs">
+            <thead>
+              <tr class="bg-slate-900/90 text-slate-200 border-b border-slate-800">
+                <th class="p-3 font-semibold">Phase & Timeline</th>
+                <th class="p-3 font-semibold">Core Engineering Deliverables</th>
+                <th class="p-3 font-semibold">Production Exit Criteria</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-slate-800/70 text-slate-300">
+              <tr>
+                <td class="p-3 font-semibold text-emerald-400">Phase 1 (Weeks 1–2)<br><span class="text-slate-400 font-normal">Core Infra & Crypto Vault</span></td>
+                <td class="p-3">PostgreSQL 16 DDL, AES-256-GCM Signal Key adapter, Baileys 8-Char Pairing Code flow, Cloud API webhook receiver, per-sender Redis pacing mutex.</td>
+                <td class="p-3">Single-phone Pairing Code links cleanly; Signal keys encrypted at rest; zero ban triggers across 500 paced test sends.</td>
+              </tr>
+              <tr>
+                <td class="p-3 font-semibold text-emerald-400">Phase 2 (Weeks 3–4)<br><span class="text-slate-400 font-normal">Conversational FSM & CLI</span></td>
+                <td class="p-3">Redis 5-step interactive wizard, vCard & S3 media streaming, <code>chrono-node</code> timezone-aware parser, Fast-Path CLI (<code>/schedule</code>, <code>/cancel</code>, <code>/edit</code>).</td>
+                <td class="p-3">100% wizard completion & branch edit coverage; immediate BullMQ eviction verified on <code>/cancel</code> and <code>/edit</code>.</td>
+              </tr>
+              <tr>
+                <td class="p-3 font-semibold text-emerald-400">Phase 3 (Weeks 5–6)<br><span class="text-slate-400 font-normal">Hybrid Queue & DST Engine</span></td>
+                <td class="p-3">60s Look-Ahead Feeder, BullMQ delayed workers, Luxon DST-invariant recurrence with anchor day preservation, 22-char deterministic <code>3EB0</code> stanza IDs.</td>
+                <td class="p-3">Zero clock drift across DST shifts; Jan 31 -> Feb 28 -> Mar 31 verified; 0 duplicate deliveries under chaos worker kill tests.</td>
+              </tr>
+              <tr>
+                <td class="p-3 font-semibold text-emerald-400">Phase 4 (Weeks 7–8)<br><span class="text-slate-400 font-normal">Resilience & Pre-Flight Checks</span></td>
+                <td class="p-3">Rectified 2m Sweeper daemon, Assistive Reminder 24h Utility Template fallback, Group Chat admin/membership pre-flight validator, S3 24h TTL cleaner.</td>
+                <td class="p-3">Orphaned <code>QUEUED</code> jobs recovered only after <code>next_run_at_utc + 3m</code>; expired 24h windows seamlessly fall back to Utility Template.</td>
+              </tr>
+              <tr>
+                <td class="p-3 font-semibold text-emerald-400">Phase 5 (Weeks 9–10)<br><span class="text-slate-400 font-normal">Load Testing & Observability</span></td>
+                <td class="p-3">Docker/K8s Helm manifests, Prometheus metrics (feeder lag, queue depth, socket reconnects), Grafana alerting dashboards.</td>
+                <td class="p-3">Sustains 10,000 scheduled jobs/hr with <500ms trigger lag and 99.95% delivery reliability.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+    </main>
+  </div>
+
+  <footer class="border-t border-slate-800/80 py-6 text-center text-xs text-slate-500">
+    WhatsApp Message Scheduler Bot — Master Technical Implementation Plan (V2.0 Rectified Edition)
+  </footer>
+
+</body>
+</html>

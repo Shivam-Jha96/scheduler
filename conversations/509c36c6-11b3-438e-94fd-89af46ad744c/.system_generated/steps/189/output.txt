@@ -1,0 +1,31 @@
+The search for ""Discord" schedule message native personal DM or server" returned the following summary:
+Discord is rolling out a **native Scheduled Messages** feature[1][2]. 
+
+### 1. Native Feature (Beta)
+* **What it is:** Discord has been testing and rolling out a native message scheduler for **both personal DMs and server channels**[2][3]. 
+* **How it works (if you have it):** When typing a message, instead of hitting send immediately, you can click/tap a modifier (such as a **`+`** button near the chat box) to set a future time and date for the message to automatically post from your account[4].
+* **Availability:** As an active beta feature, it is being released gradually[2][5]. It is **not available to everyone yet**[5]. If you don’t see the option on your desktop or mobile app, your account hasn't been included in the rollout phase[2]. You cannot manually request access[2].
+
+---
+
+### 2. Alternatives If You Don't Have the Native Beta Yet
+
+If you need to schedule messages right away and don't have access to the native beta, you have to use alternative methods depending on where you want to post:
+
+* **For Servers:** 
+  * **Bots:** You can invite third-party Discord bots designed for scheduling (such as ScoutBot, Embed Generator, or various webhook-backed automation tools) that allow you to plan one-off or recurring server announcements[2][6][7].
+  * **Webhooks:** Useful for automated or cross-platform scheduling setups[2][8].
+* **For Personal DMs / Reminders:** 
+  * If you just want to remember to send something later without using external bots, you can use Discord's **Reminders** feature (right-click a message or use built-in reminder prompts) to ping yourself when it's time to type and send the message manually[4].
+
+Sources:
+[1] [reddit.com](https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQECq39kZKdSRYMYvEcH6-OMphvB_5rh_HwQD7CQhoL12uO114wEtmnq1h51K1yH6v-xKVVdXsx9rAI2y9PqntGt9JqZZdgz9L1Kymdbw6bDh_bEBWwUh9czFb2p7LijlA1PXnVk9J5DOKYemZMKrEMKexpRW1TXWaOBLUcRQPx3CvO_zhiIAYj8tMpTa8sDiLmGQA==)
+[2] [omnifire.app](https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQGtKtyaqZ3NJ1oDIO7KgW-1M3DYD7fqszf1j7Ugx7LKyYiyeDJYW6aeliv0YktUfdR5EEPlyl_eSyWU5x-pfwnf4RZj4Wjdzec1FxlE1qWtA4mWHpzETSRIy3hkVRuX-TJ5A8vAzw7rdVrMkwW8FQ==)
+[3] [discord.com](https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQFbB1D6u5hG9U0SY0baPwjM0J4c54Bd1IenwqVt8ChplRFb9BKM9kkWApDjah4jPjuVMGxsnugNZeUE73thdvappb580jOA2m1WPGam8e9tyBAkIIJhO6BPaZSdNyAGrrITmrPthEVWXlFR6P6rGBRLsyKzD3LiDXSA6uhetVQmtAi6lAa8qk0na3ACapro7hgWD5EDpvPsv0QeEFJxsZlLf5rdH26w0H04zjcDsA==)
+[4] [discord.com](https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQG9UvjRb3J4P8RECjiVM-oYETpV7SG85G3fHC1WDrgEEW87IfsQ6xKtoU4Fjxt_4RhGuLoqkaqzJE6_b4AWx98vw0V4rNjgR-zoPBfaJevLcDRajGyhdU7UsTXjObevu351Cumogu5Scf477LhYur7Y2JU=)
+[5] [posteverywhere.ai](https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQGkxCwjBsAGqxs_bGLbY7YzTf65bp5YtptXQ2T213FH2Fwte8QE5NufTW-DqwEpzXlkSQ-HsJFuNoMXy78rKhk62BwNX4wSOMxFvksVQCs09i_TbQubeqHoYDtvy-mh5woIAOOaRUQ7KjYW1jYTAQjPK06aGfA=)
+[6] [message.style](https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQGf6ZDJfPuhu68BX29R97O_VKHC_bP-0HHi6tegRyPWyINI3XMPp6VtC36-dfNafCnzn7FdNIwGBm2KHqblmJOcIfo3NNgLfP3b_tquKW1F3NSdpmHB1ajn2WgJltRar8v4fd3dhdLR)
+[7] [scoutbot.app](https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQHSZLX46hSHai6HGI2GLJZK65ahGGqHYAyFC5ZUdytKbVS9J05WDiq72mCTEcPpCYIOABuCC09feI2nCvlhD1lnEfbjiactk2EuRdOHJiOm3oJoMt9QutwV78sA3eG_ETNUiMdKQaXy98M=)
+[8] [posteverywhere.ai](https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQGkxCwjBsAGqxs_bGLbY7YzTf65bp5YtptXQ2T213FH2Fwte8QE5NufTW-DqwEpzXlkSQ-HsJFuNoMXy78rKhk62BwNX4wSOMxFvksVQCs09i_TbQubeqHoYDtvy-mh5woIAOOaRUQ7KjYW1jYTAQjPK06aGfA=)
+
+Note: Source URLs are HTTP redirects; check where they resolve if you need the direct link.

@@ -1,0 +1,1332 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>WhatsApp Message Scheduler Bot — Master Technical Implementation Plan (V2.0 Rectified Edition)</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <script type="module">
+    import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs';
+    mermaid.initialize({
+      startOnLoad: true,
+      theme: 'dark',
+      themeVariables: {
+        primaryColor: '#10b981',
+        primaryTextColor: '#f8fafc',
+        primaryBorderColor: '#059669',
+        lineColor: '#64748b',
+        secondaryColor: '#1e293b',
+        tertiaryColor: '#0f172a',
+        fontFamily: 'Inter, sans-serif'
+      }
+    });
+  </script>
+  <style>
+    body {
+      font-family: 'Inter', sans-serif;
+      background-color: #0b0f19;
+      color: #e2e8f0;
+    }
+    code, pre {
+      font-family: 'JetBrains Mono', monospace;
+    }
+    ::-webkit-scrollbar {
+      width: 8px;
+      height: 8px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #0f172a;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #334155;
+      border-radius: 4px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: #475569;
+    }
+    .glass-card {
+      background: rgba(15, 23, 42, 0.75);
+      backdrop-filter: blur(12px);
+      border: 1px solid rgba(51, 65, 85, 0.6);
+    }
+    .badge-fix {
+      background: rgba(16, 185, 129, 0.15);
+      color: #34d399;
+      border: 1px solid rgba(16, 185, 129, 0.4);
+    }
+    .badge-warn {
+      background: rgba(245, 158, 11, 0.15);
+      color: #fbbf24;
+      border: 1px solid rgba(245, 158, 11, 0.4);
+    }
+    .badge-crit {
+      background: rgba(239, 68, 68, 0.15);
+      color: #f87171;
+      border: 1px solid rgba(239, 68, 68, 0.4);
+    }
+    .badge-hld {
+      background: rgba(99, 102, 241, 0.15);
+      color: #818cf8;
+      border: 1px solid rgba(99, 102, 241, 0.4);
+    }
+    .badge-lld {
+      background: rgba(217, 70, 239, 0.15);
+      color: #e879f9;
+      border: 1px solid rgba(217, 70, 239, 0.4);
+    }
+
+    /* Database Visual Cards */
+    .db-table-card {
+      background: #111827;
+      border: 1px solid #1f2937;
+      border-radius: 12px;
+      overflow: hidden;
+      transition: transform 0.2s, border-color 0.2s;
+    }
+    .db-table-card:hover {
+      transform: translateY(-2px);
+      border-color: #3b82f6;
+    }
+    .db-col-row {
+      display: grid;
+      grid-template-columns: 1fr auto auto;
+      gap: 10px;
+      padding: 6px 12px;
+      border-bottom: 1px solid #1f2937;
+      font-size: 11.5px;
+      align-items: center;
+    }
+    .db-col-row:last-child {
+      border-bottom: none;
+    }
+    .badge-pk { background: #7f1d1d; color: #fca5a5; border: 1px solid #991b1b; }
+    .badge-fk { background: #1e3a8a; color: #93c5fd; border: 1px solid #1d4ed8; }
+    .badge-uk { background: #78350f; color: #fde68a; border: 1px solid #92400e; }
+    .badge-enc { background: #581c87; color: #e9d5ff; border: 1px solid #6b21a8; }
+    .badge-idx { background: #064e3b; color: #6ee7b7; border: 1px solid #047857; }
+
+    /* WhatsApp Simulator Frame */
+    .phone-mockup {
+      width: 100%;
+      background: #111b21;
+      border-radius: 36px;
+      box-shadow: 0 25px 60px -15px rgba(0, 0, 0, 0.6), 0 0 0 8px #1e293b;
+      overflow: hidden;
+      border: 3px solid #334155;
+    }
+    .wa-chat-bg {
+      background-color: #0b141a;
+      background-image: radial-gradient(#1e293b 1px, transparent 1px);
+      background-size: 16px 16px;
+    }
+    .chat-user {
+      align-self: flex-end;
+      background: #005c4b;
+      color: #e9edef;
+      border-bottom-right-radius: 2px;
+    }
+    .chat-bot {
+      align-self: flex-start;
+      background: #202c33;
+      color: #e9edef;
+      border-bottom-left-radius: 2px;
+    }
+
+    @media print {
+      header, aside, .btn-pdf { display: none !important; }
+      body { background-color: #fff !important; color: #000 !important; }
+      .glass-card { background: #fff !important; border: 1px solid #cbd5e1 !important; color: #000 !important; box-shadow: none !important; }
+      .text-white { color: #000 !important; }
+      .text-slate-300, .text-slate-400 { color: #334155 !important; }
+      pre, code { background: #f1f5f9 !important; color: #0f172a !important; border: 1px solid #cbd5e1 !important; }
+    }
+  </style>
+</head>
+<body class="antialiased selection:bg-emerald-500 selection:text-white">
+
+  <!-- Top Sticky Navigation -->
+  <header class="sticky top-0 z-50 border-b border-slate-800 bg-slate-950/90 backdrop-blur-md">
+    <div class="max-w-7xl mx-auto px-6 py-3 flex items-center justify-between">
+      <div class="flex items-center space-x-3">
+        <span class="h-3 w-3 rounded-full bg-emerald-500 animate-pulse"></span>
+        <span class="font-bold tracking-tight text-white text-sm md:text-base">WHATSAPP-SCHEDULER-TECH-PLAN-V2.0</span>
+        <span class="text-xs px-2.5 py-0.5 rounded-full badge-fix font-medium">HLD • LLD • Pictorial DB • V2.0 Hardened</span>
+      </div>
+      <div class="flex items-center space-x-4">
+        <a href="WhatsApp_Scheduler_Master_Technical_Plan.pdf" class="btn-pdf text-xs bg-emerald-600 hover:bg-emerald-500 text-white font-semibold px-3 py-1.5 rounded-lg flex items-center space-x-1.5 transition">
+          <span>📄</span>
+          <span>Download PDF</span>
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <div class="max-w-7xl mx-auto px-6 py-8 grid grid-cols-1 lg:grid-cols-12 gap-8">
+
+    <!-- Sidebar Navigation -->
+    <aside class="lg:col-span-3 hidden lg:block">
+      <nav class="sticky top-20 space-y-1 text-sm border-r border-slate-800 pr-4">
+        <p class="text-xs font-semibold uppercase tracking-wider text-slate-400 mb-3">Specification Index</p>
+        <a href="#exec-summary" class="block py-1.5 px-3 rounded hover:bg-slate-800/60 text-slate-300 hover:text-emerald-400 transition">Executive Summary</a>
+        <a href="#audit-rectifications" class="block py-1.5 px-3 rounded bg-emerald-950/40 border border-emerald-800/50 text-emerald-300 font-medium transition">★ V2.0 Audit Fixes (10)</a>
+        
+        <p class="text-xs font-semibold uppercase tracking-wider text-indigo-400 mt-5 mb-2">High-Level Design (HLD)</p>
+        <a href="#hld-architecture" class="block py-1.5 px-3 rounded hover:bg-slate-800/60 text-slate-300 hover:text-indigo-400 transition">5. HLD System Topology</a>
+        <a href="#hld-subsystems" class="block py-1.5 px-3 rounded hover:bg-slate-800/60 text-slate-300 hover:text-indigo-400 transition">6. HLD Subsystem Tiers</a>
+        <a href="#hld-pipelines" class="block py-1.5 px-3 rounded hover:bg-slate-800/60 text-slate-300 hover:text-indigo-400 transition">7. HLD Dataflow Pipelines</a>
+        <a href="#sec-2" class="block py-1.5 px-3 rounded hover:bg-slate-800/60 text-slate-300 hover:text-white transition">2. Multi-Dimensional Matrix</a>
+        <a href="#sec-3" class="block py-1.5 px-3 rounded hover:bg-slate-800/60 text-slate-300 hover:text-white transition">3. Dual Delivery Mechanisms</a>
+        <a href="#sec-4" class="block py-1.5 px-3 rounded hover:bg-slate-800/60 text-slate-300 hover:text-white transition">4. Unit Economics & Scaling</a>
+
+        <p class="text-xs font-semibold uppercase tracking-wider text-fuchsia-400 mt-5 mb-2">Low-Level Design (LLD)</p>
+        <a href="#lld-patterns" class="block py-1.5 px-3 rounded hover:bg-slate-800/60 text-slate-300 hover:text-fuchsia-400 transition">8. LLD Design Patterns</a>
+        <a href="#lld-fsm" class="block py-1.5 px-3 rounded hover:bg-slate-800/60 text-slate-300 hover:text-fuchsia-400 transition">9. LLD FSM State Transition Matrix</a>
+        <a href="#lld-simulator" class="block py-1.5 px-3 rounded hover:bg-slate-800/60 text-slate-300 hover:text-fuchsia-400 transition">10. WhatsApp Mobile Simulator</a>
+        <a href="#lld-algorithms" class="block py-1.5 px-3 rounded hover:bg-slate-800/60 text-slate-300 hover:text-fuchsia-400 transition">11. LLD Concrete Algorithms</a>
+        <a href="#lld-feeder" class="block py-1.5 px-3 rounded hover:bg-slate-800/60 text-slate-300 hover:text-fuchsia-400 transition">12. LLD Hybrid Queue Engine</a>
+
+        <p class="text-xs font-semibold uppercase tracking-wider text-emerald-400 mt-5 mb-2">Pictorial Database</p>
+        <a href="#db-er-diagram" class="block py-1.5 px-3 rounded hover:bg-slate-800/60 text-slate-300 hover:text-emerald-400 transition">13. Visual ER Diagram</a>
+        <a href="#db-schema-cards" class="block py-1.5 px-3 rounded hover:bg-slate-800/60 text-slate-300 hover:text-emerald-400 transition">14. Schema Table Cards</a>
+        <a href="#db-partitioning" class="block py-1.5 px-3 rounded hover:bg-slate-800/60 text-slate-300 hover:text-emerald-400 transition">15. Partitioning & Indexing</a>
+
+        <p class="text-xs font-semibold uppercase tracking-wider text-slate-400 mt-5 mb-2">Delivery & Safeguards</p>
+        <a href="#sec-10" class="block py-1.5 px-3 rounded hover:bg-slate-800/60 text-slate-300 hover:text-white transition">16. Zero-Double-Send Recovery</a>
+        <a href="#sec-11" class="block py-1.5 px-3 rounded hover:bg-slate-800/60 text-slate-300 hover:text-white transition">17. Anti-Ban & Key Security</a>
+        <a href="#sec-12" class="block py-1.5 px-3 rounded hover:bg-slate-800/60 text-slate-300 hover:text-white transition">18. 10-Week Roadmap</a>
+      </nav>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="lg:col-span-9 space-y-12">
+
+      <!-- Title Block -->
+      <section class="glass-card rounded-2xl p-8 border-l-4 border-l-emerald-500 shadow-2xl">
+        <div class="flex flex-wrap gap-2 mb-4">
+          <span class="text-xs font-semibold uppercase tracking-wider px-2.5 py-1 rounded bg-slate-800 text-slate-300">Doc ID: WHATSAPP-SCHEDULER-TECH-PLAN-V2</span>
+          <span class="text-xs font-semibold uppercase tracking-wider px-2.5 py-1 rounded badge-fix">Status: HLD + LLD + Pictorial DB</span>
+        </div>
+        <h1 class="text-3xl sm:text-4xl font-extrabold text-white tracking-tight leading-tight mb-4">
+          WhatsApp Message Scheduler Bot: Master Technical Implementation Plan & Architectural Specification
+        </h1>
+        <p class="text-slate-300 text-base leading-relaxed mb-6">
+          Authoritative production specification featuring complete <strong>High-Level Design (HLD)</strong>, <strong>Low-Level Design (LLD)</strong>, and a <strong>Pictorial Relational Architecture</strong>. Solves Meta Cloud API 24h window constraints, Baileys multi-device pairing, two-tier BullMQ hybrid queues, wall-clock DST recurrence, and cryptographic zero-double-send guarantees.
+        </p>
+        <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 pt-4 border-t border-slate-800/80 text-xs">
+          <div>
+            <span class="text-slate-400 block">Target Runtime</span>
+            <span class="font-semibold text-white">Node.js 22 LTS / TypeScript 5.x</span>
+          </div>
+          <div>
+            <span class="text-slate-400 block">Primary Storage & Queue</span>
+            <span class="font-semibold text-white">PostgreSQL 16 + Redis 7.2 (BullMQ)</span>
+          </div>
+          <div>
+            <span class="text-slate-400 block">WhatsApp Transports</span>
+            <span class="font-semibold text-white">Cloud API v21.0 + Baileys v6.7+</span>
+          </div>
+          <div>
+            <span class="text-slate-400 block">Database Visualization</span>
+            <span class="font-semibold text-white">100% Pictorial (No Code Blocks)</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- Executive Summary -->
+      <section id="exec-summary" class="space-y-4">
+        <h2 class="text-2xl font-bold text-white border-b border-slate-800 pb-2">Executive Summary</h2>
+        <p class="text-slate-300 leading-relaxed">
+          The <strong>In-WhatsApp Message Scheduler Chatbot</strong> allows users (<strong>Alice</strong>) to message a bot conversationally within WhatsApp to schedule text, media, or recurring reminders for future delivery to personal contacts or group chats (<strong>Bob</strong>).
+        </p>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mt-4">
+          <div class="glass-card p-5 rounded-xl border-t-2 border-t-amber-500">
+            <h3 class="font-semibold text-white text-sm mb-2">1. The Sender Identity Paradox</h3>
+            <p class="text-xs text-slate-300 leading-relaxed">
+              Meta's official Cloud API dispatches from a corporate business phone number (WABA), violating peer-to-peer expectations and triggering the 24-hour service window block (<code>Error 131047</code>).
+            </p>
+          </div>
+          <div class="glass-card p-5 rounded-xl border-t-2 border-t-rose-500">
+            <h3 class="font-semibold text-white text-sm mb-2">2. Companion P2P Automation</h3>
+            <p class="text-xs text-slate-300 leading-relaxed">
+              WebSocket engines (<code>@whiskeysockets/baileys</code>) deliver authentic P2P messages from Alice's phone number, utilizing an 8-character pairing code, presence simulation, and AES-256-GCM Signal key encryption.
+            </p>
+          </div>
+          <div class="glass-card p-5 rounded-xl border-t-2 border-t-emerald-500">
+            <h3 class="font-semibold text-white text-sm mb-2">3. Two-Tier Hybrid Scheduler</h3>
+            <p class="text-xs text-slate-300 leading-relaxed">
+              Durable PostgreSQL 16 persistence paired with a 60s Look-Ahead Feeder and a 5-minute BullMQ delayed queue achieves sub-second accuracy with <250 KB Redis memory footprint.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <!-- V2.0 Audit Rectifications -->
+      <section id="audit-rectifications" class="glass-card rounded-2xl p-6 sm:p-8 border border-emerald-500/40 bg-emerald-950/10 space-y-6">
+        <div class="flex items-center justify-between flex-wrap gap-2 border-b border-emerald-800/40 pb-4">
+          <div>
+            <span class="text-xs font-bold uppercase tracking-wider text-emerald-400 block mb-1">Engineering Scrutiny Report</span>
+            <h2 class="text-2xl font-bold text-white">V2.0 Architectural Audit: 10 Critical Gaps Identified & Rectified</h2>
+          </div>
+          <span class="text-xs px-3 py-1 rounded-full badge-fix font-mono">10 / 10 Resolved in V2 Spec</span>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs">
+          <div class="p-4 rounded-xl bg-slate-900/90 border border-slate-800 space-y-1.5">
+            <div class="flex items-center justify-between">
+              <span class="font-bold text-emerald-400">1. Baileys Deterministic Message ID Collision</span>
+              <span class="px-2 py-0.5 rounded badge-crit">Protocol Bug</span>
+            </div>
+            <p class="text-slate-300"><strong>Flaw:</strong> 64-char SHA-256 hex was passed directly as stanza ID; WhatsApp servers silently drop IDs exceeding 22 hex characters.</p>
+            <p class="text-emerald-300"><strong>Fix:</strong> Derived <code>WA_MSG_ID = "3EB0" + SHA256(job_uid + ":" + next_run_iso).slice(0, 18).toUpperCase()</code> (22 chars).</p>
+          </div>
+
+          <div class="p-4 rounded-xl bg-slate-900/90 border border-slate-800 space-y-1.5">
+            <div class="flex items-center justify-between">
+              <span class="font-bold text-emerald-400">2. Sweeper Premature Re-Queue Race Condition</span>
+              <span class="px-2 py-0.5 rounded badge-crit">Concurrency Bug</span>
+            </div>
+            <p class="text-slate-300"><strong>Flaw:</strong> Sweeper falsely reset `QUEUED` jobs staged 5 minutes ahead by checking <code>updated_at</code>.</p>
+            <p class="text-emerald-300"><strong>Fix:</strong> Sweeper predicates on <code>next_run_at_utc < NOW() - INTERVAL '3 minutes'</code> for `QUEUED` records.</p>
+          </div>
+
+          <div class="p-4 rounded-xl bg-slate-900/90 border border-slate-800 space-y-1.5">
+            <div class="flex items-center justify-between">
+              <span class="font-bold text-emerald-400">3. User Edit / Cancel Race During 5-Min Buffer</span>
+              <span class="px-2 py-0.5 rounded badge-crit">Data Integrity</span>
+            </div>
+            <p class="text-slate-300"><strong>Flaw:</strong> Canceling or editing a job in DB failed to evict in-flight BullMQ delayed timers.</p>
+            <p class="text-emerald-300"><strong>Fix:</strong> Synchronous BullMQ <code>queue.getJob(idempotencyKey)?.remove()</code> on `/cancel` or `/edit` + pre-flight DB checks.</p>
+          </div>
+
+          <div class="p-4 rounded-xl bg-slate-900/90 border border-slate-800 space-y-1.5">
+            <div class="flex items-center justify-between">
+              <span class="font-bold text-emerald-400">4. Baileys Pairing Code Flow (Single-Phone UX)</span>
+              <span class="px-2 py-0.5 rounded badge-warn">UX Blocker</span>
+            </div>
+            <p class="text-slate-300"><strong>Flaw:</strong> Users chatting with the bot on mobile cannot scan a QR code rendered on that same mobile screen.</p>
+            <p class="text-emerald-300"><strong>Fix:</strong> Primary onboarding uses <strong>WhatsApp 8-Character Pairing Codes</strong> (<code>sock.requestPairingCode(userPhone)</code>).</p>
+          </div>
+
+          <div class="p-4 rounded-xl bg-slate-900/90 border border-slate-800 space-y-1.5">
+            <div class="flex items-center justify-between">
+              <span class="font-bold text-emerald-400">5. Per-User Head-of-Line Blocking in Anti-Ban</span>
+              <span class="px-2 py-0.5 rounded badge-warn">Throughput Bug</span>
+            </div>
+            <p class="text-slate-300"><strong>Flaw:</strong> Multiple workers sending concurrently from Alice's account triggered simultaneous overlapping typing indicators.</p>
+            <p class="text-emerald-300"><strong>Fix:</strong> Per-Sender Redis Token Lock (<code>pacing:sender:<user_id></code>) enforcing sequential typing & 8–15s jitter.</p>
+          </div>
+
+          <div class="p-4 rounded-xl bg-slate-900/90 border border-slate-800 space-y-1.5">
+            <div class="flex items-center justify-between">
+              <span class="font-bold text-emerald-400">6. Assistive Model 24h Self-Lockout Paradox</span>
+              <span class="px-2 py-0.5 rounded badge-crit">Policy Bug</span>
+            </div>
+            <p class="text-slate-300"><strong>Flaw:</strong> If Alice schedules >24h ahead, her own 24-hour service window with the bot expires before the reminder fires.</p>
+            <p class="text-emerald-300"><strong>Fix:</strong> Pre-approved Meta <strong>Utility Template</strong> (<code>scheduled_reminder_cta_v1</code>) fallback when <code>now - last_inbound > 24h</code>.</p>
+          </div>
+
+          <div class="p-4 rounded-xl bg-slate-900/90 border border-slate-800 space-y-1.5">
+            <div class="flex items-center justify-between">
+              <span class="font-bold text-emerald-400">7. Envelope Encryption for E2EE Signal Keys</span>
+              <span class="px-2 py-0.5 rounded badge-crit">Security Vulnerability</span>
+            </div>
+            <p class="text-slate-300"><strong>Flaw:</strong> Raw Baileys session credentials and Signal pre-keys stored in plain BYTEA columns.</p>
+            <p class="text-emerald-300"><strong>Fix:</strong> Application-layer AES-256-GCM envelope encryption with KMS master keys and random 12-byte IVs.</p>
+          </div>
+
+          <div class="p-4 rounded-xl bg-slate-900/90 border border-slate-800 space-y-1.5">
+            <div class="flex items-center justify-between">
+              <span class="font-bold text-emerald-400">8. DST Spring-Forward & Fall-Back Ambiguity</span>
+              <span class="px-2 py-0.5 rounded badge-warn">Temporal Edge Case</span>
+            </div>
+            <p class="text-slate-300"><strong>Flaw:</strong> Undefined behavior when a 2:30 AM reminder hits a spring-forward gap or fall-back fold.</p>
+            <p class="text-emerald-300"><strong>Fix:</strong> Deterministic Luxon disambiguation: advance past non-existent spring gaps; pin to earlier offset on folds.</p>
+          </div>
+
+          <div class="p-4 rounded-xl bg-slate-900/90 border border-slate-800 space-y-1.5">
+            <div class="flex items-center justify-between">
+              <span class="font-bold text-emerald-400">9. Group Chat Membership Pre-Flight Check</span>
+              <span class="px-2 py-0.5 rounded badge-warn">Delivery Failure</span>
+            </div>
+            <p class="text-slate-300"><strong>Flaw:</strong> Attempting to dispatch to group chats where Alice was removed or where "Only Admins Can Post" is active.</p>
+            <p class="text-emerald-300"><strong>Fix:</strong> Pre-flight <code>groupMetadata(jid)</code> verification at T-60s staging; auto-transitions to <code>FAILED</code> and alerts Alice.</p>
+          </div>
+
+          <div class="p-4 rounded-xl bg-slate-900/90 border border-slate-800 space-y-1.5">
+            <div class="flex items-center justify-between">
+              <span class="font-bold text-emerald-400">10. Media Payload Lifecycle & Pre-Warming</span>
+              <span class="px-2 py-0.5 rounded badge-warn">Storage & Latency</span>
+            </div>
+            <p class="text-slate-300"><strong>Flaw:</strong> Uploading large video attachments to WhatsApp at the exact firing second caused 10–30s delivery delays.</p>
+            <p class="text-emerald-300"><strong>Fix:</strong> Pre-warm/upload media during T-5m staging + automated S3 lifecycle cleanup 24h after final delivery.</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- ===================================================================== -->
+      <!-- HIGH-LEVEL DESIGN (HLD)                                               -->
+      <!-- ===================================================================== -->
+      <div class="pt-6 border-t border-slate-800">
+        <span class="text-xs font-bold uppercase tracking-widest text-indigo-400">System Architecture</span>
+        <h2 class="text-3xl font-extrabold text-white mt-1">High-Level Design (HLD)</h2>
+      </div>
+
+      <!-- Section 5: HLD Topology -->
+      <section id="hld-architecture" class="glass-card rounded-2xl p-6 sm:p-8 space-y-6">
+        <div class="flex items-center justify-between flex-wrap gap-2">
+          <h3 class="text-xl font-bold text-white">5. HLD End-to-End System Topology</h3>
+          <span class="text-xs px-2.5 py-0.5 rounded badge-hld font-mono">5 Decoupled Tiers</span>
+        </div>
+        <p class="text-xs text-slate-300 leading-relaxed">
+          The High-Level Design organizes the application into decoupled, horizontally scalable tiers communicating over asynchronous, ACID-compliant channels:
+        </p>
+        <div class="bg-slate-950/80 p-4 rounded-xl border border-slate-800 overflow-x-auto">
+          <div class="mermaid">
+flowchart TB
+    subgraph ClientTier["1. WhatsApp Client Layer"]
+        AliceApp["Alice (Scheduler User)<br/>Interactive Wizard / Fast-Path CLI"]
+        BobApp["Bob (Target Recipient / Group)<br/>Native WhatsApp Chat"]
+    end
+
+    subgraph IngressTier["2. Ingress & Dialog Gateway Tier"]
+        Webhook["Ingress Gateway<br/>Fastify Webhook (Cloud API) + Baileys Socket"]
+        FSM["Conversational FSM & Router<br/>chrono-node + libphonenumber-js"]
+        RedisSession[("Redis Session Store<br/>session:usr:jid (TTL 15m)")]
+        S3Vault[("S3 Object Storage<br/>Pre-Stage Media + 24h Lifecycle TTL")]
+    end
+
+    subgraph StorageTier["3. Durable Persistence Tier (PostgreSQL 16)"]
+        PG[("PostgreSQL Master Ledger<br/>- users and contacts<br/>- scheduled_jobs (Monthly Partitions)<br/>- Partial Index: WHERE status='PENDING'<br/>- AES-256-GCM whatsapp_sessions")]
+    end
+
+    subgraph ExecutionTier["4. Hybrid Scheduling & Delivery Tier"]
+        Feeder["Look-Ahead Feeder Daemon<br/>60s Poll (FOR UPDATE SKIP LOCKED)"]
+        Sweeper["Dead-Mans-Switch Sweeper<br/>Orphan Recovery (3m Grace)"]
+        BullMQ[("BullMQ Delayed Queue<br/>5-Minute Sliding Buffer (Redis)")]
+        Workers["Delivery Worker Pool<br/>- 22-Char Deterministic WA_MSG_ID<br/>- Per-Sender Pacing Mutex<br/>- Gaussian Typing Simulator"]
+    end
+
+    AliceApp <-->|"Inbound Commands / Wizard"| Webhook
+    Webhook <--> FSM
+    FSM <--> RedisSession
+    FSM -->|"Stream Media"| S3Vault
+    FSM -->|"ACID Commit Validated Job"| PG
+    FSM -->|"Immediate Evict on /cancel"| BullMQ
+    PG -->|"Due within 5 Minutes"| Feeder
+    Feeder -->|"addBulk(jobId: idempotencyKey)"| BullMQ
+    Sweeper <-->|"Recover Stale PROCESSING / QUEUED"| PG
+    BullMQ -->|"Millisecond Delayed Trigger"| Workers
+    Workers -->|"Verify Status == QUEUED & Update Run"| PG
+    Workers -->|"Direct P2P or Assistive CTA Dispatch"| BobApp
+          </div>
+        </div>
+      </section>
+
+      <!-- Section 6: HLD Subsystem Tiers -->
+      <section id="hld-subsystems" class="glass-card rounded-2xl p-6 sm:p-8 space-y-6">
+        <h3 class="text-xl font-bold text-white">6. HLD Subsystem Responsibilities & Boundary Contracts</h3>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-xs">
+          <div class="p-4 rounded-xl bg-slate-900/80 border border-slate-800 space-y-2">
+            <span class="text-xs font-bold uppercase tracking-wider text-indigo-400">Ingress Gateway</span>
+            <p class="text-slate-300">Terminates WebSocket sessions with WhatsApp's multi-device servers or verifies HMAC-SHA256 signatures on Cloud API webhooks. Decouples wire protocol from core scheduling logic.</p>
+          </div>
+          <div class="p-4 rounded-xl bg-slate-900/80 border border-slate-800 space-y-2">
+            <span class="text-xs font-bold uppercase tracking-wider text-indigo-400">Conversational FSM</span>
+            <p class="text-slate-300">Maintains 5-step interactive wizard state in Redis (15m sliding TTL). Validates inputs, parses temporal expressions via <code>chrono-node</code>, and normalizes phone numbers to E.164.</p>
+          </div>
+          <div class="p-4 rounded-xl bg-slate-900/80 border border-slate-800 space-y-2">
+            <span class="text-xs font-bold uppercase tracking-wider text-indigo-400">Two-Tier Hybrid Scheduler</span>
+            <p class="text-slate-300">Pairs durable PostgreSQL storage with a 60-second Look-Ahead Feeder and a 5-minute BullMQ sliding buffer. Guarantees zero memory exhaustion and sub-second dispatch precision.</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- Section 7: HLD Dataflow Pipelines -->
+      <section id="hld-pipelines" class="glass-card rounded-2xl p-6 sm:p-8 space-y-4">
+        <h3 class="text-xl font-bold text-white">7. HLD Core Dataflow Pipelines</h3>
+        <div class="overflow-x-auto rounded-xl border border-slate-800">
+          <table class="w-full text-left border-collapse text-xs">
+            <thead>
+              <tr class="bg-slate-900/90 text-slate-200 border-b border-slate-800">
+                <th class="p-3 font-semibold">Pipeline</th>
+                <th class="p-3 font-semibold">Trigger Event</th>
+                <th class="p-3 font-semibold">Involved Subsystems</th>
+                <th class="p-3 font-semibold">Failure & Recovery Strategy</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-slate-800/70 text-slate-300">
+              <tr>
+                <td class="p-3 font-medium text-white">1. Job Ingestion</td>
+                <td class="p-3">User messages bot / issues <code>/schedule</code></td>
+                <td class="p-3">Ingress &rarr; FSM &rarr; Redis Draft &rarr; PostgreSQL</td>
+                <td class="p-3">Invalid syntax prompts immediate reprompt; 15m session TTL cleans abandoned drafts.</td>
+              </tr>
+              <tr>
+                <td class="p-3 font-medium text-white">2. Look-Ahead Staging</td>
+                <td class="p-3">Feeder Cron (every 60s)</td>
+                <td class="p-3">Feeder Daemon &rarr; PostgreSQL &rarr; BullMQ</td>
+                <td class="p-3"><code>FOR UPDATE SKIP LOCKED</code> ensures 0 lock contention; marks rows `QUEUED`.</td>
+              </tr>
+              <tr>
+                <td class="p-3 font-medium text-white">3. Outbound Execution</td>
+                <td class="p-3">BullMQ millisecond delay timer expiry</td>
+                <td class="p-3">Worker Pool &rarr; Redis Mutex &rarr; Baileys &rarr; Bob</td>
+                <td class="p-3">SHA-256 idempotency key prevents duplicates; socket retries deduplicated by <code>WA_MSG_ID</code>.</td>
+              </tr>
+              <tr>
+                <td class="p-3 font-medium text-white">4. Dead-Man's Recovery</td>
+                <td class="p-3">Sweeper Cron (every 2m)</td>
+                <td class="p-3">Sweeper Daemon &rarr; PostgreSQL Ledger</td>
+                <td class="p-3">Recovers stuck `PROCESSING` (>5m) and stalled `QUEUED` (>3m past execution).</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- Section 2: Trade-off Matrix -->
+      <section id="sec-2" class="glass-card rounded-2xl p-6 sm:p-8 space-y-6">
+        <h3 class="text-xl font-bold text-white">Platform Feasibility Trade-Off Matrix</h3>
+        <div class="overflow-x-auto rounded-xl border border-slate-800">
+          <table class="w-full text-left border-collapse text-xs">
+            <thead>
+              <tr class="bg-slate-900/90 text-slate-200 border-b border-slate-800">
+                <th class="p-3.5 font-semibold">Evaluation Criteria</th>
+                <th class="p-3.5 font-semibold text-emerald-400">WhatsApp Cloud API (v21.0)</th>
+                <th class="p-3.5 font-semibold text-sky-400">Baileys (v6.7+ WebSocket)</th>
+                <th class="p-3.5 font-semibold text-amber-400">whatsapp-web.js</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-slate-800/70 text-slate-300">
+              <tr>
+                <td class="p-3 font-medium text-white">Underlying Engine</td>
+                <td class="p-3">Official Meta REST Webhook</td>
+                <td class="p-3 text-sky-400 font-semibold">Pure WebSocket (Noise_XX)</td>
+                <td class="p-3">Puppeteer Headless Chromium</td>
+              </tr>
+              <tr>
+                <td class="p-3 font-medium text-white">Idle RAM per Session</td>
+                <td class="p-3 text-emerald-400 font-semibold">0 MB (Stateless)</td>
+                <td class="p-3 text-sky-400 font-semibold">30 MB – 60 MB</td>
+                <td class="p-3">150 MB – 350 MB</td>
+              </tr>
+              <tr>
+                <td class="p-3 font-medium text-white">Autonomous Background Delivery</td>
+                <td class="p-3">Yes (from Business Number)</td>
+                <td class="p-3 text-emerald-400 font-semibold">Yes (from User's Number)</td>
+                <td class="p-3">Yes (from User's Number)</td>
+              </tr>
+              <tr>
+                <td class="p-3 font-medium text-white">24h Customer Service Window</td>
+                <td class="p-3 text-amber-400">Enforced (Error 131047)</td>
+                <td class="p-3 text-emerald-400 font-semibold">Bypassed (Native P2P)</td>
+                <td class="p-3">Bypassed (Native P2P)</td>
+              </tr>
+              <tr>
+                <td class="p-3 font-medium text-white">Meta Account Ban Risk</td>
+                <td class="p-3 text-emerald-400 font-semibold">Zero</td>
+                <td class="p-3 text-amber-400">Moderate (Pacing required)</td>
+                <td class="p-3 text-rose-400">High (DOM Fingerprinted)</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- Section 3: Dual Delivery -->
+      <section id="sec-3" class="glass-card rounded-2xl p-6 sm:p-8 space-y-6">
+        <h3 class="text-xl font-bold text-white">Dual Delivery Operational Models</h3>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div class="p-5 rounded-xl bg-slate-900/80 border border-slate-800 space-y-3">
+            <div class="flex items-center justify-between">
+              <span class="text-xs font-bold uppercase tracking-wider px-2.5 py-0.5 rounded bg-emerald-500/20 text-emerald-300">Architecture A</span>
+              <span class="text-xs text-slate-400">100% Policy Compliant</span>
+            </div>
+            <h4 class="text-base font-bold text-white">Cloud API Assistive Reminder Model</h4>
+            <p class="text-xs text-slate-300 leading-relaxed">
+              At scheduled time, alerts <strong>Alice</strong> with an interactive Call-to-Action URL button. Tapping deep-links into Alice's native WhatsApp chat with Bob with the text pre-filled.
+            </p>
+            <div class="p-3 rounded bg-amber-950/30 border border-amber-700/40 text-xs text-amber-200">
+              <strong>V2.0 Expiry Guard:</strong> If <code>NOW() - last_inbound_at > 24h</code>, dispatches pre-approved Meta <strong>Utility Template</strong> (<code>scheduled_reminder_cta_v1</code>) with dynamic button variable.
+            </div>
+          </div>
+
+          <div class="p-5 rounded-xl bg-slate-900/80 border border-slate-800 space-y-3">
+            <div class="flex items-center justify-between">
+              <span class="text-xs font-bold uppercase tracking-wider px-2.5 py-0.5 rounded bg-sky-500/20 text-sky-300">Architecture B</span>
+              <span class="text-xs text-slate-400">100% Autonomous P2P</span>
+            </div>
+            <h4 class="text-base font-bold text-white">Baileys Multi-Device Companion Node</h4>
+            <p class="text-xs text-slate-300 leading-relaxed">
+              Alice links her personal account via an <strong>8-character Pairing Code</strong>. Messages are dispatched autonomously from Alice's real phone number in the background.
+            </p>
+            <div class="p-3 rounded bg-sky-950/30 border border-sky-700/40 text-xs text-sky-200">
+              <strong>V2.0 Anti-Ban Guard:</strong> Enforces per-sender Redis token lock (<code>pacing:sender:<user_id></code>), Gaussian typing delays, and AES-256-GCM Signal key encryption.
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Section 4: Unit Economics -->
+      <section id="sec-4" class="glass-card rounded-2xl p-6 sm:p-8 space-y-4">
+        <h3 class="text-xl font-bold text-white">Unit Economics & Cost Scaling Analysis</h3>
+        <div class="overflow-x-auto rounded-xl border border-slate-800">
+          <table class="w-full text-left border-collapse text-xs">
+            <thead>
+              <tr class="bg-slate-900/90 text-slate-200 border-b border-slate-800">
+                <th class="p-3 font-semibold">Monthly Volume</th>
+                <th class="p-3 font-semibold">Cloud API (Assistive Model — APAC)</th>
+                <th class="p-3 font-semibold">Cloud API (Assistive Model — US/EU)</th>
+                <th class="p-3 font-semibold text-emerald-400">Baileys Companion (Self-Hosted VPS)</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-slate-800/70 text-slate-300">
+              <tr>
+                <td class="p-3 font-medium text-white">1,000 Messages</td>
+                <td class="p-3">$1.26 Meta + $5.00 VPS = <strong>$6.26</strong></td>
+                <td class="p-3">$10.50 Meta + $5.00 VPS = <strong>$15.50</strong></td>
+                <td class="p-3">$0.00 Meta + $12.00 VPS = <strong>$12.00</strong></td>
+              </tr>
+              <tr>
+                <td class="p-3 font-medium text-white">10,000 Messages</td>
+                <td class="p-3">$12.60 Meta + $15.00 VPS = <strong>$27.60</strong></td>
+                <td class="p-3">$105.00 Meta + $15.00 VPS = <strong>$120.00</strong></td>
+                <td class="p-3">$0.00 Meta + $28.00 VPS = <strong>$28.00</strong></td>
+              </tr>
+              <tr>
+                <td class="p-3 font-medium text-white">100,000 Messages</td>
+                <td class="p-3">$126.00 Meta + $80.00 Infra = <strong>$206.00</strong></td>
+                <td class="p-3">$1,050.00 Meta + $80.00 Infra = <strong>$1,130.00</strong></td>
+                <td class="p-3 text-emerald-400 font-semibold">$0.00 Meta + $160.00 Infra = <strong>$160.00 (Massive Savings)</strong></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- ===================================================================== -->
+      <!-- LOW-LEVEL DESIGN (LLD)                                                -->
+      <!-- ===================================================================== -->
+      <div class="pt-6 border-t border-slate-800">
+        <span class="text-xs font-bold uppercase tracking-widest text-fuchsia-400">Module & Algorithmic Design</span>
+        <h2 class="text-3xl font-extrabold text-white mt-1">Low-Level Design (LLD)</h2>
+      </div>
+
+      <!-- Section 8: LLD Design Patterns -->
+      <section id="lld-patterns" class="glass-card rounded-2xl p-6 sm:p-8 space-y-6">
+        <div class="flex items-center justify-between flex-wrap gap-2">
+          <h3 class="text-xl font-bold text-white">8. LLD Software Design Patterns & Class Architecture</h3>
+          <span class="text-xs px-2.5 py-0.5 rounded badge-lld font-mono">Design Patterns</span>
+        </div>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs">
+          <div class="p-4 rounded-xl bg-slate-900/80 border border-slate-800 space-y-1.5">
+            <span class="font-bold text-fuchsia-400">1. State Pattern (Conversational FSM)</span>
+            <p class="text-slate-300">Isolates step-by-step wizard logic into discrete state objects (<code>IDLE</code>, <code>STEP1_RECIPIENT</code>, <code>STEP2_PAYLOAD</code>, <code>STEP3_TIMING</code>, <code>STEP4_RECURRENCE</code>, <code>STEP5_CONFIRM</code>, <code>EDIT_ROUTER</code>). Each state implements input parsing, validation guards, and reprompting.</p>
+          </div>
+          <div class="p-4 rounded-xl bg-slate-900/80 border border-slate-800 space-y-1.5">
+            <span class="font-bold text-fuchsia-400">2. Strategy Pattern (Recurrence Engine)</span>
+            <p class="text-slate-300">Encapsulates wall-clock calendar mathematics behind interchangeable strategy classes: <code>OnceStrategy</code>, <code>DailyStrategy</code>, <code>WeekdaysStrategy</code>, <code>WeeklyStrategy</code>, <code>MonthlyStrategy</code> (with anchor day preservation), and <code>CronStrategy</code>.</p>
+          </div>
+          <div class="p-4 rounded-xl bg-slate-900/80 border border-slate-800 space-y-1.5">
+            <span class="font-bold text-fuchsia-400">3. Factory Pattern (Transport Engine)</span>
+            <p class="text-slate-300"><code>WhatsAppTransportFactory</code> produces either <code>BaileysSocketTransport</code> (for P2P Noise multi-device connections) or <code>CloudApiWebhookTransport</code> (for official Meta WABA accounts) based on user profile settings.</p>
+          </div>
+          <div class="p-4 rounded-xl bg-slate-900/80 border border-slate-800 space-y-1.5">
+            <span class="font-bold text-fuchsia-400">4. Producer-Consumer Priority Queue</span>
+            <p class="text-slate-300">The 60s Look-Ahead Feeder operates as a producer populating a Redis priority sorted set (BullMQ delayed queue), while distributed Delivery Workers act as consumers triggering execution with millisecond accuracy.</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- Section 9: LLD FSM State Transition Matrix -->
+      <section id="lld-fsm" class="glass-card rounded-2xl p-6 sm:p-8 space-y-4">
+        <h3 class="text-xl font-bold text-white">9. LLD Conversational FSM Transition Matrix</h3>
+        <div class="overflow-x-auto rounded-xl border border-slate-800">
+          <table class="w-full text-left border-collapse text-xs">
+            <thead>
+              <tr class="bg-slate-900/90 text-slate-200 border-b border-slate-800">
+                <th class="p-3 font-semibold">Current State</th>
+                <th class="p-3 font-semibold">Inbound Event</th>
+                <th class="p-3 font-semibold">Guard Condition</th>
+                <th class="p-3 font-semibold">Next State</th>
+                <th class="p-3 font-semibold">Action Executed</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-slate-800/70 text-slate-300">
+              <tr>
+                <td class="p-3 font-mono text-emerald-400">IDLE</td>
+                <td class="p-3">"schedule" or <code>/schedule</code></td>
+                <td class="p-3">None</td>
+                <td class="p-3 font-mono">STEP1_RECIPIENT</td>
+                <td class="p-3">Init Redis draft (TTL 15m); prompt for contact.</td>
+              </tr>
+              <tr>
+                <td class="p-3 font-mono text-emerald-400">STEP1_RECIPIENT</td>
+                <td class="p-3">vCard / E.164 phone / alias</td>
+                <td class="p-3">Valid phone or known alias</td>
+                <td class="p-3 font-mono">STEP2_PAYLOAD</td>
+                <td class="p-3">Resolve JID; buffer recipient in draft; prompt message.</td>
+              </tr>
+              <tr>
+                <td class="p-3 font-mono text-emerald-400">STEP2_PAYLOAD</td>
+                <td class="p-3">Text message or Media upload</td>
+                <td class="p-3">Payload non-empty</td>
+                <td class="p-3 font-mono">STEP3_TIMING</td>
+                <td class="p-3">Store payload in draft; display user timezone; prompt time.</td>
+              </tr>
+              <tr>
+                <td class="p-3 font-mono text-emerald-400">STEP3_TIMING</td>
+                <td class="p-3">Natural language time string</td>
+                <td class="p-3">Parsed time &gt; <code>NOW() + 60s</code></td>
+                <td class="p-3 font-mono">STEP4_RECURRENCE</td>
+                <td class="p-3">Store UTC ISO timestamp; prompt recurrence options.</td>
+              </tr>
+              <tr>
+                <td class="p-3 font-mono text-emerald-400">STEP4_RECURRENCE</td>
+                <td class="p-3">Once / Daily / Weekdays / Weekly / Monthly</td>
+                <td class="p-3">Valid option selected</td>
+                <td class="p-3 font-mono">STEP5_CONFIRM</td>
+                <td class="p-3">Render confirmation card with <code>[Confirm]</code>, <code>[Edit]</code>, <code>[Cancel]</code>.</td>
+              </tr>
+              <tr>
+                <td class="p-3 font-mono text-emerald-400">STEP5_CONFIRM</td>
+                <td class="p-3">User taps <code>[Confirm]</code></td>
+                <td class="p-3">None</td>
+                <td class="p-3 font-mono">IDLE</td>
+                <td class="p-3">Compute SHA-256 idempotency key; commit to DB; clear draft.</td>
+              </tr>
+              <tr>
+                <td class="p-3 font-mono text-emerald-400">STEP5_CONFIRM</td>
+                <td class="p-3">User taps <code>[Edit]</code></td>
+                <td class="p-3">None</td>
+                <td class="p-3 font-mono">EDIT_ROUTER</td>
+                <td class="p-3">Prompt edit picker (1: Contact, 2: Message, 3: Time, 4: Recurrence).</td>
+              </tr>
+              <tr>
+                <td class="p-3 font-mono text-emerald-400">ANY STATE</td>
+                <td class="p-3">"cancel", "abort", "exit"</td>
+                <td class="p-3">None</td>
+                <td class="p-3 font-mono">IDLE</td>
+                <td class="p-3">Purge Redis session draft; send cancel confirmation.</td>
+              </tr>
+              <tr>
+                <td class="p-3 font-mono text-emerald-400">ANY STATE</td>
+                <td class="p-3">"back"</td>
+                <td class="p-3">State != IDLE</td>
+                <td class="p-3 font-mono">PREVIOUS_STEP</td>
+                <td class="p-3">Return to immediately preceding wizard step; re-prompt.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- Section 10: WhatsApp Mobile Simulator -->
+      <section id="lld-simulator" class="glass-card rounded-2xl p-6 sm:p-8 space-y-6">
+        <h3 class="text-xl font-bold text-white">10. WhatsApp Mobile Interface Simulator (5-Step Wizard)</h3>
+        <div class="grid grid-cols-1 md:grid-cols-12 gap-8 items-start">
+          <div class="md:col-span-5 flex justify-center">
+            <div class="phone-mockup max-w-[380px]">
+              <div class="bg-[#202c33] text-white p-3.5 flex items-center space-x-3 border-b border-slate-700">
+                <div class="w-8 h-8 rounded-full bg-emerald-600 flex items-center justify-center font-bold text-sm">🤖</div>
+                <div>
+                  <div class="font-semibold text-xs">Scheduler Assistant</div>
+                  <div class="text-[10px] text-emerald-400">Online • Business Account</div>
+                </div>
+              </div>
+              <div class="wa-chat-bg p-3.5 flex flex-col space-y-2.5 max-h-[500px] overflow-y-auto text-xs">
+                <div class="chat-user p-2.5 rounded-lg max-w-[85%]">
+                  Schedule a message
+                  <div class="text-[9px] text-slate-300 text-right mt-1">10:14 AM ✓✓</div>
+                </div>
+                <div class="chat-bot p-2.5 rounded-lg max-w-[85%] space-y-1.5">
+                  <p>👋 Let's set up your scheduled message!</p>
+                  <p class="font-bold text-emerald-400">Step 1/5: Who is the recipient?</p>
+                  <p class="text-[11px] text-slate-300">Share a contact card 📎, type an international phone number, or pick an alias.</p>
+                  <div class="space-y-1 pt-1 border-t border-slate-700">
+                    <div class="bg-slate-700 text-sky-300 text-center py-1 rounded font-medium">📁 Share Contact vCard</div>
+                    <div class="bg-slate-700 text-sky-300 text-center py-1 rounded font-medium">⚡ Select Saved Alias</div>
+                  </div>
+                  <div class="text-[9px] text-slate-400 text-right">10:14 AM</div>
+                </div>
+                <div class="chat-user p-2 rounded-lg max-w-[85%]">
+                  <div class="bg-slate-800/80 p-2 rounded flex items-center space-x-2 border border-slate-700">
+                    <span class="text-base">👤</span>
+                    <div>
+                      <div class="font-bold text-[11px]">Bob Smith</div>
+                      <div class="text-[10px] text-slate-400">+1 (415) 555-0199</div>
+                    </div>
+                  </div>
+                  <div class="text-[9px] text-slate-300 text-right mt-1">10:15 AM ✓✓</div>
+                </div>
+                <div class="chat-bot p-2.5 rounded-lg max-w-[85%] space-y-1">
+                  <p>Recipient: <strong>Bob Smith</strong> (+14155550199).</p>
+                  <p class="font-bold text-emerald-400">Step 2/5: What is your message?</p>
+                  <div class="text-[9px] text-slate-400 text-right">10:15 AM</div>
+                </div>
+                <div class="chat-user p-2.5 rounded-lg max-w-[85%]">
+                  Hey Bob! The Q4 roadmap report is finalized. Let's sync tomorrow morning!
+                  <div class="text-[9px] text-slate-300 text-right mt-1">10:16 AM ✓✓</div>
+                </div>
+                <div class="chat-bot p-2.5 rounded-lg max-w-[85%] space-y-1">
+                  <p>Message captured.</p>
+                  <p class="font-bold text-emerald-400">Step 3/5: When should this be sent?</p>
+                  <p class="text-[11px] text-slate-300"><em>(Your timezone: America/New_York)</em></p>
+                  <div class="text-[9px] text-slate-400 text-right">10:16 AM</div>
+                </div>
+                <div class="chat-user p-2.5 rounded-lg max-w-[85%]">
+                  tomorrow at 9:30 AM
+                  <div class="text-[9px] text-slate-300 text-right mt-1">10:16 AM ✓✓</div>
+                </div>
+                <div class="chat-bot p-2.5 rounded-lg max-w-[85%] space-y-1.5">
+                  <div class="font-bold text-emerald-400">📋 Schedule Confirmation</div>
+                  <div class="text-[11px] text-slate-300 space-y-0.5">
+                    <div>• <strong>To:</strong> Bob Smith (+14155550199)</div>
+                    <div>• <strong>When:</strong> Nov 10, 2026 at 9:30 AM EST</div>
+                    <div>• <strong>Repeat:</strong> Once</div>
+                  </div>
+                  <div class="space-y-1 pt-1 border-t border-slate-700">
+                    <div class="bg-emerald-600 text-white text-center py-1 rounded font-bold">✅ Confirm Schedule</div>
+                    <div class="bg-slate-700 text-slate-300 text-center py-1 rounded font-medium">✏️ Edit Details</div>
+                  </div>
+                  <div class="text-[9px] text-slate-400 text-right">10:17 AM</div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="md:col-span-7 space-y-3 text-xs">
+            <h4 class="text-sm font-bold text-white mb-2">Technical Implementation of Wizard Steps</h4>
+            <div class="p-3.5 rounded-xl bg-slate-900/80 border border-slate-800 space-y-1">
+              <span class="font-bold text-emerald-400">Step 1: Contact Resolution</span>
+              <p class="text-slate-300">Accepts WhatsApp vCard attachments, parses E.164 phone numbers via <code>libphonenumber-js</code>, or searches the <code>contacts</code> table for custom aliases.</p>
+            </div>
+            <div class="p-3.5 rounded-xl bg-slate-900/80 border border-slate-800 space-y-1">
+              <span class="font-bold text-emerald-400">Step 2: Media & Text Payload</span>
+              <p class="text-slate-300">Buffers text or streams media to S3. Audio voice notes, PDF documents, and images are pre-warmed for instant dispatch.</p>
+            </div>
+            <div class="p-3.5 rounded-xl bg-slate-900/80 border border-slate-800 space-y-1">
+              <span class="font-bold text-emerald-400">Step 3: Temporal NLP & Timezone Anchoring</span>
+              <p class="text-slate-300">Parses expressions using <code>chrono-node</code> relative to the user's stored IANA timezone. Verifies execution is &gt;60s in the future.</p>
+            </div>
+            <div class="p-3.5 rounded-xl bg-slate-900/80 border border-slate-800 space-y-1">
+              <span class="font-bold text-emerald-400">Step 4 & 5: Recurrence & ACID Commit</span>
+              <p class="text-slate-300">Calculates anchor day preservation. Tapping "Confirm" generates deterministic SHA-256 idempotency key and commits to PostgreSQL.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Section 11: LLD Algorithms -->
+      <section id="lld-algorithms" class="glass-card rounded-2xl p-6 sm:p-8 space-y-6">
+        <h3 class="text-xl font-bold text-white">11. LLD Concrete Algorithmic Formulations</h3>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs">
+          <div class="p-4 rounded-xl bg-slate-900/80 border border-slate-800 space-y-2">
+            <span class="font-bold text-emerald-400">Algorithm 1: Multi-Modal Typing Cadence</span>
+            <p class="text-slate-300 leading-relaxed">Emulates human typing cadence before socket dispatch to evade Meta behavioral anti-bot heuristics:</p>
+            <div class="p-3 rounded bg-slate-950 font-mono text-[11px] text-emerald-300 space-y-1">
+              <div>// Mode 1: <= 120 characters</div>
+              <div>T_type = min(5.0, len * 0.045 + Gaussian(1.5, 0.4));</div>
+              <div>// Mode 2: > 120 characters (Review Delay)</div>
+              <div>T_type = Uniform(1.2, 2.8) seconds;</div>
+              <div class="text-slate-400">// Sequence: available -> composing (wait) -> paused -> send</div>
+            </div>
+          </div>
+
+          <div class="p-4 rounded-xl bg-slate-900/80 border border-slate-800 space-y-2">
+            <span class="font-bold text-emerald-400">Algorithm 2: Wall-Clock DST Invariance</span>
+            <p class="text-slate-300 leading-relaxed">Calculates recurrence in calendar dimension while preserving month-end anchor days:</p>
+            <div class="p-3 rounded bg-slate-950 font-mono text-[11px] text-emerald-300 space-y-1">
+              <div>t_local = Luxon.fromJSDate(last_utc, { zone: user_tz });</div>
+              <div>next_local = t_local.plus({ days: 1 }); // 23h/25h safe</div>
+              <div>target_day = min(anchor_day, next_local.daysInMonth);</div>
+              <div>next_local = next_local.set({ day: target_day });</div>
+              <div>return next_local.toUTC().toJSDate();</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Section 12: LLD Hybrid Queue Engine -->
+      <section id="lld-feeder" class="glass-card rounded-2xl p-6 sm:p-8 space-y-4">
+        <h3 class="text-xl font-bold text-white">12. LLD Two-Tier Hybrid Scheduling Engine</h3>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-xs">
+          <div class="p-4 rounded-xl bg-slate-900/80 border border-slate-800">
+            <h4 class="font-bold text-rose-400 mb-1">Pure Redis Delay Queue</h4>
+            <p class="text-slate-300">1M jobs scheduled months ahead consumes ~1.8 GB RAM. Risk of data loss on non-AOF restart.</p>
+          </div>
+          <div class="p-4 rounded-xl bg-slate-900/80 border border-slate-800">
+            <h4 class="font-bold text-amber-400 mb-1">Pure DB Polling</h4>
+            <p class="text-slate-300">20 workers polling every 1s generate 1.72M queries/day, choking CPU and connection pools.</p>
+          </div>
+          <div class="p-4 rounded-xl bg-slate-900/80 border border-emerald-700/50">
+            <h4 class="font-bold text-emerald-400 mb-1">Two-Tier Hybrid Engine</h4>
+            <p class="text-slate-300">PostgreSQL holds all future jobs (0 MB RAM). 60s Feeder stages next 5m into BullMQ (<250 KB RAM).</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- ===================================================================== -->
+      <!-- PICTORIAL DATABASE ARCHITECTURE (NO CODE BLOCKS)                      -->
+      <!-- ===================================================================== -->
+      <div class="pt-6 border-t border-slate-800">
+        <span class="text-xs font-bold uppercase tracking-widest text-emerald-400">Database Design</span>
+        <h2 class="text-3xl font-extrabold text-white mt-1">Pictorial Database Architecture</h2>
+      </div>
+
+      <!-- Section 13: Visual ER Diagram -->
+      <section id="db-er-diagram" class="glass-card rounded-2xl p-6 sm:p-8 space-y-6">
+        <div class="flex items-center justify-between flex-wrap gap-2">
+          <h3 class="text-xl font-bold text-white">13. Visual Entity-Relationship (ER) Diagram</h3>
+          <span class="text-xs px-2.5 py-0.5 rounded badge-fix font-mono">Pictorial Model</span>
+        </div>
+        <p class="text-xs text-slate-300 leading-relaxed">
+          The relational schema linking user accounts, address books, master scheduled queues, execution ledgers, and AES-256-GCM encrypted WhatsApp session keys:
+        </p>
+        <div class="bg-slate-950/80 p-4 rounded-xl border border-slate-800 overflow-x-auto">
+          <div class="mermaid">
+erDiagram
+    USERS ||--o{ CONTACTS : "manages (1:N)"
+    USERS ||--o{ SCHEDULED_JOBS : "owns (1:N)"
+    USERS ||--o| WHATSAPP_SESSIONS : "authenticates (1:1)"
+    WHATSAPP_SESSIONS ||--o{ WHATSAPP_SIGNAL_KEYS : "stores prekeys (1:N)"
+    SCHEDULED_JOBS ||--o{ JOB_EXECUTION_LOGS : "records execution (1:N)"
+
+    USERS {
+        UUID id PK "Primary Key"
+        VARCHAR phone_jid UK "WhatsApp JID (+1415...)"
+        VARCHAR display_name "Profile Name"
+        VARCHAR timezone "IANA Zone (America/New_York)"
+        ENUM delivery_mode "ASSISTIVE_CLOUD_API | BAILEYS"
+        TIMESTAMPTZ last_inbound_at "24h Meta Window Watchdog"
+        ENUM status "ACTIVE | SUSPENDED"
+    }
+
+    CONTACTS {
+        UUID id PK "Primary Key"
+        UUID user_id FK "References USERS(id)"
+        VARCHAR contact_jid "Recipient WhatsApp JID"
+        VARCHAR alias "Shorthand Alias (Mom, Boss)"
+        VARCHAR display_name "Contact Full Name"
+        ENUM recipient_type "INDIVIDUAL | GROUP"
+    }
+
+    SCHEDULED_JOBS {
+        BIGINT id PK "Primary Key (Auto-Increment)"
+        VARCHAR job_uid UK "Human-Readable ID (SCH-1042)"
+        UUID user_id FK "References USERS(id)"
+        VARCHAR recipient_jid "Target Recipient JID"
+        ENUM message_type "TEXT | IMAGE | DOC | AUDIO"
+        JSONB payload "Text & S3 Media Keys"
+        VARCHAR user_timezone "Anchor Timezone"
+        ENUM recurrence_type "ONCE | DAILY | WEEKDAYS | WEEKLY | MONTHLY"
+        TIMESTAMPTZ scheduled_at_utc "Immutable Anchor Timestamp"
+        TIMESTAMPTZ next_run_at_utc "Indexed Next Run Target"
+        VARCHAR idempotency_key UK "SHA-256 Hex Mutex"
+        VARCHAR wa_client_msg_id "22-Char Stanza ID (3EB0...)"
+        ENUM status "PENDING | QUEUED | PROCESSING | SENT | FAILED"
+    }
+
+    JOB_EXECUTION_LOGS {
+        BIGINT id PK "Primary Key"
+        BIGINT job_id FK "References SCHEDULED_JOBS(id)"
+        TIMESTAMPTZ executed_at_utc "Execution Time"
+        ENUM status "SUCCESS | FAILURE | MISFIRED"
+        VARCHAR whatsapp_message_id "WhatsApp Network ACK ID"
+        TEXT error_details "Error Diagnostics"
+        INT duration_ms "Execution Duration"
+    }
+
+    WHATSAPP_SESSIONS {
+        UUID id PK "Primary Key"
+        UUID user_id FK "References USERS(id) (1:1)"
+        VARCHAR phone_number "Paired Phone Number"
+        BYTEA encrypted_creds "AES-256-GCM Encrypted Creds"
+        BYTEA creds_iv "12-Byte GCM IV"
+        BYTEA creds_auth_tag "16-Byte GCM Tag"
+        BOOLEAN is_active "Connection Status"
+    }
+
+    WHATSAPP_SIGNAL_KEYS {
+        UUID id PK "Primary Key"
+        UUID session_id FK "References WHATSAPP_SESSIONS(id)"
+        VARCHAR key_type "identity | pre-key | session"
+        VARCHAR key_id "Prekey Identifier"
+        BYTEA encrypted_key_data "AES-256-GCM Key Bytes"
+        BYTEA key_iv "12-Byte GCM IV"
+        BYTEA key_auth_tag "16-Byte GCM Tag"
+    }
+          </div>
+        </div>
+      </section>
+
+      <!-- Section 14: Schema Table Cards -->
+      <section id="db-schema-cards" class="glass-card rounded-2xl p-6 sm:p-8 space-y-6">
+        <h3 class="text-xl font-bold text-white">14. Relational Schema Table Cards</h3>
+        <p class="text-xs text-slate-300">
+          Visual inspection cards depicting column names, data types, primary keys, foreign keys, and cryptographic attributes:
+        </p>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          <!-- Card 1: users -->
+          <div class="db-table-card">
+            <div class="bg-slate-900 px-3.5 py-2.5 border-b-2 border-emerald-500 flex items-center justify-between">
+              <span class="font-mono font-bold text-xs text-white">📁 users</span>
+              <span class="text-[10px] uppercase font-bold text-emerald-400">Core Account</span>
+            </div>
+            <div class="divide-y divide-slate-800/80">
+              <div class="db-col-row">
+                <span class="font-mono text-white">id</span>
+                <span class="font-mono text-slate-400">UUID</span>
+                <span class="badge-pk px-1.5 py-0.5 rounded text-[9px] font-bold">PK</span>
+              </div>
+              <div class="db-col-row">
+                <span class="font-mono text-white">phone_jid</span>
+                <span class="font-mono text-slate-400">VARCHAR(64)</span>
+                <span class="badge-uk px-1.5 py-0.5 rounded text-[9px] font-bold">UK</span>
+              </div>
+              <div class="db-col-row">
+                <span class="font-mono text-white">timezone</span>
+                <span class="font-mono text-slate-400">VARCHAR(64)</span>
+                <span class="text-emerald-400 text-[10px]">IANA</span>
+              </div>
+              <div class="db-col-row">
+                <span class="font-mono text-white">delivery_mode</span>
+                <span class="font-mono text-slate-400">ENUM</span>
+                <span class="text-sky-400 text-[10px]">P2P / CTA</span>
+              </div>
+              <div class="db-col-row">
+                <span class="font-mono text-white">last_inbound_at</span>
+                <span class="font-mono text-slate-400">TIMESTAMPTZ</span>
+                <span class="badge-idx px-1.5 py-0.5 rounded text-[9px] font-bold">24h Watch</span>
+              </div>
+              <div class="db-col-row">
+                <span class="font-mono text-white">status</span>
+                <span class="font-mono text-slate-400">ENUM</span>
+                <span class="text-slate-400 text-[10px]">ACTIVE</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Card 2: scheduled_jobs -->
+          <div class="db-table-card">
+            <div class="bg-slate-900 px-3.5 py-2.5 border-b-2 border-emerald-500 flex items-center justify-between">
+              <span class="font-mono font-bold text-xs text-white">⏱️ scheduled_jobs</span>
+              <span class="text-[10px] uppercase font-bold text-emerald-400">Master Queue</span>
+            </div>
+            <div class="divide-y divide-slate-800/80">
+              <div class="db-col-row">
+                <span class="font-mono text-white">id</span>
+                <span class="font-mono text-slate-400">BIGINT</span>
+                <span class="badge-pk px-1.5 py-0.5 rounded text-[9px] font-bold">PK</span>
+              </div>
+              <div class="db-col-row">
+                <span class="font-mono text-white">job_uid</span>
+                <span class="font-mono text-slate-400">VARCHAR(32)</span>
+                <span class="badge-uk px-1.5 py-0.5 rounded text-[9px] font-bold">UK</span>
+              </div>
+              <div class="db-col-row">
+                <span class="font-mono text-white">user_id</span>
+                <span class="font-mono text-slate-400">UUID</span>
+                <span class="badge-fk px-1.5 py-0.5 rounded text-[9px] font-bold">FK</span>
+              </div>
+              <div class="db-col-row">
+                <span class="font-mono text-white">payload</span>
+                <span class="font-mono text-slate-400">JSONB</span>
+                <span class="text-slate-400 text-[10px]">Text/S3</span>
+              </div>
+              <div class="db-col-row">
+                <span class="font-mono text-white">next_run_at_utc</span>
+                <span class="font-mono text-slate-400">TIMESTAMPTZ</span>
+                <span class="badge-idx px-1.5 py-0.5 rounded text-[9px] font-bold">INDEXED</span>
+              </div>
+              <div class="db-col-row">
+                <span class="font-mono text-white">idempotency_key</span>
+                <span class="font-mono text-slate-400">VARCHAR(64)</span>
+                <span class="badge-uk px-1.5 py-0.5 rounded text-[9px] font-bold">SHA256 UK</span>
+              </div>
+              <div class="db-col-row">
+                <span class="font-mono text-white">wa_client_msg_id</span>
+                <span class="font-mono text-slate-400">VARCHAR(24)</span>
+                <span class="text-sky-400 text-[10px]">3EB0... (22c)</span>
+              </div>
+              <div class="db-col-row">
+                <span class="font-mono text-white">status</span>
+                <span class="font-mono text-slate-400">ENUM</span>
+                <span class="badge-idx px-1.5 py-0.5 rounded text-[9px] font-bold">PARTIAL</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Card 3: contacts -->
+          <div class="db-table-card">
+            <div class="bg-slate-900 px-3.5 py-2.5 border-b-2 border-sky-500 flex items-center justify-between">
+              <span class="font-mono font-bold text-xs text-white">👥 contacts</span>
+              <span class="text-[10px] uppercase font-bold text-sky-400">Address Book</span>
+            </div>
+            <div class="divide-y divide-slate-800/80">
+              <div class="db-col-row">
+                <span class="font-mono text-white">id</span>
+                <span class="font-mono text-slate-400">UUID</span>
+                <span class="badge-pk px-1.5 py-0.5 rounded text-[9px] font-bold">PK</span>
+              </div>
+              <div class="db-col-row">
+                <span class="font-mono text-white">user_id</span>
+                <span class="font-mono text-slate-400">UUID</span>
+                <span class="badge-fk px-1.5 py-0.5 rounded text-[9px] font-bold">FK</span>
+              </div>
+              <div class="db-col-row">
+                <span class="font-mono text-white">alias</span>
+                <span class="font-mono text-slate-400">VARCHAR(64)</span>
+                <span class="badge-uk px-1.5 py-0.5 rounded text-[9px] font-bold">UK (u, a)</span>
+              </div>
+              <div class="db-col-row">
+                <span class="font-mono text-white">contact_jid</span>
+                <span class="font-mono text-slate-400">VARCHAR(64)</span>
+                <span class="text-slate-400 text-[10px]">WhatsApp JID</span>
+              </div>
+              <div class="db-col-row">
+                <span class="font-mono text-white">recipient_type</span>
+                <span class="font-mono text-slate-400">ENUM</span>
+                <span class="text-slate-400 text-[10px]">INDIV / GRP</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Card 4: job_execution_logs -->
+          <div class="db-table-card">
+            <div class="bg-slate-900 px-3.5 py-2.5 border-b-2 border-amber-500 flex items-center justify-between">
+              <span class="font-mono font-bold text-xs text-white">📜 job_execution_logs</span>
+              <span class="text-[10px] uppercase font-bold text-amber-400">Audit History</span>
+            </div>
+            <div class="divide-y divide-slate-800/80">
+              <div class="db-col-row">
+                <span class="font-mono text-white">id</span>
+                <span class="font-mono text-slate-400">BIGINT</span>
+                <span class="badge-pk px-1.5 py-0.5 rounded text-[9px] font-bold">PK</span>
+              </div>
+              <div class="db-col-row">
+                <span class="font-mono text-white">job_id</span>
+                <span class="font-mono text-slate-400">BIGINT</span>
+                <span class="badge-fk px-1.5 py-0.5 rounded text-[9px] font-bold">FK</span>
+              </div>
+              <div class="db-col-row">
+                <span class="font-mono text-white">executed_at_utc</span>
+                <span class="font-mono text-slate-400">TIMESTAMPTZ</span>
+                <span class="badge-idx px-1.5 py-0.5 rounded text-[9px] font-bold">INDEXED</span>
+              </div>
+              <div class="db-col-row">
+                <span class="font-mono text-white">status</span>
+                <span class="font-mono text-slate-400">ENUM</span>
+                <span class="text-emerald-400 text-[10px] font-bold">SUCCESS</span>
+              </div>
+              <div class="db-col-row">
+                <span class="font-mono text-white">whatsapp_message_id</span>
+                <span class="font-mono text-slate-400">VARCHAR(128)</span>
+                <span class="text-slate-400 text-[10px]">Net ACK</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Card 5: whatsapp_sessions -->
+          <div class="db-table-card">
+            <div class="bg-slate-900 px-3.5 py-2.5 border-b-2 border-purple-500 flex items-center justify-between">
+              <span class="font-mono font-bold text-xs text-white">🔑 whatsapp_sessions</span>
+              <span class="text-[10px] uppercase font-bold text-purple-400">Baileys Auth</span>
+            </div>
+            <div class="divide-y divide-slate-800/80">
+              <div class="db-col-row">
+                <span class="font-mono text-white">id</span>
+                <span class="font-mono text-slate-400">UUID</span>
+                <span class="badge-pk px-1.5 py-0.5 rounded text-[9px] font-bold">PK</span>
+              </div>
+              <div class="db-col-row">
+                <span class="font-mono text-white">user_id</span>
+                <span class="font-mono text-slate-400">UUID</span>
+                <span class="badge-fk px-1.5 py-0.5 rounded text-[9px] font-bold">FK (1:1)</span>
+              </div>
+              <div class="db-col-row">
+                <span class="font-mono text-white">encrypted_creds</span>
+                <span class="font-mono text-slate-400">BYTEA</span>
+                <span class="badge-enc px-1.5 py-0.5 rounded text-[9px] font-bold">AES-256</span>
+              </div>
+              <div class="db-col-row">
+                <span class="font-mono text-white">creds_iv</span>
+                <span class="font-mono text-slate-400">BYTEA</span>
+                <span class="text-purple-300 text-[10px]">12B GCM</span>
+              </div>
+              <div class="db-col-row">
+                <span class="font-mono text-white">creds_auth_tag</span>
+                <span class="font-mono text-slate-400">BYTEA</span>
+                <span class="text-purple-300 text-[10px]">16B Tag</span>
+              </div>
+              <div class="db-col-row">
+                <span class="font-mono text-white">is_active</span>
+                <span class="font-mono text-slate-400">BOOLEAN</span>
+                <span class="text-emerald-400 text-[10px]">TRUE/FALSE</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Card 6: whatsapp_signal_keys -->
+          <div class="db-table-card">
+            <div class="bg-slate-900 px-3.5 py-2.5 border-b-2 border-purple-500 flex items-center justify-between">
+              <span class="font-mono font-bold text-xs text-white">🔐 whatsapp_signal_keys</span>
+              <span class="text-[10px] uppercase font-bold text-purple-400">E2EE Pre-Keys</span>
+            </div>
+            <div class="divide-y divide-slate-800/80">
+              <div class="db-col-row">
+                <span class="font-mono text-white">id</span>
+                <span class="font-mono text-slate-400">UUID</span>
+                <span class="badge-pk px-1.5 py-0.5 rounded text-[9px] font-bold">PK</span>
+              </div>
+              <div class="db-col-row">
+                <span class="font-mono text-white">session_id</span>
+                <span class="font-mono text-slate-400">UUID</span>
+                <span class="badge-fk px-1.5 py-0.5 rounded text-[9px] font-bold">FK</span>
+              </div>
+              <div class="db-col-row">
+                <span class="font-mono text-white">key_type</span>
+                <span class="font-mono text-slate-400">VARCHAR(32)</span>
+                <span class="badge-uk px-1.5 py-0.5 rounded text-[9px] font-bold">UK (s,t,k)</span>
+              </div>
+              <div class="db-col-row">
+                <span class="font-mono text-white">encrypted_key_data</span>
+                <span class="font-mono text-slate-400">BYTEA</span>
+                <span class="badge-enc px-1.5 py-0.5 rounded text-[9px] font-bold">AES-256</span>
+              </div>
+              <div class="db-col-row">
+                <span class="font-mono text-white">key_auth_tag</span>
+                <span class="font-mono text-slate-400">BYTEA</span>
+                <span class="text-purple-300 text-[10px]">16B Tag</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Section 15: Partitioning & Indexing Graphic -->
+      <section id="db-partitioning" class="glass-card rounded-2xl p-6 sm:p-8 space-y-4">
+        <h3 class="text-xl font-bold text-white">15. Pictorial Partitioning & Indexing Architecture</h3>
+        <p class="text-xs text-slate-300">
+          PostgreSQL 16 Table Partitioning & Partial B-Tree Topology ensuring sub-millisecond polling queries:
+        </p>
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          <div class="p-4 rounded-xl bg-slate-900 border-t-4 border-t-emerald-500 space-y-1">
+            <span class="font-mono font-bold text-xs text-white">scheduled_jobs_2026_11</span>
+            <div class="text-[11px] text-slate-400">Range: 2026-11-01 &rarr; 12-01</div>
+            <span class="inline-block px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-300 text-[10px] font-bold mt-2">Active Partition</span>
+          </div>
+          <div class="p-4 rounded-xl bg-slate-900 border-t-4 border-t-slate-700 space-y-1">
+            <span class="font-mono font-bold text-xs text-white">scheduled_jobs_2026_12</span>
+            <div class="text-[11px] text-slate-400">Range: 2026-12-01 &rarr; 2027-01-01</div>
+            <span class="inline-block px-2 py-0.5 rounded bg-slate-800 text-slate-400 text-[10px] font-bold mt-2">Future Partition</span>
+          </div>
+          <div class="p-4 rounded-xl bg-slate-900 border-t-4 border-t-slate-700 space-y-1">
+            <span class="font-mono font-bold text-xs text-white">scheduled_jobs_2027_01</span>
+            <div class="text-[11px] text-slate-400">Range: 2027-01-01 &rarr; 02-01</div>
+            <span class="inline-block px-2 py-0.5 rounded bg-slate-800 text-slate-400 text-[10px] font-bold mt-2">Future Partition</span>
+          </div>
+          <div class="p-4 rounded-xl bg-slate-900 border-t-4 border-t-sky-500 space-y-1">
+            <span class="font-mono font-bold text-xs text-white">Partial B-Tree Index</span>
+            <div class="text-[11px] text-slate-400">WHERE status IN ('PENDING', 'QUEUED')</div>
+            <span class="inline-block px-2 py-0.5 rounded bg-sky-500/20 text-sky-300 text-[10px] font-bold mt-2">Scan Time: &lt; 0.2 ms</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- Section 10: Zero-Double-Send -->
+      <section id="sec-10" class="glass-card rounded-2xl p-6 sm:p-8 space-y-4">
+        <h3 class="text-xl font-bold text-white">16. Zero-Double-Send Guarantee & Rectified Recovery Sweeper</h3>
+        <p class="text-xs text-slate-300 leading-relaxed">
+          Four distinct layers protect against duplicate message transmissions:
+        </p>
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-4 text-xs">
+          <div class="p-3.5 rounded-xl bg-slate-900/80 border border-slate-800">
+            <span class="font-bold text-emerald-400 block mb-1">1. BullMQ Job ID</span>
+            <p class="text-slate-300">Staged using <code>opts: { jobId: idempotencyKey }</code>. Redis deduplicates overlapping feeder ticks.</p>
+          </div>
+          <div class="p-3.5 rounded-xl bg-slate-900/80 border border-slate-800">
+            <span class="font-bold text-emerald-400 block mb-1">2. Redis Mutex</span>
+            <p class="text-slate-300">Worker acquires <code>SET lock:job:<key> NX EX 60</code> and checks <code>GET done:job:<key></code> before socket write.</p>
+          </div>
+          <div class="p-3.5 rounded-xl bg-slate-900/80 border border-slate-800">
+            <span class="font-bold text-emerald-400 block mb-1">3. Pre-Flight DB State</span>
+            <p class="text-slate-300">Atomically updates <code>status='PROCESSING' WHERE status='QUEUED'</code>. Zero rows match if user cancelled.</p>
+          </div>
+          <div class="p-3.5 rounded-xl bg-slate-900/80 border border-slate-800">
+            <span class="font-bold text-emerald-400 block mb-1">4. 22-Char Stanza ID</span>
+            <p class="text-slate-300">Passed as <code>WA_MSG_ID = 3EB0...</code> into Baileys. WhatsApp network automatically deduplicates retransmissions.</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- Section 11: Anti-Ban -->
+      <section id="sec-11" class="glass-card rounded-2xl p-6 sm:p-8 space-y-4">
+        <h3 class="text-xl font-bold text-white">17. Anti-Ban Safeguards & Envelope Encryption</h3>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs">
+          <div class="p-4 rounded-xl bg-slate-900/80 border border-slate-800 space-y-1.5">
+            <span class="font-bold text-emerald-400">Per-Sender Outbound Serialization</span>
+            <p class="text-slate-300">Workers acquire <code>pacing:sender:<user_id></code> to serialize dispatches from Alice's account, preventing unnatural concurrent typing states across multiple chats.</p>
+          </div>
+          <div class="p-4 rounded-xl bg-slate-900/80 border border-slate-800 space-y-1.5">
+            <span class="font-bold text-sky-400">AES-256-GCM Signal Key Vault</span>
+            <p class="text-slate-300">Baileys session credentials and Signal identity/signed pre-keys are encrypted before DB storage using a 256-bit KMS Master Key and per-row 12-byte IVs.</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- Section 12: Roadmap -->
+      <section id="sec-12" class="glass-card rounded-2xl p-6 sm:p-8 space-y-4">
+        <h3 class="text-xl font-bold text-white">18. Phased Implementation Roadmap & Verification Matrix</h3>
+        <div class="overflow-x-auto rounded-xl border border-slate-800">
+          <table class="w-full text-left border-collapse text-xs">
+            <thead>
+              <tr class="bg-slate-900/90 text-slate-200 border-b border-slate-800">
+                <th class="p-3 font-semibold">Phase & Timeline</th>
+                <th class="p-3 font-semibold">Core Deliverables</th>
+                <th class="p-3 font-semibold">Verification Exit Criteria</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-slate-800/70 text-slate-300">
+              <tr>
+                <td class="p-3 font-semibold text-emerald-400">Phase 1 (Weeks 1–2)<br><span class="text-slate-400 font-normal">Core Infra & Crypto Vault</span></td>
+                <td class="p-3">PostgreSQL 16 DDL, AES-256-GCM Signal Key adapter, Baileys 8-Char Pairing Code flow, Cloud API webhook receiver, per-sender Redis pacing mutex.</td>
+                <td class="p-3">Single-phone Pairing Code links cleanly; Signal keys encrypted at rest; zero ban triggers across 500 paced test sends.</td>
+              </tr>
+              <tr>
+                <td class="p-3 font-semibold text-emerald-400">Phase 2 (Weeks 3–4)<br><span class="text-slate-400 font-normal">Conversational FSM & CLI</span></td>
+                <td class="p-3">Redis 5-step interactive wizard, vCard & S3 media streaming, <code>chrono-node</code> timezone-aware parser, Fast-Path CLI (<code>/schedule</code>, <code>/cancel</code>, <code>/edit</code>).</td>
+                <td class="p-3">100% wizard completion & branch edit coverage; immediate BullMQ eviction verified on <code>/cancel</code> and <code>/edit</code>.</td>
+              </tr>
+              <tr>
+                <td class="p-3 font-semibold text-emerald-400">Phase 3 (Weeks 5–6)<br><span class="text-slate-400 font-normal">Hybrid Queue & DST Engine</span></td>
+                <td class="p-3">60s Look-Ahead Feeder, BullMQ delayed workers, Luxon DST-invariant recurrence with anchor day preservation, 22-char deterministic <code>3EB0</code> stanza IDs.</td>
+                <td class="p-3">Zero clock drift across DST shifts; Jan 31 -> Feb 28 -> Mar 31 verified; 0 duplicate deliveries under chaos worker kill tests.</td>
+              </tr>
+              <tr>
+                <td class="p-3 font-semibold text-emerald-400">Phase 4 (Weeks 7–8)<br><span class="text-slate-400 font-normal">Resilience & Pre-Flight Checks</span></td>
+                <td class="p-3">Rectified 2m Sweeper daemon, Assistive Reminder 24h Utility Template fallback, Group Chat admin/membership pre-flight validator, S3 24h TTL cleaner.</td>
+                <td class="p-3">Orphaned <code>QUEUED</code> jobs recovered only after <code>next_run_at_utc + 3m</code>; expired 24h windows seamlessly fall back to Utility Template.</td>
+              </tr>
+              <tr>
+                <td class="p-3 font-semibold text-emerald-400">Phase 5 (Weeks 9–10)<br><span class="text-slate-400 font-normal">Load Testing & Observability</span></td>
+                <td class="p-3">Docker/K8s Helm manifests, Prometheus metrics (feeder lag, queue depth, socket reconnects), Grafana alerting dashboards.</td>
+                <td class="p-3">Sustains 10,000 scheduled jobs/hr with <500ms trigger lag and 99.95% delivery reliability.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+    </main>
+  </div>
+
+  <footer class="border-t border-slate-800/80 py-6 text-center text-xs text-slate-500">
+    WhatsApp Message Scheduler Bot — Master Technical Implementation Plan (V2.0 Rectified Edition) • Approved Architecture 2026
+  </footer>
+
+</body>
+</html>

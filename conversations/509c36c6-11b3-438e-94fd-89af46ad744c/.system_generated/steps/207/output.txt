@@ -1,0 +1,53 @@
+Command exited with code 0.
+
+Command output:
+# Functional Requirements Document (FRD)
+## In-WhatsApp Message Scheduler Chatbot
+
+**Document Identifier:** FRD-WAPP-SCHED-V1.0  
+**Project Name:** WhatsApp Message Scheduler Bot  
+**Document Status:** Approved for Implementation  
+**Version:** 1.0.0  
+**Effective Date:** November 2026  
+**Target Environment:** Node.js 22 LTS / PostgreSQL 16 / Redis 7.2 (BullMQ) / WhatsApp Multi-Device & Cloud API  
+**Author:** Lead Software Architect & Engineering Team  
+
+---
+
+## 1. System Overview & Functional Scope
+
+The **WhatsApp Message Scheduler Bot** is an automated messaging system operating directly inside WhatsApp. It allows users to create, view, modify, and delete scheduled messages for future delivery to individual contacts or group chats.
+
+The system integrates directly with two messaging backends:
+1. **Personal Account Automation (Mode B - Baileys WebSocket):** Full peer-to-peer delivery from the user's personal phone number using companion device session credentials.
+2. **Official Business API (Mode A - Cloud API Assistive Redirector):** Meta policy-compliant reminder system delivering interactive `wa.me` CTA buttons with Utility Template fallback.
+
+---
+
+## 2. Detailed Functional Requirements
+
+### Module 1: Authentication, Onboarding & Device Linking (FR-AUTH)
+
+```
++â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€+
+|                               MODULE 1: AUTHENTICATION (FR-AUTH)                            |
++â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¬â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¬â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€+
+| Req ID     | Requirement Title          | Functional Specification                          |
++â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¼â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¼â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€+
+| FR-AUTH-01 | User Auto-Provisioning     | On first inbound message, the system shall create |
+|            |                            | a record in `users` with default UTC timezone,    |
+|            |                            | locale `en-US`, and `status = 'ACTIVE'`.          |
++â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¼â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¼â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€+
+| FR-AUTH-02 | Single-Phone Pairing Code  | When user sends `/link`, the system shall request |
+|            | Flow                       | an 8-character pairing code via Baileys socket    |
+|            |                            | (`sock.requestPairingCode`) and return the code   |
+|            |                            | in chat for 1-tap notification pairing on mobile. |
++â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¼â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¼â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€+
+| FR-AUTH-03 | Signal Key Envelope        | Baileys session credentials and Signal pre-keys   |
+|            | Encryption                 | must be encrypted at the application layer with   |
+|            |                            | AES-256-GCM using a 256-bit KMS Master Key and    |
+|            |                            | random 12-byte IV before PostgreSQL persistence.  |
++â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¼â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¼â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€+
+| FR-AUTH-04 | Session Lifecycle & Ban    | System shall monitor socket disconnects:          |
+|            | Circuit Breakers           | â€¢ Code 401: Purge keys & notify user out-of-band. |
+|            |                            | â€¢ Code 403: Trigger immediate SIM-ban circuit     |

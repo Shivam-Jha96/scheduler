@@ -1,0 +1,496 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Partner Meeting Briefing & Strategic FAQ — WhatsApp & Omnichannel Scheduler</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    @page {
+      size: A4;
+      margin: 14mm 14mm 14mm 14mm;
+    }
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      color: #0f172a;
+      background-color: #ffffff;
+      line-height: 1.5;
+      font-size: 11pt;
+    }
+    code, pre {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 9.5pt;
+    }
+    .question-card {
+      border: 1px solid #e2e8f0;
+      border-radius: 8px;
+      padding: 14px 16px;
+      margin-bottom: 14px;
+      background-color: #ffffff;
+      page-break-inside: avoid;
+    }
+    .question-title {
+      font-size: 12pt;
+      font-weight: 700;
+      color: #1e293b;
+      margin-bottom: 6px;
+      display: flex;
+      align-items: center;
+    }
+    .theme-header {
+      font-size: 14pt;
+      font-weight: 800;
+      color: #0f172a;
+      border-bottom: 2px solid #2563eb;
+      padding-bottom: 4px;
+      margin-top: 22px;
+      margin-bottom: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      page-break-after: avoid;
+    }
+    .badge {
+      display: inline-block;
+      padding: 2px 8px;
+      border-radius: 4px;
+      font-size: 8.5pt;
+      font-weight: 600;
+      margin-right: 8px;
+      text-transform: uppercase;
+    }
+    .badge-blue { background-color: #dbeafe; color: #1e40af; border: 1px solid #bfdbfe; }
+    .badge-green { background-color: #dcfce7; color: #166534; border: 1px solid #bbf7d0; }
+    .badge-purple { background-color: #f3e8ff; color: #6b21a8; border: 1px solid #e9d5ff; }
+    .badge-amber { background-color: #fef3c7; color: #92400e; border: 1px solid #fde68a; }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 10px 0;
+      font-size: 9.5pt;
+    }
+    th, td {
+      border: 1px solid #cbd5e1;
+      padding: 6px 10px;
+      text-align: left;
+    }
+    th {
+      background-color: #f1f5f9;
+      font-weight: 700;
+      color: #1e293b;
+    }
+    .callout-box {
+      background-color: #f8fafc;
+      border-left: 4px solid #2563eb;
+      padding: 10px 14px;
+      margin: 8px 0;
+      border-radius: 0 6px 6px 0;
+      font-size: 10pt;
+    }
+  </style>
+</head>
+<body class="p-4 sm:p-8">
+
+  <!-- Document Header -->
+  <div class="border-b-2 border-slate-900 pb-4 mb-6">
+    <div class="flex items-center justify-between">
+      <div>
+        <span class="badge badge-blue">CONFIDENTIAL &bull; PARTNER BRIEFING</span>
+        <span class="badge badge-green">STATUS: READY FOR REVIEW</span>
+        <h1 class="text-2xl font-extrabold text-slate-900 tracking-tight mt-1">Partner Meeting Strategic Briefing & Q&A</h1>
+        <p class="text-xs text-slate-600 mt-0.5">Comprehensive Technical, Business Model & Operational Answers for the WhatsApp & Omnichannel Message Scheduler</p>
+      </div>
+      <div class="text-right text-xs text-slate-500 font-mono">
+        <div>Doc ID: BRIEF-PARTNER-QNA-V1.0</div>
+        <div>Date: November 2026</div>
+        <div>Platform: OSMP v2.0</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========================================================================= -->
+  <!-- THEME 1: TECHNICAL ARCHITECTURE & SCHEDULING MECHANICS -->
+  <!-- ========================================================================= -->
+  <div class="theme-header">Theme 1: Technical Architecture & Core Scheduling</div>
+
+  <!-- Q1 -->
+  <div class="question-card">
+    <div class="question-title">
+      <span class="badge badge-blue">Q1</span>
+      <span>What were the audit gaps identified between V1 and V2, and why do they matter?</span>
+    </div>
+    <p class="text-slate-700 text-xs sm:text-sm leading-relaxed mb-2">
+      In moving from the initial spike to an enterprise-grade production architecture, we conducted an exhaustive failure-mode audit and fixed 10 critical production edge cases:
+    </p>
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-2 text-xs">
+      <div class="p-2.5 rounded bg-slate-50 border border-slate-200">
+        <strong>1. Baileys 22-Char Stanza IDs:</strong> WhatsApp silently drops messages if the socket stanza ID is not strictly 22 alphanumeric characters. We enforce valid stanza generation.
+      </div>
+      <div class="p-2.5 rounded bg-slate-50 border border-slate-200">
+        <strong>2. Feeder vs. Sweeper Race:</strong> Separated polling time windows so the 60s feeder and the 5m crash recovery sweeper never grab or dispatch the same message twice.
+      </div>
+      <div class="p-2.5 rounded bg-slate-50 border border-slate-200">
+        <strong>3. In-Flight BullMQ Eviction:</strong> If Alice cancels a message loaded in Redis memory 2 minutes before send time, the system actively removes the job via <code>job.remove()</code>.
+      </div>
+      <div class="p-2.5 rounded bg-slate-50 border border-slate-200">
+        <strong>4. Single-Phone Pairing Code:</strong> Scanning QR codes requires a second screen. We implemented WhatsApp's native 8-digit pairing code (<code>1234-5678</code>) for 1-tap mobile pairing.
+      </div>
+      <div class="p-2.5 rounded bg-slate-50 border border-slate-200">
+        <strong>5. Per-Sender Typing Locks:</strong> Parallel socket transmissions from one phone number trigger instant spam bans. We serialize sends with realistic 3–6s typing delays.
+      </div>
+      <div class="p-2.5 rounded bg-slate-50 border border-slate-200">
+        <strong>6. 24-Hour Meta Cloud API Fallback:</strong> Automatically falls back to an approved Utility Template with a deep-link button if the 24-hour customer window is closed.
+      </div>
+      <div class="p-2.5 rounded bg-slate-50 border border-slate-200">
+        <strong>7. Signal Pre-Key AES-256 Encryption:</strong> Session keys grant full cryptographic control over WhatsApp accounts. We mandate AES-256-GCM envelope encryption with AWS KMS.
+      </div>
+      <div class="p-2.5 rounded bg-slate-50 border border-slate-200">
+        <strong>8. DST Gap & Fold Handling:</strong> Handled Daylight Saving Time shifts via Luxon disambiguation so 9:00 AM local time never drifts or double-fires across seasonal clock shifts.
+      </div>
+      <div class="p-2.5 rounded bg-slate-50 border border-slate-200">
+        <strong>9. Group Membership Pre-Flight:</strong> Prevents socket crashes by verifying active group membership before executing scheduled group broadcasts.
+      </div>
+      <div class="p-2.5 rounded bg-slate-50 border border-slate-200">
+        <strong>10. S3 Media Pre-Warming:</strong> Large image/document attachments are pre-cached into server RAM 30 seconds prior to scheduled dispatch to ensure sub-second delivery.
+      </div>
+    </div>
+  </div>
+
+  <!-- Q7 -->
+  <div class="question-card">
+    <div class="question-title">
+      <span class="badge badge-blue">Q7</span>
+      <span>How does the BullMQ Hybrid Approach work in simple terms?</span>
+    </div>
+    <div class="callout-box">
+      <strong>Core Analogy:</strong> Think of the scheduling system as an airport operation:
+    </div>
+    <ul class="text-xs sm:text-sm text-slate-700 space-y-1.5 list-disc list-inside mt-2">
+      <li><strong>Why not Database-Only (PostgreSQL)?</strong> If 100,000 users schedule messages and you poll PostgreSQL every second, database CPU spikes to 100% and crashes under disk I/O lock contention.</li>
+      <li><strong>Why not Queue-Only (Redis/BullMQ)?</strong> Redis stores jobs in RAM. Storing 100,000 messages scheduled 6 months out in Redis is financially wasteful, and if Redis restarts, long-term scheduled data could be lost.</li>
+      <li><strong>The Two-Tier Solution:</strong>
+        <ol class="list-decimal list-inside ml-4 mt-1 space-y-1">
+          <li><strong>PostgreSQL is the "Cold Warehouse":</strong> All 100,000 messages sit cheaply and durably on persistent disk.</li>
+          <li><strong>The 60-Second Feeder is the "Conveyor Belt":</strong> Every 60 seconds, a background process queries: <em>"Give me messages due in the next 5 minutes."</em></li>
+          <li><strong>BullMQ (Redis) is the "Launchpad":</strong> Only messages due within the immediate 5 minutes are held in RAM. BullMQ counts down and fires them with millisecond precision.</li>
+        </ol>
+      </li>
+    </ul>
+  </div>
+
+  <!-- Q10 -->
+  <div class="question-card">
+    <div class="question-title">
+      <span class="badge badge-blue">Q10</span>
+      <span>What is the "Sliding Buffer" (5-Minute Delay)? Does it delay message delivery?</span>
+    </div>
+    <p class="text-xs sm:text-sm text-slate-700 leading-relaxed">
+      <strong>No, it does NOT delay message delivery.</strong> The message is delivered at the exact second scheduled.
+    </p>
+    <p class="text-xs sm:text-sm text-slate-700 leading-relaxed mt-1">
+      "Sliding buffer" refers to our <strong>look-ahead staging window</strong>. If a message is scheduled for <strong>10:00:00 AM</strong>, the Feeder transfers the job from PostgreSQL into Redis at <strong>9:55:00 AM</strong> with a 5-minute countdown timer. At <strong>10:00:00.050 AM</strong>, BullMQ hits zero and fires immediately. This 5-minute cushion absorbs server spikes and network jitters so no deadline is ever missed.
+    </p>
+  </div>
+
+  <!-- Q14 -->
+  <div class="question-card">
+    <div class="question-title">
+      <span class="badge badge-blue">Q14</span>
+      <span>Elaboration on Section 12 (Hybrid Queue Engine) and Section 16 (Zero-Double-Send Guarantee)</span>
+    </div>
+    <div class="space-y-2 text-xs sm:text-sm text-slate-700">
+      <div>
+        <strong>Section 12 — Two-Tier Hybrid Scheduling Engine:</strong>
+        <p class="text-xs text-slate-600">The Feeder executes <code>SELECT ... FOR UPDATE SKIP LOCKED</code> on PostgreSQL 16 to guarantee that multiple horizontal feeder instances never lock or process duplicate records. Jobs are pushed into BullMQ with deterministic IDs (<code>jobId = scheduled_message.id</code>), guaranteeing single-instance registration in Redis.</p>
+      </div>
+      <div>
+        <strong>Section 16 — Zero-Double-Send Guarantee & Recovery Sweeper:</strong>
+        <p class="text-xs text-slate-600">Enforces a 4-tier safety shield: (1) DB row lock on claim, (2) BullMQ unique job ID deduplication, (3) Atomic Redis lock <code>SET lock:msg:{id} NX EX 600</code> right before socket transmission, and (4) An independent Recovery Sweeper running every 5 minutes that recovers stale jobs orphaned by sudden worker node crashes without overlapping with the live feeder.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Q15 -->
+  <div class="question-card">
+    <div class="question-title">
+      <span class="badge badge-blue">Q15</span>
+      <span>What is the difference between Anchor Time and Scheduler Time?</span>
+    </div>
+    <ul class="text-xs sm:text-sm text-slate-700 space-y-1 list-disc list-inside">
+      <li><strong>Anchor Time:</strong> The user's intended <strong>local wall-clock time</strong> in their IANA timezone (e.g., <code>09:00:00 AM</code> in <code>America/New_York</code>). This is permanent and invariant to seasonal shifts.</li>
+      <li><strong>Scheduler Trigger Time:</strong> The absolute UTC timestamp calculated for physical server dispatch (e.g., <code>14:00:00 UTC</code> during standard time, shifting to <code>13:00:00 UTC</code> during daylight saving time).</li>
+      <li><strong>When Updating:</strong> The user updates the <strong>Anchor Time</strong>; the recurrence engine re-computes the corresponding UTC <strong>Scheduler Time</strong> automatically.</li>
+    </ul>
+  </div>
+
+  <!-- ========================================================================= -->
+  <!-- THEME 2: BUSINESS MODEL, MONETIZATION & MOAT -->
+  <!-- ========================================================================= -->
+  <div class="theme-header">Theme 2: Business Model, Monetization & Competitive Moat</div>
+
+  <!-- Q2 -->
+  <div class="question-card">
+    <div class="question-title">
+      <span class="badge badge-purple">Q2</span>
+      <span>What exactly is the business model we are building toward?</span>
+    </div>
+    <p class="text-xs sm:text-sm text-slate-700 leading-relaxed mb-2">
+      We operate a high-margin <strong>Freemium Prosumer & SMB SaaS Model</strong>:
+    </p>
+    <table>
+      <thead>
+        <tr>
+          <th>Tier</th>
+          <th>Monthly Price</th>
+          <th>Feature Entitlements</th>
+          <th>Target Audience</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="font-bold">Free Tier</td>
+          <td>$0.00</td>
+          <td>15 scheduled messages/mo, text-only, viral footer tag</td>
+          <td>Casual individual users, acquisition funnel</td>
+        </tr>
+        <tr>
+          <td class="font-bold text-blue-600">Pro Tier</td>
+          <td>$7.99 – $9.99 / mo</td>
+          <td>Unlimited text, 500 active queue, images, recurring crons, no branding</td>
+          <td>Freelancers, consultants, realtors, coaches</td>
+        </tr>
+        <tr>
+          <td class="font-bold text-purple-600">Business Tier</td>
+          <td>$29.99 – $49.99 / mo</td>
+          <td>Multi-platform (WhatsApp + Viber + Discord), CSV bulk upload, Google Sheets sync</td>
+          <td>Small businesses, gym operators, clinics, agencies</td>
+        </tr>
+      </tbody>
+    </table>
+    <div class="callout-box">
+      <strong>Gross Margin:</strong> At ~$0.02 server cost per active user, a $9.99/month Pro subscription yields a <strong>>98% Gross Margin</strong>.
+    </div>
+  </div>
+
+  <!-- Q3 -->
+  <div class="question-card">
+    <div class="question-title">
+      <span class="badge badge-purple">Q3</span>
+      <span>If WhatsApp launches native scheduling one day, what is our survival plan?</span>
+    </div>
+    <p class="text-xs sm:text-sm text-slate-700 leading-relaxed mb-1.5">
+      If Meta introduces a basic "Send Later" feature (similar to Telegram or iOS 18), our business remains defensible through four distinct moats:
+    </p>
+    <ol class="text-xs sm:text-sm text-slate-700 space-y-1.5 list-decimal list-inside">
+      <li><strong>Omnichannel Unified Hub:</strong> WhatsApp will <em>never</em> schedule to Viber, Signal, Discord, or Telegram. We become the single command center across all messaging ecosystems.</li>
+      <li><strong>Advanced Recurrence & Business Logic:</strong> Any native WhatsApp tool will only support simple one-off delays. It will not handle complex business rules: <em>"Every 2nd Tuesday except bank holidays"</em>, <em>"Follow up in 48 hours if no reply"</em>, dynamic CRM variable injection, or Google Sheets sync.</li>
+      <li><strong>Headless Cloud Persistence:</strong> Native mobile schedulers (like Signal or Android SMS) die if the phone battery runs out or loses network. Our cloud scheduler fires 100% reliably 24/7/365 regardless of device status.</li>
+      <li><strong>Team Collaboration & Shared Inboxes:</strong> Multi-seat scheduling, manager approvals, and team-wide audit logs for agencies.</li>
+    </ol>
+  </div>
+
+  <!-- Q5 -->
+  <div class="question-card">
+    <div class="question-title">
+      <span class="badge badge-purple">Q5</span>
+      <span>Pricing Architecture: Per-User vs Pay-Per-Go vs Subscription? Baileys vs WABA? Message Length?</span>
+    </div>
+    <ul class="text-xs sm:text-sm text-slate-700 space-y-1.5 list-disc list-inside">
+      <li><strong>Baileys Companion Model:</strong> Meta charges <strong>$0.00</strong> in messaging fees. Our marginal cost per message is virtually zero. $ightarrow$ <strong>Flat Monthly Subscription ($7.99 – $9.99/mo)</strong> is optimal.</li>
+      <li><strong>Meta WABA Cloud API Model:</strong> Meta charges per conversation/template ($0.005–$0.015/msg). $ightarrow$ <strong>Hybrid Credit Model</strong> (Base monthly subscription including 500 messages + prepaid usage packs for overage).</li>
+      <li><strong>Message Length:</strong> Unlike SMS (which charges per 160 characters), WhatsApp and Viber <strong>do NOT charge by character count</strong> (up to 4,096 characters per message). Pricing should never depend on character length—only on <strong>monthly message volume</strong> and <strong>media bandwidth</strong>.</li>
+    </ul>
+  </div>
+
+  <!-- ========================================================================= -->
+  <!-- THEME 3: MULTI-PLATFORM SCALE-OUT & ECOSYSTEM INTEGRATION -->
+  <!-- ========================================================================= -->
+  <div class="theme-header">Theme 3: Multi-Platform Scale-Out & Cross-Channel Expansion</div>
+
+  <!-- Q4 -->
+  <div class="question-card">
+    <div class="question-title">
+      <span class="badge badge-green">Q4</span>
+      <span>Are we limited to WhatsApp? Is the approach scalable to other messaging platforms?</span>
+    </div>
+    <p class="text-xs sm:text-sm text-slate-700 leading-relaxed mb-2">
+      <strong>No, we are not limited to WhatsApp.</strong> The core Two-Tier Hybrid Scheduler is completely transport-agnostic. We designed the <code>IMessagingTransportAdapter</code> interface to support multiple platforms seamlessly:
+    </p>
+    <table>
+      <thead>
+        <tr>
+          <th>Platform</th>
+          <th>Reach</th>
+          <th>Native 1:1 Personal Scheduling?</th>
+          <th>Scale-Out Feasibility & Method</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="font-bold">WhatsApp</td>
+          <td>2.8B MAU</td>
+          <td class="text-red-600 font-semibold">NO (Business greeting only)</td>
+          <td>Baileys Companion Socket / Meta Cloud API</td>
+        </tr>
+        <tr>
+          <td class="font-bold text-purple-600">Viber</td>
+          <td>1.1B Reg</td>
+          <td class="text-red-600 font-semibold">NO (Channels only)</td>
+          <td>Official Viber REST Bot API (100% compliant, huge Eastern Europe reach)</td>
+        </tr>
+        <tr>
+          <td class="font-bold text-blue-600">Signal</td>
+          <td>50M MAU</td>
+          <td class="text-amber-600 font-semibold">Partial (Android only; iOS/Desktop: NO)</td>
+          <td><code>signal-cli</code> JSON-RPC daemon (Headless E2EE cloud queue)</td>
+        </tr>
+        <tr>
+          <td class="font-bold text-indigo-600">Discord</td>
+          <td>200M MAU</td>
+          <td class="text-amber-600 font-semibold">Limited Beta (No recurring)</td>
+          <td>Official Discord Bot Gateway (<code>discord.js</code>, zero ban risk)</td>
+        </tr>
+        <tr>
+          <td class="font-bold text-emerald-600">LINE</td>
+          <td>200M MAU</td>
+          <td class="text-amber-600 font-semibold">Experimental Labs (Text only)</td>
+          <td>LINE Messaging API (Official Bot for Japan/Taiwan/Thailand)</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- ========================================================================= -->
+  <!-- THEME 4: SECURITY, PII, STORAGE & UNIT ECONOMICS -->
+  <!-- ========================================================================= -->
+  <div class="theme-header">Theme 4: Security, PII, Storage & Unit Economics</div>
+
+  <!-- Q6 -->
+  <div class="question-card">
+    <div class="question-title">
+      <span class="badge badge-amber">Q6</span>
+      <span>PII, Security Policies, and Database Hosting Cost Inclusion</span>
+    </div>
+    <div class="space-y-1.5 text-xs sm:text-sm text-slate-700">
+      <p><strong>1. PII & Privacy Architecture:</strong></p>
+      <ul class="list-disc list-inside ml-2 space-y-1 text-slate-600">
+        <li><strong>Envelope Encryption:</strong> Baileys session keys and authentication tokens are encrypted at the application layer with <strong>AES-256-GCM</strong> using AWS KMS master keys before database writes.</li>
+        <li><strong>Ephemeral Retention Policy:</strong> Once a scheduled message is dispatched, message content is <strong>permanently scrubbed</strong> from the active database; only an anonymized delivery receipt and SHA-256 verification hash are kept for auditing.</li>
+        <li><strong>Zero Contact Scraping:</strong> We never harvest or upload Alice's complete contact address book—only the specific recipient phone numbers she schedules messages for.</li>
+      </ul>
+      <p class="pt-1"><strong>2. Infrastructure Hosting Costs (10,000 Active Users):</strong></p>
+      <p class="text-xs text-slate-600">Managed PostgreSQL ($35/mo) + Redis BullMQ ($20/mo) + Node.js VPS cluster ($60/mo) = <strong>~$115 / month total infrastructure</strong>. At ~$0.012 per active user/month, hosting charges are negligible and fully absorbed into subscription pricing.</p>
+    </div>
+  </div>
+
+  <!-- Q11 -->
+  <div class="question-card">
+    <div class="question-title">
+      <span class="badge badge-amber">Q11</span>
+      <span>Video Message Scheduling: Cost of Storage, Bandwidth, and Encryption</span>
+    </div>
+    <div class="callout-box">
+      <strong>Partner Guidance:</strong> Video files (30MB–100MB) introduce significant S3 storage costs and slow mobile uploads.
+    </div>
+    <ul class="text-xs sm:text-sm text-slate-700 space-y-1 list-disc list-inside mt-1.5">
+      <li><strong>V1 MVP Scope:</strong> Support <strong>Text, Audio/Voice Notes, and Images (up to 5MB)</strong>. This satisfies 95% of user use cases at near-zero bandwidth cost.</li>
+      <li><strong>V2 Video Guardrails:</strong> When video is introduced, enforce: (1) Maximum 15MB file size / 30-second duration, (2) <strong>24-hour auto-delete lifecycle rule</strong> in S3 so files are purged immediately post-delivery, and (3) AWS S3 SSE-KMS server-side encryption.</li>
+    </ul>
+  </div>
+
+  <!-- ========================================================================= -->
+  <!-- THEME 5: USER EXPERIENCE, DELIVERY MODES & RECURRENCE -->
+  <!-- ========================================================================= -->
+  <div class="theme-header">Theme 5: User Experience, Delivery Modes & Recurrence</div>
+
+  <!-- Q8 -->
+  <div class="question-card">
+    <div class="question-title">
+      <span class="badge badge-blue">Q8</span>
+      <span>In the Cloud API Assistive Model (Section 3A), does Alice just click a button to send?</span>
+    </div>
+    <p class="text-xs sm:text-sm text-slate-700 leading-relaxed">
+      <strong>Yes, exactly.</strong> At the scheduled time, the bot sends Alice an interactive WhatsApp message: <em>"⏰ Time to send your scheduled message to Bob!"</em> with an actionable button: <code>[ 🚀 Send Message to Bob ]</code>.
+    </p>
+    <p class="text-xs sm:text-sm text-slate-700 leading-relaxed mt-1">
+      Tapping the button deep-links into Alice's native 1-on-1 WhatsApp chat with Bob with the text <strong>already pre-filled in the input box</strong>. Alice just taps Send. This provides a 100% Meta-compliant experience with zero risk of account ban for users who prefer not to link companion sessions.
+    </p>
+  </div>
+
+  <!-- Q9 -->
+  <div class="question-card">
+    <div class="question-title">
+      <span class="badge badge-blue">Q9</span>
+      <span>Is Baileys Companion Pairing limited to 24 hours or permanent for months?</span>
+    </div>
+    <p class="text-xs sm:text-sm text-slate-700 leading-relaxed">
+      <strong>It is permanent for months.</strong> It does NOT expire in 24 hours.
+    </p>
+    <p class="text-xs sm:text-sm text-slate-700 leading-relaxed mt-1">
+      The 24-hour window applies <em>only</em> to Meta's corporate Cloud API (customer service window). Baileys uses WhatsApp's native Multi-Device companion protocol (identical to WhatsApp Web / Desktop). WhatsApp only unlinks companion devices if Alice's primary phone stays completely offline for <strong>more than 14 consecutive days</strong>. If Alice uses her phone normally, the link persists indefinitely.
+    </p>
+  </div>
+
+  <!-- Q12 -->
+  <div class="question-card">
+    <div class="question-title">
+      <span class="badge badge-blue">Q12</span>
+      <span>Weekly Recurrence: Can users edit an existing schedule, or must they cancel and recreate?</span>
+    </div>
+    <p class="text-xs sm:text-sm text-slate-700 leading-relaxed">
+      <strong>Both options are fully supported:</strong>
+    </p>
+    <ul class="text-xs sm:text-sm text-slate-700 space-y-1 list-disc list-inside mt-1">
+      <li><strong>In-Place Editing:</strong> Users can send <code>/edit &lt;id&gt;</code> to change the send time, update the message text, or adjust recurrence rules (e.g., switching from Mondays to Tuesdays).</li>
+      <li><strong>Cancellation:</strong> Users can send <code>/cancel &lt;id&gt;</code> to cancel upcoming iterations.</li>
+      <li><strong>Under the Hood:</strong> We use a <strong>Single-Active-Row FSM</strong>. Exactly one row exists in the database for that schedule. When Monday's message is delivered, the system calculates next Monday's date and updates the same database row in place.</li>
+    </ul>
+  </div>
+
+  <!-- Q13 -->
+  <div class="question-card">
+    <div class="question-title">
+      <span class="badge badge-blue">Q13</span>
+      <span>What inputs are parseable: Structured commands or casual conversational writing?</span>
+    </div>
+    <p class="text-xs sm:text-sm text-slate-700 leading-relaxed">
+      <strong>We support both via a dual-input architecture:</strong>
+    </p>
+    <ol class="text-xs sm:text-sm text-slate-700 space-y-1 list-decimal list-inside mt-1">
+      <li><strong>Fast-Path CLI (Power Users):</strong> <code>/schedule +14155552671 tomorrow 9am Happy birthday Bob!</code> (Processed in one atomic turn).</li>
+      <li><strong>Conversational Wizard (Everyday Users):</strong> User types <code>/schedule</code> $ightarrow$ Bot prompts for recipient $ightarrow$ User shares contact card $ightarrow$ Bot prompts for message $ightarrow$ User types or sends voice note $ightarrow$ Bot confirms with interactive buttons.</li>
+      <li><strong>Natural Language Parsing:</strong> Uses <code>chrono-node</code> to extract relative times from phrases like <em>"tomorrow at 3pm"</em> or <em>"every 2nd Wednesday at 10am"</em>.</li>
+    </ol>
+  </div>
+
+  <!-- ========================================================================= -->
+  <!-- THEME 6: ANTI-ABUSE & SPAM PREVENTION -->
+  <!-- ========================================================================= -->
+  <div class="theme-header">Theme 6: Anti-Abuse & Spam Prevention</div>
+
+  <!-- Q16 -->
+  <div class="question-card">
+    <div class="question-title">
+      <span class="badge badge-amber">Q16</span>
+      <span>How do we prevent spamming? Can Alice schedule a message to 100 users at the same time?</span>
+    </div>
+    <p class="text-xs sm:text-sm text-slate-700 leading-relaxed mb-1.5">
+      To protect user accounts from being flagged or banned by WhatsApp, the platform enforces four multi-layered safeguards:
+    </p>
+    <ul class="text-xs sm:text-sm text-slate-700 space-y-1.5 list-disc list-inside">
+      <li><strong>Serialization & Inter-Message Jitter:</strong> If Alice schedules a message to 100 contacts for 9:00 AM, the scheduler <strong>never</strong> sends 100 messages at 9:00:00 AM. It serializes them sequentially, adding <strong>3 to 6 seconds of randomized delay</strong> plus realistic typing indicator emulation between each recipient. The 100 messages are smoothly distributed across an 8- to 10-minute window.</li>
+      <li><strong>Account Rate Limits:</strong> Personal companion sessions are hard-capped at <strong>5 messages per minute</strong> and <strong>50 messages per hour</strong>.</li>
+      <li><strong>Tier-Based Quotas:</strong> Free users can only schedule for 1 to 5 contacts per batch. Large batch broadcasts are restricted to verified Business accounts.</li>
+      <li><strong>Emergency Circuit Breakers:</strong> If WhatsApp returns an error <code>403</code> or triggers recipient spam feedback, the system immediately freezes all pending outbound jobs for that sender to safeguard their phone number from a permanent SIM ban.</li>
+    </ul>
+  </div>
+
+  <!-- Document Footer -->
+  <div class="border-t-2 border-slate-900 pt-3 mt-8 text-center text-xs text-slate-500 font-mono">
+    <span>WhatsApp & Omnichannel Message Scheduler &bull; Partner Meeting Strategy &bull; Page 1 of 1</span>
+  </div>
+
+</body>
+</html>

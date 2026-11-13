@@ -1,0 +1,6 @@
+Command exited with code 0.
+
+Command output:
+True
+False
+True

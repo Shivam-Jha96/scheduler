@@ -1,0 +1,12 @@
+Command exited with code 0.
+
+Command output:
+
+Name                                 Length LastWriteTime         
+----                                 ------ -------------         
+.agents                                     08-11-2026 12:09:56 AM
+docs                                        08-11-2026 01:00:18 AM
+PROJECT.md                           6185   08-11-2026 01:01:44 AM
+WHATSAPP_SCHEDULER_TECHNICAL_PLAN.md 40121  08-11-2026 01:01:28 AM
+
+

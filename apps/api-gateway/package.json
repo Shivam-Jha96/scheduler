@@ -1,0 +1,28 @@
+{
+  "name": "@scheduler/api-gateway",
+  "version": "1.0.0",
+  "private": true,
+  "license": "MIT",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "scripts": {
+    "build": "tsc -b",
+    "typecheck": "tsc --noEmit",
+    "dev": "node dist/index.js",
+    "clean": "rm -rf dist"
+  },
+  "dependencies": {
+    "@scheduler/adapter-registry": "*",
+    "@scheduler/adapter-sdk": "*",
+    "@scheduler/config": "*",
+    "@scheduler/crypto": "*",
+    "@scheduler/database": "*",
+    "@scheduler/logger": "*",
+    "@scheduler/types": "*",
+    "fastify": "^5.2.1"
+  },
+  "devDependencies": {
+    "@scheduler/typescript-config": "*",
+    "typescript": "^5.7.3"
+  }
+}

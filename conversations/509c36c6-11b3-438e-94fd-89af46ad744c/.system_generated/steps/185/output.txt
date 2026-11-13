@@ -1,0 +1,21 @@
+The search for ""Viber" schedule message native personal chat" returned the following summary:
+As of right now, **Viber does not have a native, built-in feature to schedule messages for personal chats** (one-on-one conversations). 
+
+While Viber *does* support scheduled messages for **Viber Communities and Channels** (allowing admins to plan posts ahead of time)[1], that functionality is not available for regular, everyday personal messaging[2]. 
+
+If you want to schedule or delay a message to someone in a personal Viber chat, you have to rely on workarounds depending on your device:
+
+### Workarounds for Android
+* **Third-Party Automation Apps:** Android users often use automation and task-scheduling apps (like *TikTask*[3] or similar notification/auto-send tools) to trigger automated text strings or reminders routed through Viber. 
+
+### Workarounds for iPhone (iOS)
+* **No Direct Integration:** iOS doesn't allow third-party apps to directly hook into and auto-send messages inside competing chat apps due to system sandboxing. 
+* **Alternative Channels:** If scheduling is a strict requirement for a specific contact, you may need to switch to a platform that natively supports it for personal chats (such as Apple's *iMessage* via the "Send Later" feature[4], or Telegram).
+
+Sources:
+[1] [viber.com](https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQH17skbBVeBdoKrvpFi4aPwWaMpJ7QNpRs0Fz1NfX3yFgO81_HFvlMKVSyIgre02AMt0fbQtsbpuqgL7_tq_l733_Fco5_TSbGfCwuZXGSrTLnLpFw7oKQVLAuvBQMfSuup1oWd3PCGGD8TzwECIO8e_OiO3MgzKgC_jldI5qDda0QI1alpbpxVJnJ2jgrP9Q==)
+[2] [reddit.com](https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQE_ckwt0R5rcLK_uQLQdguOPz7RVpU1R0HQ7d89Aq5gfrYYcMBxZlh_RxyThKVvi-XIi4-C7o6F3n0xipSgg2xXWVTyd2g6DjNb0Q_fKmoNOgUuyXiT0MGdFrnsU33bMqFzVJPD6meC4bb9d7l7hn3Dll4rInL4CLzDdrG5lQxH)
+[3] [tiktask.ai](https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQEb1fuRZfmruOp3lqd9MzKDv0sdV5WAvTjUgfVAUZZbAw7flkCNKeCxEjx8SJ0DOUxI5vV1yjlHfHx6Y8UDSOuzQEdhRF7fa66_5ri9SRDR6QuoVyQvxlup8J6O8GORuRyd2T69ENWMfkLW-tdpslY=)
+[4] [youtube.com](https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQGCO_Mh-JfLd_OOwTY5ACPtsHGpiHJXVGI_lNYdjeJrWiedguBFRqb60Y90oN59vQ569_ixg03xJWqHSogJ2-xqd4JYKIHzrGDqYWpkq5H6Ep8xB_qzXAg9dVwlIaA2w0pW)
+
+Note: Source URLs are HTTP redirects; check where they resolve if you need the direct link.

@@ -1,0 +1,5 @@
+{
+  "summary": "Authoritative, shareable master architectural specification and technical implementation plan for building an In-WhatsApp Message Scheduler Chatbot. Covers platform feasibility, Meta policy constraints, dual conversational UX, PostgreSQL 14+ production DDL, two-tier hybrid scheduling (Feeder + BullMQ), wall-clock DST invariance, zero-double-send idempotency, anti-ban heuristics, and a 5-phase engineering roadmap.",
+  "updatedAt": "2026-11-08T06:18:02.457831800Z",
+  "userFacing": true
+}

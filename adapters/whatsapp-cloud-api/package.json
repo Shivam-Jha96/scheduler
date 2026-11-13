@@ -1,0 +1,21 @@
+{
+  "name": "@scheduler/adapter-whatsapp-cloud-api",
+  "version": "1.0.0",
+  "private": true,
+  "license": "MIT",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "scripts": {
+    "build": "tsc -b",
+    "typecheck": "tsc --noEmit",
+    "clean": "rm -rf dist"
+  },
+  "dependencies": {
+    "@scheduler/adapter-sdk": "*",
+    "@scheduler/types": "*"
+  },
+  "devDependencies": {
+    "@scheduler/typescript-config": "*",
+    "typescript": "^5.7.3"
+  }
+}

@@ -1,0 +1,23 @@
+Command exited with code 0.
+
+Command output:
+
+          <p class="text-xs font-semibold uppercase tracking-wider text-slate-400 mt-5 mb-2">Delivery & Safeguards</p>
+>         <a href="#sec-10" class="block py-1.5 px-3 rounded hover:bg-slate-800/60 text-slate-300 hover:text-white 
+transition">16. Zero-Double-Send Recovery</a>
+          <a href="#sec-11" class="block py-1.5 px-3 rounded hover:bg-slate-800/60 text-slate-300 hover:text-white 
+transition">17. Anti-Ban & Key Security</a>
+          <a href="#sec-12" class="block py-1.5 px-3 rounded hover:bg-slate-800/60 text-slate-300 hover:text-white 
+transition">18. 10-Week Roadmap</a>
+        </nav>
+      </aside>
+  
+        <section id="sec-10" class="glass-card rounded-2xl p-6 sm:p-8 space-y-4">
+>         <h3 class="text-xl font-bold text-white">16. Zero-Double-Send Guarantee & Rectified Recovery Sweeper</h3>
+          <p class="text-xs text-slate-300 leading-relaxed">
+            Four distinct layers protect against duplicate message transmissions:
+          </p>
+          <div class="grid grid-cols-1 md:grid-cols-4 gap-4 text-xs">
+            <div class="p-3.5 rounded-xl bg-slate-900/80 border border-slate-800">
+
+
