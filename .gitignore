@@ -39,3 +39,8 @@ coverage/
 # OS Files
 .DS_Store
 Thumbs.db
+
+# Documentation
+docs/*
+!docs/monorepo_boilerplate_plan.md
+
