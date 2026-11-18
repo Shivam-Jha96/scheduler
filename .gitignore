@@ -42,5 +42,16 @@ Thumbs.db
 
 # Documentation
 docs/*
-!docs/monorepo_boilerplate_plan.md
+!docs/README.md
+!docs/README*.md
+!README.md
+!**/README.md
+downloaded_docs/
+
+# Document Formats & Binaries
+*.pdf
+*.docx
+*.doc
+*.pptx
+*.xlsx
 

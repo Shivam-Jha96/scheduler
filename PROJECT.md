@@ -30,10 +30,14 @@
 ## Milestones
 | # | Name | Scope | Dependencies | Status |
 |---|------|-------|-------------|--------|
-| 1 | Documentation Consolidation & Hygiene | Copy boilerplate plan, prune drafts, create docs/README.md index | none | PLANNED |
-| 2 | GitHub Repository & Project Kanban Setup | Init remote repo, create Project v2, set 5 Kanban columns | M1 | PLANNED |
-| 3 | Epics Population in Kanban Backlog | Create GitHub issues for all BRD Epics, add to Backlog | M2 | PLANNED |
-| 4 | Review & Forensic Audit | Verification of docs, repository, board, and Backlog items | M3 | PLANNED |
+| 1 | Documentation Consolidation & Hygiene | Copy boilerplate plan, prune drafts, create docs/README.md index | none | DONE |
+| 2 | GitHub Repository & Project Kanban Setup | Init remote repo, create Project v2, set 5 Kanban columns | M1 | DONE |
+| 3 | Epics Population in Kanban Backlog | Create GitHub issues for all BRD Epics, add to Backlog | M2 | DONE |
+| 4 | Review & Forensic Audit | Verification of docs, repository, board, and Backlog items | M3 | DONE |
+| 5 | Preeti Recommendations Synthesis (Doc 1) | Synthesize 5 Preeti source documents into production summary | none | DONE |
+| 6 | MS Teams REA Blueprint (Doc 2) | 7-layer architectural reverse engineering specification | none | DONE |
+| 7 | Refined HLD & Target Stack v3.0 (Doc 3) | Quad-tier delivery, 4-step gate, canonical DDL, $8.90 OpEx | M5, M6 | DONE |
+| 8 | Google Drive Cloud Synchronization | Create subfolder, upload 3 Google Docs + 3 MD files, verify | M5, M6, M7 | DONE |
 
 ## Code Layout & Write Boundaries
 - Milestone 1 owns: `docs/monorepo_boilerplate_plan.md`, `docs/README.md`, `docs/whatsapp_scheduler_master_plan.md` (remove/archive), `PROJECT.md` at root.
