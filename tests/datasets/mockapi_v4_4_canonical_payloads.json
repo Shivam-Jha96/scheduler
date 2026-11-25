@@ -1,0 +1,558 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "meta": {
+    "version": "4.4.0",
+    "contract_adr": "docs/contracts/mock_reconciliation_v4_4.md",
+    "reconciled_deltas": ["6.1", "6.2", "6.3", "6.4", "6.5", "6.6", "6.7", "6.8"],
+    "template_locale": "en_US",
+    "meta_graph_api_version": "v22.0",
+    "notes": "All phone numbers are synthetic test fixtures (zero real PII)."
+  },
+  "nlu_parse_schedule": {
+    "canonical_intents": ["SCHEDULE_RELAY", "CANCEL_SCHEDULE", "OPT_OUT", "UNKNOWN"],
+    "standard_schedule": {
+      "request": {
+        "raw_text": "Remind Bob (+919123456789) tomorrow at 9:00 AM to bring the project slides",
+        "timezone": "Asia/Kolkata"
+      },
+      "expected_response": {
+        "intent": "SCHEDULE_RELAY",
+        "confidence": 0.96,
+        "recipient_name": "Bob",
+        "recipient_e164": "+919123456789",
+        "scheduled_at_iso": "2026-11-26T09:00:00+05:30",
+        "message_body": "Bring the project slides",
+        "validation": {
+          "is_valid": true,
+          "missing_fields": [],
+          "errors": []
+        }
+      }
+    },
+    "missing_phone_triggers_contact_card": {
+      "request": {
+        "raw_text": "Remind John tomorrow at 10am to call the client",
+        "timezone": "Asia/Kolkata"
+      },
+      "expected_response": {
+        "intent": "SCHEDULE_RELAY",
+        "confidence": 0.91,
+        "recipient_name": "John",
+        "recipient_e164": null,
+        "message_body": "Call the client",
+        "validation": {
+          "is_valid": false,
+          "missing_fields": ["recipient_e164"],
+          "errors": ["MISSING_RECIPIENT_PHONE"]
+        }
+      }
+    },
+    "cancel_hinglish": {
+      "request": {
+        "raw_text": "Kal subah 9 baje Raj wala message cancel kar do",
+        "timezone": "Asia/Kolkata"
+      },
+      "expected_response": {
+        "intent": "CANCEL_SCHEDULE",
+        "confidence": 0.94,
+        "recipient_name": "Raj",
+        "validation": {
+          "is_valid": true,
+          "missing_fields": [],
+          "errors": []
+        }
+      }
+    },
+    "oversized_body_rejected": {
+      "request": {
+        "raw_text": "Remind Bob (+919123456789) tomorrow at 9 AM: [501-char payload]",
+        "timezone": "Asia/Kolkata"
+      },
+      "expected_response": {
+        "intent": "SCHEDULE_RELAY",
+        "validation": {
+          "is_valid": false,
+          "missing_fields": [],
+          "errors": ["MESSAGE_EXCEEDS_500_CHARS"]
+        }
+      }
+    }
+  },
+  "outbound_meta_graph_v22_templates": {
+    "hybrid_notify_alice_v1": {
+      "messaging_product": "whatsapp",
+      "to": "919876543210",
+      "type": "template",
+      "biz_opaque_callback_data": "idemp-notify-0001",
+      "template": {
+        "name": "hybrid_notify_alice_v1",
+        "language": { "code": "en_US" },
+        "components": [
+          {
+            "type": "body",
+            "parameters": [
+              { "type": "text", "text": "Bob" },
+              { "type": "text", "text": "Bring the project slides" },
+              { "type": "text", "text": "9:00 AM" }
+            ]
+          }
+        ]
+      }
+    },
+    "hybrid_dispatch_card_v1": {
+      "messaging_product": "whatsapp",
+      "to": "919876543210",
+      "type": "template",
+      "biz_opaque_callback_data": "idemp-t0-0001",
+      "template": {
+        "name": "hybrid_dispatch_card_v1",
+        "language": { "code": "en_US" },
+        "components": [
+          {
+            "type": "body",
+            "parameters": [
+              { "type": "text", "text": "Bob" },
+              { "type": "text", "text": "9:00 AM" }
+            ]
+          },
+          {
+            "type": "button",
+            "sub_type": "url",
+            "index": "0",
+            "parameters": [
+              { "type": "text", "text": "919123456789?text=Bring%20the%20project%20slides" }
+            ]
+          }
+        ]
+      }
+    },
+    "hybrid_escalation_v1": {
+      "messaging_product": "whatsapp",
+      "to": "919876543210",
+      "type": "template",
+      "biz_opaque_callback_data": "idemp-t3m-0001",
+      "template": {
+        "name": "hybrid_escalation_v1",
+        "language": { "code": "en_US" },
+        "components": [
+          {
+            "type": "body",
+            "parameters": [
+              { "type": "text", "text": "Bob" },
+              { "type": "text", "text": "9:00 AM" }
+            ]
+          },
+          {
+            "type": "button",
+            "sub_type": "url",
+            "index": "0",
+            "parameters": [
+              { "type": "text", "text": "919123456789?text=Bring%20the%20project%20slides" }
+            ]
+          }
+        ]
+      }
+    },
+    "scheduled_relay_v1": {
+      "messaging_product": "whatsapp",
+      "to": "919123456789",
+      "type": "template",
+      "biz_opaque_callback_data": "idemp-t10m-0001",
+      "template": {
+        "name": "scheduled_relay_v1",
+        "language": { "code": "en_US" },
+        "components": [
+          {
+            "type": "body",
+            "parameters": [
+              { "type": "text", "text": "Alice (+91-98XXX-43210)" },
+              { "type": "text", "text": "Bring the project slides" },
+              { "type": "text", "text": "Alice" }
+            ]
+          }
+        ]
+      }
+    },
+    "scheduled_cancelled_v1": {
+      "messaging_product": "whatsapp",
+      "to": "919876543210",
+      "type": "template",
+      "biz_opaque_callback_data": "idemp-cancel-0001",
+      "template": {
+        "name": "scheduled_cancelled_v1",
+        "language": { "code": "en_US" },
+        "components": [
+          {
+            "type": "body",
+            "parameters": [
+              { "type": "text", "text": "Bob" },
+              { "type": "text", "text": "9:00 AM" }
+            ]
+          }
+        ]
+      }
+    }
+  },
+  "inbound_webhooks": {
+    "step0_alice_schedule_request": {
+      "object": "whatsapp_business_account",
+      "entry": [
+        {
+          "id": "WABA_TEST_001",
+          "changes": [
+            {
+              "field": "messages",
+              "value": {
+                "messaging_product": "whatsapp",
+                "metadata": { "display_phone_number": "15551234567", "phone_number_id": "15551234567" },
+                "contacts": [{ "profile": { "name": "Alice" }, "wa_id": "919876543210" }],
+                "messages": [
+                  {
+                    "from": "919876543210",
+                    "id": "wamid.HBgMOTE5ODc2NTQzMjEwFQIAEhggMTAx",
+                    "timestamp": "1795500000",
+                    "type": "text",
+                    "text": { "body": "Remind Bob (+919123456789) tomorrow at 9:00 AM to bring the project slides" }
+                  }
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    "alice_name_update": {
+      "object": "whatsapp_business_account",
+      "entry": [
+        {
+          "id": "WABA_TEST_001",
+          "changes": [
+            {
+              "field": "messages",
+              "value": {
+                "messaging_product": "whatsapp",
+                "metadata": { "display_phone_number": "15551234567", "phone_number_id": "15551234567" },
+                "contacts": [{ "profile": { "name": "Alice Cooper" }, "wa_id": "919876543210" }],
+                "messages": [
+                  {
+                    "from": "919876543210",
+                    "id": "wamid.HBgMOTE5ODc2NTQzMjEwFQIAEhggMTAy",
+                    "timestamp": "1795500010",
+                    "type": "text",
+                    "text": { "body": "NAME Alice C." }
+                  }
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    "alice_contact_card_recipient": {
+      "object": "whatsapp_business_account",
+      "entry": [
+        {
+          "id": "WABA_TEST_001",
+          "changes": [
+            {
+              "field": "messages",
+              "value": {
+                "messaging_product": "whatsapp",
+                "metadata": { "display_phone_number": "15551234567", "phone_number_id": "15551234567" },
+                "contacts": [{ "profile": { "name": "Alice" }, "wa_id": "919876543210" }],
+                "messages": [
+                  {
+                    "from": "919876543210",
+                    "id": "wamid.HBgMOTE5ODc2NTQzMjEwFQIAEhggMTAz",
+                    "timestamp": "1795500020",
+                    "type": "contacts",
+                    "contacts": [
+                      {
+                        "name": { "formatted_name": "John Doe", "first_name": "John" },
+                        "phones": [{ "phone": "+919123400001", "wa_id": "919123400001", "type": "CELL" }]
+                      }
+                    ]
+                  }
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    "rejected_multimedia_image": {
+      "object": "whatsapp_business_account",
+      "entry": [
+        {
+          "id": "WABA_TEST_001",
+          "changes": [
+            {
+              "field": "messages",
+              "value": {
+                "messaging_product": "whatsapp",
+                "metadata": { "display_phone_number": "15551234567", "phone_number_id": "15551234567" },
+                "contacts": [{ "profile": { "name": "Alice" }, "wa_id": "919876543210" }],
+                "messages": [
+                  {
+                    "from": "919876543210",
+                    "id": "wamid.HBgMOTE5ODc2NTQzMjEwFQIAEhggMTA0",
+                    "timestamp": "1795500030",
+                    "type": "image",
+                    "image": { "id": "media-forbidden-001", "mime_type": "image/jpeg", "caption": "Send this photo tomorrow" }
+                  }
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    "button_confirm_personal_uuid_format": {
+      "object": "whatsapp_business_account",
+      "entry": [
+        {
+          "id": "WABA_TEST_001",
+          "changes": [
+            {
+              "field": "messages",
+              "value": {
+                "messaging_product": "whatsapp",
+                "metadata": { "display_phone_number": "15551234567", "phone_number_id": "15551234567" },
+                "contacts": [{ "profile": { "name": "Alice" }, "wa_id": "919876543210" }],
+                "messages": [
+                  {
+                    "from": "919876543210",
+                    "id": "wamid.HBgMOTE5ODc2NTQzMjEwFQIAEhggMTA1",
+                    "timestamp": "1795500040",
+                    "type": "interactive",
+                    "interactive": {
+                      "type": "button_reply",
+                      "button_reply": {
+                        "id": "SENT_VIA_PERSONAL:a1b2c3d4-e5f6-7890-abcd-ef1234567890",
+                        "title": "✅ I Sent It"
+                      }
+                    }
+                  }
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    "button_confirm_personal_legacy_alias": {
+      "object": "whatsapp_business_account",
+      "entry": [
+        {
+          "id": "WABA_TEST_001",
+          "changes": [
+            {
+              "field": "messages",
+              "value": {
+                "messaging_product": "whatsapp",
+                "metadata": { "display_phone_number": "15551234567", "phone_number_id": "15551234567" },
+                "contacts": [{ "profile": { "name": "Alice" }, "wa_id": "919876543210" }],
+                "messages": [
+                  {
+                    "from": "919876543210",
+                    "id": "wamid.HBgMOTE5ODc2NTQzMjEwFQIAEhggMTA2",
+                    "timestamp": "1795500045",
+                    "type": "interactive",
+                    "interactive": {
+                      "type": "button_reply",
+                      "button_reply": {
+                        "id": "BTN_CONFIRM_SENT",
+                        "title": "✅ Already Sent"
+                      }
+                    }
+                  }
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    "bob_opt_in_start": {
+      "object": "whatsapp_business_account",
+      "entry": [
+        {
+          "id": "WABA_TEST_001",
+          "changes": [
+            {
+              "field": "messages",
+              "value": {
+                "messaging_product": "whatsapp",
+                "metadata": { "display_phone_number": "15551234567", "phone_number_id": "15551234567" },
+                "contacts": [{ "profile": { "name": "Bob" }, "wa_id": "919123456789" }],
+                "messages": [
+                  {
+                    "from": "919123456789",
+                    "id": "wamid.HBgMOTE5MTIzNDU2Nzg5FQIAEhggMjAx",
+                    "timestamp": "1795500050",
+                    "type": "text",
+                    "text": { "body": "START" }
+                  }
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    "bob_tier2_global_stop": {
+      "object": "whatsapp_business_account",
+      "entry": [
+        {
+          "id": "WABA_TEST_001",
+          "changes": [
+            {
+              "field": "messages",
+              "value": {
+                "messaging_product": "whatsapp",
+                "metadata": { "display_phone_number": "15551234567", "phone_number_id": "15551234567" },
+                "contacts": [{ "profile": { "name": "Bob" }, "wa_id": "919123456789" }],
+                "messages": [
+                  {
+                    "from": "919123456789",
+                    "id": "wamid.HBgMOTE5MTIzNDU2Nzg5FQIAEhggMjAy",
+                    "timestamp": "1795500060",
+                    "type": "text",
+                    "text": { "body": "STOP" }
+                  }
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    "bob_tier1_unsubscribe_pair_selection": {
+      "object": "whatsapp_business_account",
+      "entry": [
+        {
+          "id": "WABA_TEST_001",
+          "changes": [
+            {
+              "field": "messages",
+              "value": {
+                "messaging_product": "whatsapp",
+                "metadata": { "display_phone_number": "15551234567", "phone_number_id": "15551234567" },
+                "contacts": [{ "profile": { "name": "Bob" }, "wa_id": "919123456789" }],
+                "messages": [
+                  {
+                    "from": "919123456789",
+                    "id": "wamid.HBgMOTE5MTIzNDU2Nzg5FQIAEhggMjAz",
+                    "timestamp": "1795500070",
+                    "type": "interactive",
+                    "interactive": {
+                      "type": "list_reply",
+                      "list_reply": {
+                        "id": "UNSUB_PAIR:11111111-2222-4333-8444-555555555555",
+                        "title": "Alice (+91-98XXX-43210)"
+                      }
+                    }
+                  }
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    "quality_alert_red": {
+      "object": "whatsapp_business_account",
+      "entry": [
+        {
+          "id": "WABA_TEST_001",
+          "changes": [
+            {
+              "field": "phone_number_quality_update",
+              "value": {
+                "display_phone_number": "15551234567",
+                "event": "FLAGGED",
+                "current_limit": "TIER_1K",
+                "quality_rating": "RED"
+              }
+            }
+          ]
+        }
+      ]
+    }
+  },
+  "kms_operations": {
+    "generate_data_key": {
+      "request": { "key_id": "alias/schedulerbot-dek", "key_spec": "AES_256" }
+    },
+    "encrypt": {
+      "request": { "key_id": "alias/schedulerbot-dek", "plaintext": "QnJpbmcgdGhlIHByb2plY3Qgc2xpZGVz" },
+      "expected_response_fields": ["ciphertext_blob", "key_id"]
+    },
+    "decrypt": {
+      "request": { "key_id": "alias/schedulerbot-dek", "ciphertext_blob": "BASE64_CIPHERTEXT_BLOB" },
+      "expected_response_fields": ["plaintext", "key_id"]
+    }
+  },
+  "meta_error_taxonomy": [
+    {
+      "http_status": 429,
+      "meta_code": 130429,
+      "name": "WABA_THROUGHPUT_LIMIT",
+      "retry_after_seconds": 12,
+      "expected_action": "RELEASE_LEASE_AND_SET_NEXT_RETRY_AT",
+      "increments_meta_errors_metric": true
+    },
+    {
+      "http_status": 429,
+      "meta_code": 131056,
+      "name": "PAIR_RATE_LIMIT_HIT",
+      "retry_after_seconds": 6,
+      "expected_action": "RELEASE_LEASE_AND_SET_NEXT_RETRY_AT",
+      "increments_meta_errors_metric": true
+    },
+    {
+      "http_status": 400,
+      "meta_code": 131047,
+      "name": "RE_ENGAGEMENT_OUTSIDE_24H_WINDOW",
+      "expected_action": "FALLBACK_TO_APPROVED_UTILITY_TEMPLATE",
+      "increments_meta_errors_metric": true
+    },
+    {
+      "http_status": 400,
+      "meta_code": 131051,
+      "name": "UNSUPPORTED_OR_BLOCKED_MESSAGE_TYPE",
+      "expected_action": "MARK_FAILED_AND_FEED_EARLY_WARNING_MONITOR",
+      "increments_meta_errors_metric": true
+    },
+    {
+      "http_status": 400,
+      "meta_code": 131026,
+      "name": "MESSAGE_UNDELIVERABLE_RECIPIENT_INVALID",
+      "expected_action": "MARK_FAILED_NO_RETRY",
+      "increments_meta_errors_metric": true
+    },
+    {
+      "http_status": 400,
+      "meta_code": 131031,
+      "name": "ACCOUNT_LOCKED_POLICY_VIOLATION",
+      "expected_action": "TRIP_WABA_CIRCUIT_BREAKER_P1",
+      "increments_meta_errors_metric": true
+    }
+  ],
+  "simulation_harness": {
+    "isolation_headers": { "X-Test-Run-Id": "ci-run-v4-4-001" },
+    "reset_endpoint": "POST /mock/reset",
+    "simulate_inbound_schedule": {
+      "sender_e164": "+919876543210",
+      "text": "Remind Bob (+919123456789) tomorrow at 9:00 AM to bring the project slides"
+    },
+    "simulate_opt_out": {
+      "sender_e164": "+919123456789",
+      "keyword": "STOP"
+    },
+    "simulate_button_click": {
+      "sender_e164": "+919876543210",
+      "button_id": "SENT_VIA_PERSONAL:a1b2c3d4-e5f6-7890-abcd-ef1234567890"
+    }
+  }
+}

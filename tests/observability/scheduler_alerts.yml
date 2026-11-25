@@ -1,0 +1,51 @@
+groups:
+  - name: schedulerbot_v4_4_hybrid_alerts
+    interval: 30s
+    rules:
+      - alert: WABAQualityDegradingTrend
+        expr: >-
+          (scheduler_waba_quality_state == 0)
+          and (
+            (increase(scheduler_meta_errors_total{code=~"131051|131056"}[15m])
+              > 1.2 * increase(scheduler_meta_errors_total{code=~"131051|131056"}[15m] offset 15m))
+            or
+            (increase(scheduler_opt_out_total[15m])
+              > 1.2 * increase(scheduler_opt_out_total[15m] offset 15m))
+          )
+        for: 45m
+        labels:
+          severity: P2
+          component: meta-waba
+        annotations:
+          summary: "Early-warning WABA quality degradation trend while rating is still GREEN"
+          runbook: "docs/runbooks/SOP-01.md"
+
+      - alert: LeaseReaperHighChurn
+        expr: increase(scheduler_worker_lease_reclaimed_total[1h]) > 5
+        for: 1m
+        labels:
+          severity: P2
+          component: delivery-worker
+        annotations:
+          summary: "More than 5 orphaned worker leases reclaimed by 10s pg_cron reaper in 1 hour"
+          runbook: "docs/runbooks/SOP-02.md"
+
+      - alert: WABACircuitBreakerTripped
+        expr: scheduler_waba_quality_state >= 1
+        for: 0m
+        labels:
+          severity: P1
+          component: meta-waba
+        annotations:
+          summary: "WABA quality dropped to YELLOW/RED — Bot Relay halted, Personal-Only mode active"
+          runbook: "docs/runbooks/SOP-01.md"
+
+      - alert: DoubleSendAttemptBlocked
+        expr: increase(scheduler_idempotency_conflicts_total{reason="already_confirmed_personal"}[5m]) > 0
+        for: 0m
+        labels:
+          severity: P1
+          component: scheduler-cas
+        annotations:
+          summary: "CAS guard intercepted Bot Fallback attempt on an already-confirmed personal send"
+          runbook: "docs/runbooks/SOP-03.md"
