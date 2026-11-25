@@ -1,0 +1,91 @@
+{
+  "meta": {
+    "version": "4.4.0",
+    "states_count": 10,
+    "canonical_states": [
+      "PENDING",
+      "NOTIFIED",
+      "FAST_TRACK",
+      "AWAITING_CONFIRMATION",
+      "DISPATCHING",
+      "SENT_VIA_PERSONAL",
+      "SENT_VIA_BOT",
+      "FAILED",
+      "CANCELLED",
+      "EXPIRED"
+    ],
+    "terminal_states": [
+      "SENT_VIA_PERSONAL",
+      "SENT_VIA_BOT",
+      "FAILED",
+      "CANCELLED",
+      "EXPIRED"
+    ]
+  },
+  "valid_transitions": [
+    { "id": "TR-01", "from": "PENDING", "to": "NOTIFIED", "trigger": "T_MINUS_10M_DUE", "guard": "scheduled_at - NOW() <= 10m" },
+    { "id": "TR-02", "from": "PENDING", "to": "FAST_TRACK", "trigger": "CREATED_WITHIN_10M", "guard": "scheduled_at - created_at < 10m" },
+    { "id": "TR-03", "from": "NOTIFIED", "to": "AWAITING_CONFIRMATION", "trigger": "T0_ARRIVED", "guard": "scheduled_at <= NOW()" },
+    { "id": "TR-04", "from": "FAST_TRACK", "to": "AWAITING_CONFIRMATION", "trigger": "T0_ARRIVED", "guard": "scheduled_at <= NOW()" },
+    { "id": "TR-05", "from": "AWAITING_CONFIRMATION", "to": "SENT_VIA_PERSONAL", "trigger": "ALICE_TAP_I_SENT_IT", "guard": "personal_send_confirmed_at IS NULL" },
+    { "id": "TR-06", "from": "AWAITING_CONFIRMATION", "to": "DISPATCHING", "trigger": "T_PLUS_10M_OR_USER_DELEGATED", "guard": "auto_fallback = TRUE AND consent_status = OPTED_IN AND NOT globally opted out AND personal_send_confirmed_at IS NULL" },
+    { "id": "TR-07", "from": "AWAITING_CONFIRMATION", "to": "EXPIRED", "trigger": "T_PLUS_10M_UNCONFIRMED_NO_FALLBACK", "guard": "auto_fallback = FALSE" },
+    { "id": "TR-08", "from": "DISPATCHING", "to": "SENT_VIA_BOT", "trigger": "META_V22_HTTP_200", "guard": "valid unexpired worker lease" },
+    { "id": "TR-09", "from": "DISPATCHING", "to": "AWAITING_CONFIRMATION", "trigger": "LEASE_REAPED_OR_HTTP_429", "guard": "retry_count + 1 < max_retries" },
+    { "id": "TR-10", "from": "DISPATCHING", "to": "FAILED", "trigger": "RETRIES_EXHAUSTED_OR_NON_RETRYABLE_4XX", "guard": "retry_count + 1 >= max_retries" },
+    { "id": "TR-11", "from": "PENDING", "to": "CANCELLED", "trigger": "ALICE_CANCEL_OR_BOB_OPT_OUT", "guard": "active non-terminal state" },
+    { "id": "TR-12", "from": "NOTIFIED", "to": "CANCELLED", "trigger": "ALICE_CANCEL_OR_BOB_OPT_OUT", "guard": "active non-terminal state" },
+    { "id": "TR-13", "from": "FAST_TRACK", "to": "CANCELLED", "trigger": "ALICE_CANCEL_OR_BOB_OPT_OUT", "guard": "active non-terminal state" },
+    { "id": "TR-14", "from": "AWAITING_CONFIRMATION", "to": "CANCELLED", "trigger": "ALICE_CANCEL_OR_BOB_OPT_OUT", "guard": "active non-terminal state" }
+  ],
+  "illegal_transitions": [
+    { "from": "SENT_VIA_PERSONAL", "to": "DISPATCHING", "reason": "Terminal state; double-send strictly forbidden (P0 SLO)" },
+    { "from": "SENT_VIA_PERSONAL", "to": "SENT_VIA_BOT", "reason": "Double-send violation" },
+    { "from": "SENT_VIA_BOT", "to": "SENT_VIA_PERSONAL", "reason": "Terminal state immutable" },
+    { "from": "SENT_VIA_BOT", "to": "CANCELLED", "reason": "Cannot cancel already delivered message" },
+    { "from": "CANCELLED", "to": "DISPATCHING", "reason": "Opted-out or cancelled job must never resume" },
+    { "from": "CANCELLED", "to": "AWAITING_CONFIRMATION", "reason": "Cancelled is terminal" },
+    { "from": "EXPIRED", "to": "DISPATCHING", "reason": "Expired job must never fall back to bot" },
+    { "from": "FAILED", "to": "DISPATCHING", "reason": "Failed is terminal after max_retries" },
+    { "from": "PENDING", "to": "SENT_VIA_BOT", "reason": "Must pass through AWAITING_CONFIRMATION and DISPATCHING CAS lease" }
+  ],
+  "cas_chaos_scenarios": [
+    {
+      "id": "TC-CHAOS-01",
+      "name": "N=10 Concurrent Worker CAS Claim",
+      "concurrent_workers": 10,
+      "initial_state": { "status": "AWAITING_CONFIRMATION", "version": 3, "personal_send_confirmed_at": null, "auto_fallback": true, "consent_status": "OPTED_IN", "global_opt_out": false },
+      "expected_claimed_count": 1,
+      "expected_conflicts_count": 9,
+      "expected_final_version": 4
+    },
+    {
+      "id": "TC-CHAOS-02",
+      "name": "Personal Confirmation Wins Before Bot Fallback",
+      "initial_state": { "status": "AWAITING_CONFIRMATION", "version": 3, "personal_send_confirmed_at": "2026-11-26T09:05:00Z", "auto_fallback": true, "consent_status": "OPTED_IN", "global_opt_out": false },
+      "expected_claimed_count": 0,
+      "expected_alert_metric": "scheduler_idempotency_conflicts_total{reason=\"already_confirmed_personal\"}"
+    },
+    {
+      "id": "TC-CHAOS-03",
+      "name": "Global Opt-Out Blocks CAS Claim Even If auto_fallback=TRUE",
+      "initial_state": { "status": "AWAITING_CONFIRMATION", "version": 3, "personal_send_confirmed_at": null, "auto_fallback": true, "consent_status": "OPTED_IN", "global_opt_out": true },
+      "expected_claimed_count": 0
+    },
+    {
+      "id": "TC-CHAOS-04",
+      "name": "Unconsented Recipient Blocks CAS Claim",
+      "initial_state": { "status": "AWAITING_CONFIRMATION", "version": 3, "personal_send_confirmed_at": null, "auto_fallback": true, "consent_status": "UNKNOWN", "global_opt_out": false },
+      "expected_claimed_count": 0
+    }
+  ],
+  "lease_reaper_erratum_a2_7_progression": {
+    "max_retries": 3,
+    "steps": [
+      { "input_retry_count": 0, "expected_status": "AWAITING_CONFIRMATION", "expected_retry_count": 1, "expected_error_code": null },
+      { "input_retry_count": 1, "expected_status": "AWAITING_CONFIRMATION", "expected_retry_count": 2, "expected_error_code": null },
+      { "input_retry_count": 2, "expected_status": "FAILED", "expected_retry_count": 3, "expected_error_code": "LEASE_RETRIES_EXHAUSTED" },
+      { "input_retry_count": 3, "expected_status": "FAILED", "expected_retry_count": 3, "expected_error_code": "LEASE_RETRIES_EXHAUSTED" }
+    ]
+  }
+}

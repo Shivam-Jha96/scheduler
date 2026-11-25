@@ -1,0 +1,53 @@
+rule_files:
+  - scheduler_alerts.yml
+
+evaluation_interval: 1m
+
+tests:
+  - interval: 1m
+    input_series:
+      # 7 reclaimed leases within 1 hour -> fires LeaseReaperHighChurn
+      - series: 'scheduler_worker_lease_reclaimed_total'
+        values: '0+1x7 7x10'
+      # WABA quality transitions GREEN (0) -> RED (2) at minute 5 -> fires WABACircuitBreakerTripped
+      - series: 'scheduler_waba_quality_state'
+        values: '0x5 2x10'
+      # CAS blocked a double-send attempt at minute 3 -> fires DoubleSendAttemptBlocked
+      - series: 'scheduler_idempotency_conflicts_total{reason="already_confirmed_personal"}'
+        values: '0x3 1x10'
+
+    alert_rule_test:
+      - eval_time: 2m
+        alertname: WABACircuitBreakerTripped
+        exp_alerts: []
+
+      - eval_time: 5m
+        alertname: WABACircuitBreakerTripped
+        exp_alerts:
+          - exp_labels:
+              severity: P1
+              component: meta-waba
+            exp_annotations:
+              summary: "WABA quality dropped to YELLOW/RED — Bot Relay halted, Personal-Only mode active"
+              runbook: "docs/runbooks/SOP-01.md"
+
+      - eval_time: 4m
+        alertname: DoubleSendAttemptBlocked
+        exp_alerts:
+          - exp_labels:
+              severity: P1
+              component: scheduler-cas
+              reason: already_confirmed_personal
+            exp_annotations:
+              summary: "CAS guard intercepted Bot Fallback attempt on an already-confirmed personal send"
+              runbook: "docs/runbooks/SOP-03.md"
+
+      - eval_time: 9m
+        alertname: LeaseReaperHighChurn
+        exp_alerts:
+          - exp_labels:
+              severity: P2
+              component: delivery-worker
+            exp_annotations:
+              summary: "More than 5 orphaned worker leases reclaimed by 10s pg_cron reaper in 1 hour"
+              runbook: "docs/runbooks/SOP-02.md"

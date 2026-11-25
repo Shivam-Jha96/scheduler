@@ -1,0 +1,117 @@
+{
+  "meta": {
+    "version": "4.4.0",
+    "retention_model": "4-Tier Data Retention Model (Erratum A.2 #1)",
+    "shred_sql_literal": "E'\\\\x00'::bytea"
+  },
+  "blind_index_vectors": {
+    "pepper": "test-kms-pepper-0123456789abcdef0123456789abcdef0123456789abcdef",
+    "cases": [
+      { "e164": "+919876543210", "expected_length_hex": 64 },
+      { "e164": "+919123456789", "expected_length_hex": 64 },
+      { "e164": "+14155550199", "expected_length_hex": 64 },
+      { "e164": "+447700900123", "expected_length_hex": 64 }
+    ]
+  },
+  "bytea_envelope_spec": {
+    "key_version_bytes": 1,
+    "iv_bytes": 12,
+    "auth_tag_bytes": 16,
+    "header_total_bytes": 29,
+    "sample_plaintexts": [
+      "Bring the project slides",
+      "Happy Birthday Bob! 🎂",
+      "Kal subah 9 baje meeting join karna mat bhulna"
+    ]
+  },
+  "four_tier_retention_tiers": [
+    {
+      "tier": 1,
+      "name": "Message Payload & Deep Link Crypto-Shredding",
+      "sla_hours": 24,
+      "columns_shredded": {
+        "dek_encrypted": "0x00",
+        "message_content_encrypted": "0x00",
+        "wa_me_link": ""
+      },
+      "ephemeral_tables": {
+        "inbound_webhook_events_max_hours": 24,
+        "conversation_states_max_minutes": 15
+      }
+    },
+    {
+      "tier": 2,
+      "name": "Metadata & Audit Events Purge (Option A Locked)",
+      "sla_days": 90,
+      "scheduled_messages_strategy": "UNPARTITIONED_BATCH_DELETE_LIMIT_5000",
+      "scheduled_message_events_strategy": "MONTHLY_RANGE_PARTITION_DROP"
+    },
+    {
+      "tier": 3,
+      "name": "Application Operational Logs",
+      "sla_days": 30
+    },
+    {
+      "tier": 4,
+      "name": "Statutory Consent & Opt-Out Proof",
+      "sla_years": 2
+    }
+  ],
+  "opt_out_classification_cases": [
+    { "input": "STOP", "expected_tier": "GLOBAL", "expected_action": "TIER2_GLOBAL_OPT_OUT" },
+    { "input": "  stop  ", "expected_tier": "GLOBAL", "expected_action": "TIER2_GLOBAL_OPT_OUT" },
+    { "input": "Stop", "expected_tier": "GLOBAL", "expected_action": "TIER2_GLOBAL_OPT_OUT" },
+    { "input": "UNSUBSCRIBE Alice", "expected_tier": "PER_SENDER", "expected_action": "TIER1_PER_SENDER_OPT_OUT", "target_name": "Alice" },
+    { "input": "unsubscribe Dr. Sharma", "expected_tier": "PER_SENDER", "expected_action": "TIER1_PER_SENDER_OPT_OUT", "target_name": "Dr. Sharma" },
+    { "input": "Cancel", "expected_tier": "NONE", "expected_action": "NOT_GLOBAL_OPT_OUT", "rule": "BR-04" },
+    { "input": "End", "expected_tier": "NONE", "expected_action": "NOT_GLOBAL_OPT_OUT", "rule": "BR-04" },
+    { "input": "Quit", "expected_tier": "NONE", "expected_action": "NOT_GLOBAL_OPT_OUT", "rule": "BR-04" },
+    { "input": "Please don't stop sending updates", "expected_tier": "NONE", "expected_action": "NOT_GLOBAL_OPT_OUT", "rule": "BR-04" },
+    { "input": "stop by my office at 5pm", "expected_tier": "NONE", "expected_action": "NOT_GLOBAL_OPT_OUT", "rule": "BR-04" },
+    { "input": "START", "expected_tier": "OPT_IN", "expected_action": "CONSENT_OPT_IN" },
+    { "input": "YES", "expected_tier": "OPT_IN", "expected_action": "CONSENT_OPT_IN" }
+  ],
+  "per_sender_collision_case": {
+    "recipient_e164": "+919123456789",
+    "command": "UNSUBSCRIBE Alice",
+    "active_senders": [
+      { "user_id": "11111111-2222-4333-8444-555555555555", "decrypted_name": "Alice", "masked_phone": "+91-98XXX-43210" },
+      { "user_id": "aaaaaaaa-bbbb-4ccc-8ddd-eeeeeeeeeeee", "decrypted_name": "Alice", "masked_phone": "+91-99XXX-11111" },
+      { "user_id": "99999999-8888-4777-8666-555555555555", "decrypted_name": "Charlie", "masked_phone": "+91-97XXX-22222" }
+    ],
+    "expected_stateless_list_ids": [
+      "UNSUB_PAIR:11111111-2222-4333-8444-555555555555",
+      "UNSUB_PAIR:aaaaaaaa-bbbb-4ccc-8ddd-eeeeeeeeeeee",
+      "UNSUB_ALL"
+    ]
+  },
+  "pino_redaction_vectors": {
+    "forbidden_plaintext_tokens": [
+      "Bring the secret contract slides",
+      "https://wa.me/919123456789?text=Secret",
+      "Alice Cooper",
+      "Bob Smith",
+      "raw-256-bit-dek-secret",
+      "+919876543210",
+      "+919123456789"
+    ],
+    "sample_log_payload": {
+      "jobId": "job-uuid-001",
+      "message_body": "Bring the secret contract slides",
+      "raw_text": "Remind Bob (+919123456789) tomorrow at 9 AM",
+      "wa_me_link": "https://wa.me/919123456789?text=Secret",
+      "sender_name": "Alice Cooper",
+      "recipient_name": "Bob Smith",
+      "dek": "raw-256-bit-dek-secret",
+      "plaintext": "Bring the secret contract slides",
+      "user": { "phone": "+919876543210", "waId": "919876543210" },
+      "nested": { "wa_me_link": "https://wa.me/919123456789?text=Secret" },
+      "freeform_note": "Dispatched from +919876543210 to +919123456789"
+    }
+  },
+  "anti_abuse_quotas": {
+    "rolling_24h_active_limit": 5,
+    "monthly_quota_period_limit": 20,
+    "max_message_chars": 500
+  }
+}
