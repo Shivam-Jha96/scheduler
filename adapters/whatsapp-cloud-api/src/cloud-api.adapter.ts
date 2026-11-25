@@ -1,38 +1,39 @@
-import { 
-  IChannelAdapter, 
-  ChannelCapabilities, 
-  ChannelAccountConfig, 
-  HealthStatus, 
-  RecipientValidationResult, 
-  DeliveryReceipt, 
-  ScheduledMessageJob 
+import {
+  IChannelAdapter,
+  ChannelCapabilities,
+  ChannelAccountConfig,
+  HealthStatus,
+  RecipientValidationResult,
+  DeliveryReceipt,
+  ScheduledMessageJob,
+  MAX_PLAINTEXT_MESSAGE_LENGTH
 } from '@scheduler/adapter-sdk';
 
 export class WhatsAppCloudApiAdapter implements IChannelAdapter {
   readonly channelId = 'whatsapp-cloud-api';
-  readonly displayName = 'WhatsApp (Meta Cloud API / WABA)';
+  readonly displayName = 'WhatsApp (Meta Cloud API v22.0 / WABA)';
 
   readonly capabilities: ChannelCapabilities = {
     supportsRichText: false,
-    supportsMarkdown: true,
-    supportsMedia: ['IMAGE', 'VIDEO', 'AUDIO', 'DOCUMENT'],
+    supportsMarkdown: false,
+    supportsMedia: [],
     supportsButtons: true,
-    supportsReactions: true,
+    supportsReactions: false,
     supportsDeliveryReceipts: true,
     requiresPersistentSession: false,
-    maxPayloadLength: 4096,
+    maxPayloadLength: MAX_PLAINTEXT_MESSAGE_LENGTH,
     rateLimit: {
-      maxPerMinute: 6000, // Meta Tier 3
-      burst: 100,
-      recommendedJitterMs: 50
+      maxPerMinute: 4800, // 80 mps Meta Cloud API v22.0 ceiling
+      burst: 80,
+      recommendedJitterMs: 0
     }
   };
 
-  async initialize(accountConfig: ChannelAccountConfig): Promise<void> {
-    // Validates Meta Graph API Token & WABA Phone ID
+  async initialize(_accountConfig: ChannelAccountConfig): Promise<void> {
+    // M2 (EPIC-07): Validates Meta Graph API v22.0 System User Token & WABA Phone Number ID
   }
 
-  async shutdown(accountId: string): Promise<void> {
+  async shutdown(_accountId: string): Promise<void> {
     // Stateless REST API - no-op
   }
 
@@ -41,27 +42,38 @@ export class WhatsAppCloudApiAdapter implements IChannelAdapter {
       channelId: this.channelId,
       accountId,
       healthy: true,
-      latencyMs: 120,
+      latencyMs: 0,
       timestamp: new Date()
     };
   }
 
-  async validateRecipient(accountId: string, recipientId: string): Promise<RecipientValidationResult> {
-    const cleaned = recipientId.replace(/[^\d]/g, '');
+  async validateRecipient(_accountId: string, recipientId: string): Promise<RecipientValidationResult> {
+    const trimmed = recipientId.trim();
+    const isValidE164 = /^\+[1-9]\d{6,14}$/.test(trimmed);
     return {
-      isValid: cleaned.length >= 10,
-      formattedId: cleaned
+      isValid: isValidE164,
+      formattedId: isValidE164 ? trimmed : undefined,
+      reason: isValidE164 ? undefined : 'Recipient must be a valid E.164 phone number (e.g. +919123456789)'
     };
   }
 
   async sendMessage(job: ScheduledMessageJob): Promise<DeliveryReceipt> {
-    // Sends via Meta Graph API: POST https://graph.facebook.com/v20.0/{phone_number_id}/messages
+    const text = job.payload.text ?? '';
+    if (text.length === 0 || text.length > MAX_PLAINTEXT_MESSAGE_LENGTH) {
+      throw new Error(
+        `Plain-text message length must be between 1 and ${MAX_PLAINTEXT_MESSAGE_LENGTH} characters (got ${text.length})`
+      );
+    }
+
+    // M2 (EPIC-07): Dispatches via Meta Graph API v22.0:
+    // POST {META_GRAPH_API_BASE_URL}/v22.0/{WABA_PHONE_NUMBER_ID}/messages
+    // with biz_opaque_callback_data = job.idempotencyKey
     return {
       messageId: job.id,
       externalMessageId: `wamid.${Date.now()}`,
       channelId: this.channelId,
       recipientId: job.recipientId,
-      status: 'DELIVERED',
+      status: 'SENT',
       deliveredAt: new Date()
     };
   }

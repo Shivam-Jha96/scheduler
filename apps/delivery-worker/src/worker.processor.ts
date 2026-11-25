@@ -18,18 +18,10 @@ export class DeliveryWorkerProcessor {
 
     const adapter = adapterRegistry.get(job.channelId);
 
-    // Optional typing presence
-    if (adapter.simulateActivity && adapter.capabilities.rateLimit.recommendedJitterMs > 0) {
-      await adapter.simulateActivity(
-        job.channelAccountId, 
-        job.recipientId, 
-        adapter.capabilities.rateLimit.recommendedJitterMs
-      );
-    }
-
-    // Execute delivery through adapter port
+    // Execute delivery directly through the official transport adapter port
+    // (v1.2 typing simulation / jitter heuristics permanently retired in Model C v4.4)
     const receipt = await adapter.sendMessage(job);
-    logger.info(`Message delivered successfully: ${job.id}`, { receipt });
+    logger.info(`Message dispatched successfully: ${job.id}`, { receipt });
 
     return receipt;
   }

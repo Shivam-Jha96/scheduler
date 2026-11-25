@@ -1,17 +1,11 @@
 import { adapterRegistry } from '@scheduler/adapter-registry';
-import { whatsAppBaileysAdapter } from '@scheduler/adapter-whatsapp-baileys';
 import { whatsAppCloudApiAdapter } from '@scheduler/adapter-whatsapp-cloud-api';
-import { telegramAdapter } from '@scheduler/adapter-telegram';
-import { discordAdapter } from '@scheduler/adapter-discord';
-import { slackAdapter } from '@scheduler/adapter-slack';
-import { genericWebhookAdapter } from '@scheduler/adapter-webhook';
 
+/**
+ * Registers Phase 1 v4.4 HYBRID production transports only.
+ * Phase 2 omnichannel adapters (Viber, Discord, Signal, LINE, iMessage) are
+ * quarantined until M6/M7 (EPIC-08..10). V1.2 Baileys is permanently retired.
+ */
 export function initializeAdapters(): void {
-  // Register all pluggable omnichannel transports
-  adapterRegistry.register(whatsAppBaileysAdapter);
   adapterRegistry.register(whatsAppCloudApiAdapter);
-  adapterRegistry.register(telegramAdapter);
-  adapterRegistry.register(discordAdapter);
-  adapterRegistry.register(slackAdapter);
-  adapterRegistry.register(genericWebhookAdapter);
 }

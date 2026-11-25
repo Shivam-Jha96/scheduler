@@ -1,11 +1,13 @@
 export enum ChannelType {
-  WHATSAPP_BAILEYS = 'whatsapp-baileys',
   WHATSAPP_CLOUD_API = 'whatsapp-cloud-api',
-  TELEGRAM = 'telegram',
-  DISCORD = 'discord',
-  SLACK = 'slack',
-  SIGNAL = 'signal',
+  // Phase 2+ Omnichannel Roadmap (quarantined outside Phase 1 MVP)
   VIBER = 'viber',
+  DISCORD = 'discord',
+  SIGNAL = 'signal',
+  LINE = 'line',
+  IMESSAGE = 'imessage',
+  TELEGRAM = 'telegram',
+  SLACK = 'slack',
   WEBHOOK = 'webhook',
   CUSTOM = 'custom'
 }

@@ -1,5 +1,8 @@
 # Omnichannel & WhatsApp Message Scheduler — Documentation Portal
 
+> [!WARNING]
+> **[HISTORICAL PRE-v4.4 INDEX]** Several architecture summaries below reflect earlier v1.2–v3.0 iterations (`pg-boss`, Redis locks, Prisma, Baileys pacing). The **authoritative execution baseline** is **Model C v4.4 HYBRID** (Implementation Plan v2.0, `BRD-FRD-WAPP-SCHED-V2.0`, and [docs/contracts/mock_reconciliation_v4_4.md](./contracts/mock_reconciliation_v4_4.md)), which runs purely on **PostgreSQL 16+ (`pg` + `pg_cron >= 1.5`)** and **Meta Cloud API `v22.0`** with zero Redis, BullMQ, `pg-boss`, Prisma, or Baileys in Phase 1.
+
 Welcome to the **Master Documentation Portal** for the **Omnichannel & WhatsApp Message Scheduler** platform.
 
 This portal serves as the authoritative entry point and navigational index for all architectural specifications, system designs, business requirements, scale-out strategies, and executive briefing artifacts across the project lifecycle.

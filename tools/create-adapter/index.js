@@ -33,14 +33,14 @@ fs.mkdirSync(path.join(targetDir, 'test'), { recursive: true });
 const pkgJson = {
   name: `@scheduler/adapter-${name}`,
   version: '1.0.0',
-  description: `${display} adapter for Omnichannel Message Scheduler`,
+  description: `${display} adapter for SchedulerBot Omnichannel Platform`,
   main: './dist/index.js',
   types: './dist/index.d.ts',
   scripts: {
     build: 'tsc -b',
     typecheck: 'tsc --noEmit',
-    test: 'node --test',
-    clean: 'rm -rf dist'
+    test: 'vitest run --passWithNoTests',
+    clean: 'node -e "for(const p of [\'dist\',\'tsconfig.tsbuildinfo\'])require(\'fs\').rmSync(p,{recursive:true,force:true})"'
   },
   dependencies: {
     '@scheduler/adapter-sdk': '*',
@@ -48,7 +48,7 @@ const pkgJson = {
   },
   devDependencies: {
     '@scheduler/typescript-config': '*',
-    'typescript': '^5.7.3'
+    typescript: '^5.7.3'
   }
 };
 fs.writeFileSync(path.join(targetDir, 'package.json'), JSON.stringify(pkgJson, null, 2));
@@ -64,16 +64,17 @@ const tsconfig = {
 };
 fs.writeFileSync(path.join(targetDir, 'tsconfig.json'), JSON.stringify(tsconfig, null, 2));
 
-// 3. Adapter Implementation
+// 3. Adapter Implementation (Model C v4.4 plain-text defaults: <=500 chars, zero media, zero jitter)
 const pascalName = name.replace(/(^|-)([a-z])/g, (_, __, letter) => letter.toUpperCase());
-const adapterCode = `import { 
-  IChannelAdapter, 
-  ChannelCapabilities, 
-  ChannelAccountConfig, 
-  HealthStatus, 
-  RecipientValidationResult, 
-  DeliveryReceipt, 
-  ScheduledMessageJob 
+const adapterCode = `import {
+  IChannelAdapter,
+  ChannelCapabilities,
+  ChannelAccountConfig,
+  HealthStatus,
+  RecipientValidationResult,
+  DeliveryReceipt,
+  ScheduledMessageJob,
+  MAX_PLAINTEXT_MESSAGE_LENGTH
 } from '@scheduler/adapter-sdk';
 
 export class ${pascalName}Adapter implements IChannelAdapter {
@@ -81,27 +82,27 @@ export class ${pascalName}Adapter implements IChannelAdapter {
   readonly displayName = '${display}';
 
   readonly capabilities: ChannelCapabilities = {
-    supportsRichText: true,
-    supportsMarkdown: true,
-    supportsMedia: ['IMAGE', 'DOCUMENT'],
+    supportsRichText: false,
+    supportsMarkdown: false,
+    supportsMedia: [],
     supportsButtons: false,
     supportsReactions: false,
     supportsDeliveryReceipts: true,
     requiresPersistentSession: false,
-    maxPayloadLength: 4096,
+    maxPayloadLength: MAX_PLAINTEXT_MESSAGE_LENGTH,
     rateLimit: {
       maxPerMinute: 60,
       burst: 10,
-      recommendedJitterMs: 500
+      recommendedJitterMs: 0
     }
   };
 
-  async initialize(accountConfig: ChannelAccountConfig): Promise<void> {
-    // TODO: Initialize connection, authenticate client, verify tokens
+  async initialize(_accountConfig: ChannelAccountConfig): Promise<void> {
+    // TODO: Initialize official API client and verify credentials
   }
 
-  async shutdown(accountId: string): Promise<void> {
-    // TODO: Gracefully close connection
+  async shutdown(_accountId: string): Promise<void> {
+    // TODO: Gracefully close client resources
   }
 
   async checkHealth(accountId: string): Promise<HealthStatus> {
@@ -114,8 +115,7 @@ export class ${pascalName}Adapter implements IChannelAdapter {
     };
   }
 
-  async validateRecipient(accountId: string, recipientId: string): Promise<RecipientValidationResult> {
-    // Basic validation format check
+  async validateRecipient(_accountId: string, recipientId: string): Promise<RecipientValidationResult> {
     return {
       isValid: recipientId.trim().length > 0,
       formattedId: recipientId.trim()
@@ -123,13 +123,13 @@ export class ${pascalName}Adapter implements IChannelAdapter {
   }
 
   async sendMessage(job: ScheduledMessageJob): Promise<DeliveryReceipt> {
-    // TODO: Dispatch message via ${display} API or socket
+    // TODO: Dispatch plain-text message via official ${display} API
     return {
       messageId: job.id,
       externalMessageId: \`${name}-\${Date.now()}\`,
       channelId: this.channelId,
       recipientId: job.recipientId,
-      status: 'DELIVERED',
+      status: 'SENT',
       deliveredAt: new Date()
     };
   }

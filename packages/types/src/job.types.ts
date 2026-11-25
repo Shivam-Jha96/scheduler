@@ -1,27 +1,30 @@
 import { ChannelId } from './channel.types.js';
 
-export enum JobStatus {
-  SCHEDULED = 'SCHEDULED',
-  STAGED_IN_QUEUE = 'STAGED_IN_QUEUE',
-  PROCESSING = 'PROCESSING',
-  DELIVERED = 'DELIVERED',
+/**
+ * Canonical 10-State Finite State Machine for Model C v4.4 HYBRID.
+ * Mirrors PostgreSQL `scheduled_message_status` enum (Erratum A.2 #3).
+ */
+export enum ScheduledMessageStatus {
+  PENDING = 'PENDING',
+  NOTIFIED = 'NOTIFIED',
+  FAST_TRACK = 'FAST_TRACK',
+  AWAITING_CONFIRMATION = 'AWAITING_CONFIRMATION',
+  DISPATCHING = 'DISPATCHING',
+  SENT_VIA_PERSONAL = 'SENT_VIA_PERSONAL',
+  SENT_VIA_BOT = 'SENT_VIA_BOT',
   FAILED = 'FAILED',
-  CANCELLED = 'CANCELLED'
+  CANCELLED = 'CANCELLED',
+  EXPIRED = 'EXPIRED'
 }
 
-export type MediaType = 'IMAGE' | 'VIDEO' | 'AUDIO' | 'DOCUMENT';
+export type DispatchMode = 'HYBRID' | 'PERSONAL_ONLY' | 'BOT_ONLY';
 
-export interface MessageMedia {
-  type: MediaType;
-  url: string;
-  mimeType: string;
-  fileName?: string;
-  caption?: string;
-}
+/** Maximum UTF-8 character length enforced in Phase 1 (plain-text only, BR-02). */
+export const MAX_PLAINTEXT_MESSAGE_LENGTH = 500;
 
 export interface ScheduledMessagePayload {
+  /** Plain-text UTF-8 body (<= 500 characters; multimedia prohibited in v4.4). */
   text: string;
-  media?: MessageMedia[];
   metadata?: Record<string, unknown>;
 }
 
@@ -34,11 +37,15 @@ export interface ScheduledMessageJob {
   payload: ScheduledMessagePayload;
   scheduledFor: Date;
   timezone: string;
-  cronExpression?: string;
-  recurrenceRule?: string;
-  parentScheduleId?: string;
   idempotencyKey: string;
   retryCount: number;
+  status?: ScheduledMessageStatus;
+  dispatchMode?: DispatchMode;
+  autoFallback?: boolean;
+  version?: number;
+  templateName?: string;
+  templateLanguage?: string;
+  waMeLink?: string;
 }
 
 export interface DeliveryReceipt {

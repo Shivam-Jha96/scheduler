@@ -9,23 +9,18 @@
     "build": "tsc -b",
     "typecheck": "tsc --noEmit",
     "dev": "node dist/index.js",
-    "clean": "rm -rf dist"
+    "clean": "node -e \"require('fs').rmSync('dist',{recursive:true,force:true});require('fs').rmSync('tsconfig.tsbuildinfo',{force:true})\""
   },
   "dependencies": {
-    "@scheduler/adapter-discord": "*",
     "@scheduler/adapter-registry": "*",
     "@scheduler/adapter-sdk": "*",
-    "@scheduler/adapter-slack": "*",
-    "@scheduler/adapter-telegram": "*",
-    "@scheduler/adapter-webhook": "*",
-    "@scheduler/adapter-whatsapp-baileys": "*",
     "@scheduler/adapter-whatsapp-cloud-api": "*",
     "@scheduler/config": "*",
     "@scheduler/crypto": "*",
     "@scheduler/database": "*",
     "@scheduler/logger": "*",
-    "@scheduler/queue": "*",
-    "@scheduler/types": "*"
+    "@scheduler/types": "*",
+    "prom-client": "^15.1.3"
   },
   "devDependencies": {
     "@scheduler/typescript-config": "*",

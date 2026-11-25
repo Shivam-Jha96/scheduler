@@ -1,39 +1,50 @@
-version: '3.8'
-
 services:
   postgres:
-    image: postgres:16-alpine
+    build:
+      context: .
+      dockerfile: Dockerfile.postgres
     container_name: scheduler-postgres
-    restart: always
+    restart: unless-stopped
     environment:
       POSTGRES_USER: scheduler
       POSTGRES_PASSWORD: scheduler_secret
       POSTGRES_DB: scheduler_db
+    command:
+      - "postgres"
+      - "-c"
+      - "shared_preload_libraries=pg_cron"
+      - "-c"
+      - "cron.database_name=scheduler_db"
     ports:
       - "5432:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
+      - ./postgres/init:/docker-entrypoint-initdb.d:ro
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U scheduler -d scheduler_db"]
       interval: 5s
       timeout: 5s
       retries: 5
 
-  redis:
-    image: redis:7-alpine
-    container_name: scheduler-redis
-    restart: always
-    command: ["redis-server", "--appendonly", "yes"]
+  # Isolated local CI / k6 soak MockAPI_Server (M0-T3).
+  # External Modal URL is reserved strictly for manual/smoke verification.
+  # Start with: docker compose -f docker/docker-compose.yml --profile mock up -d
+  mockapi-server:
+    profiles: ["mock"]
+    image: ${MOCK_API_IMAGE:-ghcr.io/shivam-jha96/mockapi-server:latest}
+    container_name: scheduler-mockapi
+    restart: unless-stopped
+    environment:
+      APP_SECRET: ${META_APP_SECRET:-dev-meta-app-secret}
+      VERIFY_TOKEN: ${META_VERIFY_TOKEN:-mock_verify_token_12345}
+      REQUIRE_TEST_RUN_ISOLATION: "true"
     ports:
-      - "6379:6379"
-    volumes:
-      - redis_data:/data
+      - "8080:8080"
     healthcheck:
-      test: ["CMD", "redis-cli", "ping"]
+      test: ["CMD-SHELL", "curl -fsS http://localhost:8080/health || exit 1"]
       interval: 5s
       timeout: 3s
       retries: 5
 
 volumes:
   postgres_data:
-  redis_data:
