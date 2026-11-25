@@ -13,13 +13,13 @@
     },
     "test": {
       "dependsOn": ["build"],
-      "outputs": ["coverage/**"]
+      "outputs": []
     },
     "dev": {
       "cache": false,
       "persistent": true
     },
-    "db:generate": {
+    "clean": {
       "cache": false
     }
   }

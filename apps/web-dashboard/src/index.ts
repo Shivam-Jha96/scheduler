@@ -1,4 +1,5 @@
-// Next.js / React management dashboard entrypoint
+// Phase 2 (M7 / EPIC-11) Next.js / React management dashboard placeholder.
+// Quarantined outside Phase 1 v4.4 HYBRID WhatsApp-native MVP runtime.
 export interface DashboardStats {
   totalScheduled: number;
   totalDelivered: number;
@@ -9,6 +10,6 @@ export function getInitialDashboardStats(): DashboardStats {
   return {
     totalScheduled: 0,
     totalDelivered: 0,
-    activeChannels: ['whatsapp-baileys', 'telegram', 'discord', 'slack', 'webhook']
+    activeChannels: ['whatsapp-cloud-api']
   };
 }

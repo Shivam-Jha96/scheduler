@@ -1,8 +1,0 @@
-{
-  "extends": "@scheduler/typescript-config/node.json",
-  "include": ["src/**/*"],
-  "compilerOptions": {
-    "outDir": "dist",
-    "rootDir": "src"
-  }
-}

@@ -44,6 +44,8 @@ Thumbs.db
 docs/*
 !docs/README.md
 !docs/README*.md
+!docs/contracts/
+!docs/contracts/**
 !README.md
 !**/README.md
 downloaded_docs/
