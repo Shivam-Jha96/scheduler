@@ -1,0 +1,64 @@
+{
+  // ============================================================================
+  // Tailscale Access Control Lists (ACL) Policy
+  // Lean VPS Zero-Trust Administration (FR-NET-02 / BO-08)
+  // ============================================================================
+  // Enforces Corporate SSO + WebAuthn FIDO2 MFA for all administrative access.
+  // Restricts Port 22 (SSH) and Port 5432 (PostgreSQL) strictly to
+  // authorized admin groups targeting tag:scheduler-prod over CGNAT 100.x.y.z.
+  // ============================================================================
+
+  "tagOwners": {
+    "tag:scheduler-prod": ["group:sre-admins"]
+  },
+
+  "groups": {
+    "group:sre-admins": [
+      "sre-lead@schedulerbot.internal",
+      "platform-admin@schedulerbot.internal"
+    ],
+    "group:db-admins": [
+      "dba-lead@schedulerbot.internal",
+      "sre-lead@schedulerbot.internal"
+    ]
+  },
+
+  "acls": [
+    // Database Administrators: Port 5432 (PostgreSQL) access to production nodes
+    {
+      "action": "accept",
+      "src": ["group:db-admins"],
+      "dst": ["tag:scheduler-prod:5432"]
+    },
+    // SRE Administrators: Full diagnostic access to production nodes
+    {
+      "action": "accept",
+      "src": ["group:sre-admins"],
+      "dst": ["tag:scheduler-prod:22", "tag:scheduler-prod:5432", "tag:scheduler-prod:3100"]
+    }
+  ],
+
+  // Tailscale SSH with Mandatory WebAuthn / FIDO2 Step-Up Authentication
+  "ssh": [
+    {
+      "action": "check",
+      "src": ["group:sre-admins"],
+      "dst": ["tag:scheduler-prod"],
+      "users": ["root", "ubuntu", "cloudflared"],
+      "checkPeriod": "12h"
+    }
+  ],
+
+  // Enforce Multi-Factor Authentication via Corporate WebAuthn / FIDO2 Keys
+  "tests": [
+    {
+      "src": "sre-lead@schedulerbot.internal",
+      "accept": ["tag:scheduler-prod:22", "tag:scheduler-prod:5432"]
+    },
+    {
+      "src": "dba-lead@schedulerbot.internal",
+      "accept": ["tag:scheduler-prod:5432"],
+      "deny": ["tag:scheduler-prod:22"]
+    }
+  ]
+}

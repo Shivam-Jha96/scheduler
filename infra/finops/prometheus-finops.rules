@@ -1,0 +1,61 @@
+# ==============================================================================
+# Prometheus FinOps Alerting & Recording Rules
+# Milestone M1 / EPIC-14 (#30) / R-EP14-02 / §4.4
+#
+# FinOps Governance:
+# 1. Recording rule for rolling 24h Bot Relay fallback ratio
+# 2. Recording rule tracking estimated monthly AWS KMS envelope calls
+# 3. Alert rule: fires when 24h fallback ratio > 25% for 15m (severity: warning)
+# ==============================================================================
+
+groups:
+  - name: schedulerbot_finops_unit_economics
+    interval: 1m
+    rules:
+      # ------------------------------------------------------------------------
+      # Recording Rule 1: 24-Hour Rolling Bot Fallback Ratio
+      # Ratio = sum(increase(bot_fallback_dispatched[24h])) / sum(increase(scheduled_total[24h]))
+      # Clamped to minimum 1 denominator to prevent division by zero in quiet periods.
+      # ------------------------------------------------------------------------
+      - record: scheduler:bot_fallback_ratio_24h
+        expr: >-
+          sum(increase(scheduler_bot_fallback_dispatched_total[24h]))
+          /
+          clamp_min(sum(increase(scheduler_messages_scheduled_total[24h])), 1)
+
+      # ------------------------------------------------------------------------
+      # Recording Rule 2: Estimated Monthly AWS KMS Envelope Encryption Operations
+      # 1 GenerateDataKey (scheduling) + 2..4 Decrypt ops (reaper/delivery/verification)
+      # Factor: 4.5 KMS calls per message. At 100k msgs = ~450k calls (~$1.20/mo).
+      # ------------------------------------------------------------------------
+      - record: scheduler:estimated_monthly_kms_calls
+        expr: >-
+          sum(increase(scheduler_messages_scheduled_total[30d])) * 4.5
+
+      # ------------------------------------------------------------------------
+      # Alert: SchedulerBotFallbackRateDriftHigh
+      # Fires when rolling 24h fallback exceeds 25% (baseline is 20% / 0.20) for 15m.
+      # Indicates:
+      # - Degradation of T0 wa.me P2P deep-link UX (users ignoring personal link)
+      # - Unanticipated Meta Utility spend drift above $0.015/msg budgeted baseline
+      # ------------------------------------------------------------------------
+      - alert: SchedulerBotFallbackRateDriftHigh
+        expr: >-
+          (
+            sum(increase(scheduler_bot_fallback_dispatched_total[24h]))
+            /
+            clamp_min(sum(increase(scheduler_messages_scheduled_total[24h])), 1)
+          ) > 0.25
+        for: 15m
+        labels:
+          severity: warning
+          component: finops-unit-economics
+          milestone: M1
+          epic: EPIC-14
+        annotations:
+          summary: "SchedulerBot Bot Fallback rate exceeded 25% over rolling 24h"
+          description: >-
+            The rolling 24-hour Bot Relay fallback ratio is {{ $value | humanizePercentage }},
+            exceeding the 20% planned baseline (threshold 25.0%). This indicates elevated Meta Utility
+            template spend ($0.015/msg) or user drop-off in T0 wa.me deep-link execution.
+          runbook: "docs/runbooks/FINOPS-01.md"

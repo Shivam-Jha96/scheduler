@@ -90,12 +90,48 @@ for (const file of codeFiles) {
   }
 }
 
+// 4. Milestone M1 / EPIC-14 IaC & FinOps Guardrails (#31)
+const infraDir = path.join(ROOT, 'infra');
+let infraFileCount = 0;
+if (fs.existsSync(infraDir)) {
+  const infraFiles = walk(infraDir, (f) => /\.(tf|ya?ml|sh|sql|conf)$/i.test(f));
+  infraFileCount = infraFiles.length;
+  for (const file of infraFiles) {
+    const rel = path.relative(ROOT, file).replace(/\\/g, '/');
+    const content = fs.readFileSync(file, 'utf8');
+
+    // Fail if any aws_s3_bucket or r2.cloudflarestorage.com resource is defined in Phase 1 IaC
+    if (/\bresource\s+"aws_s3_bucket"\b/.test(content)) {
+      errors.push(`Forbidden S3 object-storage resource (aws_s3_bucket) defined in Phase 1 IaC: ${rel}`);
+    }
+    if (content.includes('r2.cloudflarestorage.com')) {
+      errors.push(`Forbidden Cloudflare R2 reference found in Phase 1 IaC: ${rel}`);
+    }
+
+    // Fail if any Terraform security group opens port 22 or 5432 to 0.0.0.0/0
+    if (file.endsWith('.tf')) {
+      const ingressBlocks = content.match(/ingress\s*\{[^}]*\}/g) || [];
+      for (const block of ingressBlocks) {
+        if (/0\.0\.0\.0\/0/.test(block) && /\b(from_port\s*=\s*(?:22|5432)|to_port\s*=\s*(?:22|5432)|port\s*=\s*(?:22|5432))\b/.test(block)) {
+          errors.push(`Forbidden security group ingress: port 22 or 5432 open to 0.0.0.0/0 in ${rel}`);
+        }
+      }
+      const ruleBlocks = content.match(/resource\s+"(?:aws_security_group_rule|aws_vpc_security_group_ingress_rule)"\s+"[^"]+"\s*\{[^}]*\}/g) || [];
+      for (const block of ruleBlocks) {
+        if (/0\.0\.0\.0\/0/.test(block) && /\b(from_port\s*=\s*(?:22|5432)|to_port\s*=\s*(?:22|5432)|port\s*=\s*(?:22|5432))\b/.test(block)) {
+          errors.push(`Forbidden security group rule: port 22 or 5432 open to 0.0.0.0/0 in ${rel}`);
+        }
+      }
+    }
+  }
+}
+
 if (errors.length > 0) {
-  console.error('M0-T4 / EP12-G2 Guardrail Check FAILED:');
+  console.error('M0-T4 / EP12-G2 / M1-IaC Guardrail Check FAILED:');
   for (const err of errors) {
     console.error(`  - ${err}`);
   }
   process.exit(1);
 }
 
-console.log(`M0-T4 / EP12-G2 Guardrail Check PASSED (${pkgFiles.length} package.json & ${codeFiles.length} code/SQL files scanned).`);
+console.log(`M0-T4 / EP12-G2 / M1-IaC Guardrail Check PASSED (${pkgFiles.length} package.json, ${codeFiles.length} code/SQL, & ${infraFileCount} infra files scanned).`);

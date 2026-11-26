@@ -1,7 +1,7 @@
 # Omnichannel & WhatsApp Message Scheduler — Documentation Portal
 
 > [!WARNING]
-> **[HISTORICAL PRE-v4.4 INDEX]** Several architecture summaries below reflect earlier v1.2–v3.0 iterations (`pg-boss`, Redis locks, Prisma, Baileys pacing). The **authoritative execution baseline** is **Model C v4.4 HYBRID** (Implementation Plan v2.0, `BRD-FRD-WAPP-SCHED-V2.0`, and [docs/contracts/mock_reconciliation_v4_4.md](./contracts/mock_reconciliation_v4_4.md)), which runs purely on **PostgreSQL 16+ (`pg` + `pg_cron >= 1.5`)** and **Meta Cloud API `v22.0`** with zero Redis, BullMQ, `pg-boss`, Prisma, or Baileys in Phase 1.
+> **[HISTORICAL PRE-v4.4 INDEX]** Several architecture summaries below reflect earlier v1.2–v3.0 iterations (`pg-boss`, Redis locks, Prisma, Baileys pacing). The **authoritative execution baseline** is **Model C v4.4 HYBRID** (Implementation Plan v2.0, `BRD-FRD-WAPP-SCHED-V2.0`, [docs/contracts/mock_reconciliation_v4_4.md](./contracts/mock_reconciliation_v4_4.md), and [infra/README.md](../infra/README.md)), which runs purely on **PostgreSQL 16+ (`pg` + `pg_cron >= 1.5`)** and **Meta Cloud API `v22.0`** with zero Redis, BullMQ, `pg-boss`, Prisma, or Baileys in Phase 1. Dual hosting profiles and FinOps unit economics are detailed in [infra/finops/cost_model_v4_4.md](../infra/finops/cost_model_v4_4.md).
 
 Welcome to the **Master Documentation Portal** for the **Omnichannel & WhatsApp Message Scheduler** platform.
 
@@ -268,49 +268,75 @@ python scripts/build_brd_frd_html_pdf.py
 
 ## 6. Monorepo Organization & Code Layout
 
-The project follows standard Turborepo conventions:
+The project follows standard Turborepo conventions for the active **Model C v4.4 HYBRID** architecture:
 
 ```
 scheduler/
 ├── apps/                        # Application services
-│   ├── api-gateway/             # Fastify webhook and API ingest
-│   ├── scheduler-feeder/        # 60s PostgreSQL Look-Ahead Poller daemon
-│   ├── delivery-worker/         # BullMQ millisecond execution pool
-│   └── web-dashboard/           # Next.js administrative control plane
+│   ├── api-gateway/             # Fastify v5 webhook and API ingest
+│   ├── delivery-worker/         # Pure PG 16 CAS lease dispatch processor
+│   └── web-dashboard/           # [Phase 2 / M7 / EPIC-11] Quarantined dashboard shell
 │
 ├── adapters/                    # Pluggable channel transport implementations
-│   ├── whatsapp-baileys/        # Companion device socket connection
-│   ├── whatsapp-cloud-api/      # Official Meta Graph REST API
-│   ├── telegram/                # Telegram Bot API adapter
-│   ├── discord/                 # Discord Gateway Bot adapter
-│   ├── slack/                   # Slack Bolt API adapter
-│   └── webhook/                 # Generic outbound HTTP webhook adapter
+│   ├── whatsapp-cloud-api/      # [Phase 1 Active] Official Meta Cloud API v22.0
+│   ├── discord/                 # [Phase 2 / M6 / EPIC-09] Quarantined
+│   ├── viber/                   # [Phase 2 / M6 / EPIC-09] Quarantined
+│   ├── slack/                   # [Phase 2+ Backlog] Quarantined
+│   ├── telegram/                # [Phase 2+ Backlog] Quarantined
+│   └── webhook/                 # [Phase 2+ Backlog] Quarantined
 │
 ├── packages/                    # Shared internal libraries
+│   ├── types/                   # Canonical 10-state FSM & plain-text contracts
 │   ├── adapter-sdk/             # IChannelAdapter TypeScript interface & port
 │   ├── adapter-registry/        # Inversion-of-Control adapter manager
 │   ├── adapter-test-kit/        # Automated contract test suite
-│   ├── database/                # Prisma client & PostgreSQL schemas
-│   ├── queue/                   # BullMQ connection & job abstractions
-│   ├── crypto/                  # AES-256-GCM envelope encryption
-│   └── temporal/                # Luxon timezone and DST calculation engine
+│   ├── database/                # Pure PostgreSQL 16+ pg pool client & migrations
+│   ├── crypto/                  # AWS KMS envelope encryption & blind indexing
+│   ├── temporal/                # Luxon timezone and DST calculation engine
+│   ├── logger/                  # Pino structured logger & PII redactor
+│   └── config/                  # Zod-validated v4.4 environment config
+│
+├── infra/                       # Milestone M1 Infrastructure-as-Code (EPIC-14)
+│   ├── README.md                # IaC Architecture & Verification Guide
+│   ├── lean-vps/                # Lean VPS Zero-Trust Ingress Profile ($11.95–$27.80/mo)
+│   │   ├── cloudflared/         # Outbound QUIC tunnel (0 public WAN ports)
+│   │   ├── tailscale/           # Bastion-free admin via WireGuard 100.x.y.z + FIDO2
+│   │   ├── hardening/           # UFW default-deny & Linux sysctl hardening
+│   │   ├── postgres/            # PostgreSQL 16 + pg_cron >= 1.5 + local pgBackRest
+│   │   └── logging/             # Promtail + Loki (Tier-3 30-day / 720h retention)
+│   ├── terraform-aws/           # Enterprise AWS Terraform Profile ($180.00/mo)
+│   │   ├── vpc.tf, security_groups.tf # Multi-AZ VPC with isolated DB subnets
+│   │   ├── kms.tf               # Envelope CMK (alias/schedulerbot-dek) + key rotation
+│   │   ├── rds_aurora.tf        # Aurora PG 16 with pg_cron parameter group
+│   │   ├── alb.tf, waf.tf       # TLS 1.3 ALB + WAFv2 rate limiting on /webhooks/whatsapp
+│   │   ├── ecs.tf, ssm.tf       # Private Fargate tasks + SSM Session Manager
+│   │   └── cloudwatch.tf        # Tier-3 30-day log groups
+│   ├── finops/                  # Cost Modeling & Drift Governance
+│   │   ├── budget-alerts.tf     # AWS Budgets ($180 base, $481.20 100k tier @ 75%/90%)
+│   │   ├── prometheus-finops.rules # >25% fallback drift alert over 24h & KMS metrics
+│   │   └── cost_model_v4_4.md   # Reconciled unit-economics ledger (72.5%–79.1% savings)
+│   └── verification/            # Security & Performance Verification Scripts
+│       ├── verify-zero-ports.sh # nmap -Pn -p- audit asserting 0 open public WAN ports
+│       ├── probe-latency.sh     # Anycast (<140ms) & Meta Graph peering (<15ms)
+│       └── test-pg-cron-10s.sql # PostgreSQL 16 sub-minute 10s cron & advisory lock fallback
+│
+├── tests/                       # Complete Testing & QA Suite
+│   ├── suites/                  # Vitest contract & specification suites (including m1-iac-and-finops)
+│   ├── datasets/                # Deterministic test vectors & golden dataset
+│   ├── load-k6/                 # Grafana k6 webhook & opt-out soak scripts
+│   └── observability/           # Prometheus alert rules & promtool test fixtures
 │
 ├── docs/                        # Master Documentation Portal (this directory)
 │   ├── README.md                # Master Documentation Index & Guide
-│   ├── monorepo_boilerplate_plan.md
-│   ├── whatsapp_message_scheduler_master_plan.md
-│   ├── WhatsApp_Scheduler_Master_Technical_Plan.html / .pdf
-│   ├── whatsapp_scheduler_brd_frd.md
-│   ├── WhatsApp_Scheduler_BRD_FRD.html / .pdf
-│   ├── omnichannel_messaging_scheduler_plan.md
-│   ├── Omnichannel_Scheduler_BRD_FRD_ScaleOut.html / .pdf
-│   ├── Partner_Meeting_Briefing_QnA.html / .pdf
-│   └── conversation_transcript.md
+│   ├── contracts/               # Frozen M0-T3 ADRs (mock_reconciliation_v4_4.md)
+│   └── ...
 │
-├── scripts/                     # Document build & headless PDF compilation scripts
+├── scripts/                     # Guardrail, Kanban & document build scripts
 ├── tools/                       # Developer velocity tooling (create-adapter CLI)
 └── PROJECT.md                   # Monorepo Roadmap & Milestone Decomposition
 ```
+
+> **Retired V1.2 Disclaimer**: Legacy directories `apps/scheduler-feeder`, `adapters/whatsapp-baileys`, `packages/queue`, and Prisma (`packages/database/prisma`) have been permanently purged from the repository. All background polling is replaced by PostgreSQL 16+ `pg_cron >= 1.5` and pure CAS leases. Cloudflare R2 media pipelines (`EPIC-12`) are permanently retired ($0.00 OpEx).
 
 ---
 
