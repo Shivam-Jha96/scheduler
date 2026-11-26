@@ -6,7 +6,9 @@
     "milestone_m1_title": "M1: Zero-Trust Edge, Crypto Foundation & Production DDL",
     "generated_at": "2026-11-26T11:14:41Z",
     "assignee": "Shivam-Jha96",
-    "target_status": "In Progress"
+    "target_status": "In Review",
+    "pr_number": 32,
+    "pr_url": "https://github.com/Shivam-Jha96/scheduler/pull/32"
   },
   "milestones": {
     "M0: Pre-Build Hygiene, V1.2 Purge & Errata Reconciliation": 1,
@@ -26,7 +28,7 @@
       "title": "[EPIC-14] Reconciled Network Ingress, Dual Hosting Profiles & Cost Modeling (FR-NET)",
       "milestone": "M1: Zero-Trust Edge, Crypto Foundation & Production DDL",
       "assignee": "Shivam-Jha96",
-      "status": "In Progress"
+      "status": "In Review"
     },
     "EPIC-13": {
       "number": 13,
@@ -51,7 +53,7 @@
       "parent_epic_node_id": "I_kwDOVs6B1c8AAAABe5MgQg",
       "assignee": "Shivam-Jha96",
       "milestone": "M1: Zero-Trust Edge, Crypto Foundation & Production DDL",
-      "status": "In Progress"
+      "status": "In Review"
     },
     "STORY-2": {
       "type": "story",
@@ -63,7 +65,7 @@
       "parent_epic_node_id": "I_kwDOVs6B1c8AAAABfavkXg",
       "assignee": "Shivam-Jha96",
       "milestone": "M1: Zero-Trust Edge, Crypto Foundation & Production DDL",
-      "status": "In Progress"
+      "status": "In Review"
     },
     "STORY-3": {
       "type": "story",
@@ -75,7 +77,7 @@
       "parent_epic_node_id": "I_kwDOVs6B1c8AAAABfavkXg",
       "assignee": "Shivam-Jha96",
       "milestone": "M1: Zero-Trust Edge, Crypto Foundation & Production DDL",
-      "status": "In Progress"
+      "status": "In Review"
     },
     "STORY-4": {
       "type": "story",
@@ -87,7 +89,7 @@
       "parent_epic_node_id": "I_kwDOVs6B1c8AAAABfavkXg",
       "assignee": "Shivam-Jha96",
       "milestone": "M1: Zero-Trust Edge, Crypto Foundation & Production DDL",
-      "status": "In Progress"
+      "status": "In Review"
     },
     "STORY-2_SUBTASK_23": {
       "type": "subtask",
@@ -99,7 +101,7 @@
       "parent_story_node_id": "I_kwDOVs6B1c8AAAABiubG5w",
       "assignee": "Shivam-Jha96",
       "milestone": "M1: Zero-Trust Edge, Crypto Foundation & Production DDL",
-      "status": "In Progress"
+      "status": "In Review"
     },
     "STORY-2_SUBTASK_24": {
       "type": "subtask",
@@ -111,7 +113,7 @@
       "parent_story_node_id": "I_kwDOVs6B1c8AAAABiubG5w",
       "assignee": "Shivam-Jha96",
       "milestone": "M1: Zero-Trust Edge, Crypto Foundation & Production DDL",
-      "status": "In Progress"
+      "status": "In Review"
     },
     "STORY-2_SUBTASK_25": {
       "type": "subtask",
@@ -123,7 +125,7 @@
       "parent_story_node_id": "I_kwDOVs6B1c8AAAABiubG5w",
       "assignee": "Shivam-Jha96",
       "milestone": "M1: Zero-Trust Edge, Crypto Foundation & Production DDL",
-      "status": "In Progress"
+      "status": "In Review"
     },
     "STORY-3_SUBTASK_26": {
       "type": "subtask",
@@ -135,7 +137,7 @@
       "parent_story_node_id": "I_kwDOVs6B1c8AAAABiubU5w",
       "assignee": "Shivam-Jha96",
       "milestone": "M1: Zero-Trust Edge, Crypto Foundation & Production DDL",
-      "status": "In Progress"
+      "status": "In Review"
     },
     "STORY-3_SUBTASK_27": {
       "type": "subtask",
@@ -147,7 +149,7 @@
       "parent_story_node_id": "I_kwDOVs6B1c8AAAABiubU5w",
       "assignee": "Shivam-Jha96",
       "milestone": "M1: Zero-Trust Edge, Crypto Foundation & Production DDL",
-      "status": "In Progress"
+      "status": "In Review"
     },
     "STORY-3_SUBTASK_28": {
       "type": "subtask",
@@ -159,7 +161,7 @@
       "parent_story_node_id": "I_kwDOVs6B1c8AAAABiubU5w",
       "assignee": "Shivam-Jha96",
       "milestone": "M1: Zero-Trust Edge, Crypto Foundation & Production DDL",
-      "status": "In Progress"
+      "status": "In Review"
     },
     "STORY-4_SUBTASK_29": {
       "type": "subtask",
@@ -171,7 +173,7 @@
       "parent_story_node_id": "I_kwDOVs6B1c8AAAABiubivA",
       "assignee": "Shivam-Jha96",
       "milestone": "M1: Zero-Trust Edge, Crypto Foundation & Production DDL",
-      "status": "In Progress"
+      "status": "In Review"
     },
     "STORY-4_SUBTASK_30": {
       "type": "subtask",
@@ -183,7 +185,7 @@
       "parent_story_node_id": "I_kwDOVs6B1c8AAAABiubivA",
       "assignee": "Shivam-Jha96",
       "milestone": "M1: Zero-Trust Edge, Crypto Foundation & Production DDL",
-      "status": "In Progress"
+      "status": "In Review"
     },
     "STORY-4_SUBTASK_31": {
       "type": "subtask",
@@ -195,7 +197,14 @@
       "parent_story_node_id": "I_kwDOVs6B1c8AAAABiubivA",
       "assignee": "Shivam-Jha96",
       "milestone": "M1: Zero-Trust Edge, Crypto Foundation & Production DDL",
-      "status": "In Progress"
+      "status": "In Review"
     }
+  },
+  "pr_item": {
+    "number": 32,
+    "item_id": "PVTI_lAHOATDjps4BrbmUzhMFrFk",
+    "title": "feat(m1-iac): implement Dual-Profile Zero-Trust IaC, FinOps & Verification Suite (EPIC-14)",
+    "status": "In Review",
+    "url": "https://github.com/Shivam-Jha96/scheduler/pull/32"
   }
 }
