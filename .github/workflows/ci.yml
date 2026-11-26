@@ -23,7 +23,7 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: M0-T4 / EP12-G2 Forbidden V1.2 & SQL Guardrails
+      - name: M0-T4 / EP12-G2 / M1-IaC Guardrails (Zero-Trust, Zero-Storage & No-Baileys)
         run: npm run lint:v12-guard
 
       - name: Build all Turborepo workspaces
@@ -32,5 +32,5 @@ jobs:
       - name: Typecheck all Turborepo workspaces
         run: npm run typecheck
 
-      - name: Run Vitest & workspace tests
+      - name: Run Vitest & workspace tests (including M1 IaC & FinOps suite)
         run: npm test

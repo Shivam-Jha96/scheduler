@@ -2,7 +2,7 @@
 
 > **Architecture**: Model C v4.4 HYBRID (Pure PostgreSQL 16+ ACID State Machine + Meta WhatsApp Cloud API `v22.0` + `wa.me` P2P Deep Links)  
 > **Monorepo**: Turborepo + npm workspaces + TypeScript `5.7.3`  
-> **Status**: `M0` (Sprint 0) Hygiene, V1.2 Purge, Contract Reconciliation & CI Baseline Active
+> **Status**: `M0` Complete | `M1` (Sprint 1–2) Zero-Trust Edge, Dual-Profile IaC (`EPIC-14`) & PG 16 `pg_cron` Verification Active
 
 ---
 
@@ -27,9 +27,45 @@ scheduler/
 ├── .env.example                       # Model C v4.4 HYBRID environment template
 ├── .github/workflows/ci.yml           # CI: v1.2 guardrails, build, typecheck, tests
 ├── scripts/
-│   └── check-v12-guardrails.mjs       # EP12-G2 / M0-T4 forbidden v1.2 dependency & SQL guard
+│   ├── check-v12-guardrails.mjs       # EP12-G2 / M0-T4 forbidden v1.2 & M1 IaC zero-storage guard
+│   └── setup_m1_kanban.py             # Milestone M1 Kanban automation script
 ├── tests/
-│   └── m0-hygiene.test.ts             # Vitest baseline verification suite
+│   ├── m0-hygiene.test.ts             # Vitest baseline verification suite
+│   ├── suites/
+│   │   ├── m1-iac-and-finops.spec.ts  # M1 IaC, Lean VPS, AWS Terraform, FinOps & verification suite
+│   │   ├── fsm-and-cas-contracts.spec.ts
+│   │   ├── mockapi-v4-4-contract.spec.ts
+│   │   ├── nlu-calibration-and-dataset.spec.ts
+│   │   ├── security-privacy-retention.spec.ts
+│   │   └── temporal-dst-39-cases.spec.ts
+│   ├── datasets/                      # Deterministic test vectors & golden dataset
+│   ├── load-k6/                       # Grafana k6 webhook & opt-out soak scripts
+│   └── observability/                 # Prometheus alert rules & promtool test fixtures
+│
+├── infra/
+│   ├── README.md                      # Milestone M1 IaC, Dual Profiles & Verification Guide
+│   ├── lean-vps/                      # Lean VPS Zero-Trust Ingress Profile ($11.95–$27.80/mo)
+│   │   ├── cloudflared/               # Outbound QUIC tunnel (0 public WAN ports)
+│   │   ├── tailscale/                 # Bastion-free admin via WireGuard 100.x.y.z + FIDO2
+│   │   ├── hardening/                 # UFW default-deny & Linux sysctl hardening
+│   │   ├── postgres/                  # PostgreSQL 16 + pg_cron >= 1.5 + local pgBackRest
+│   │   └── logging/                   # Promtail + Loki (Tier-3 30-day / 720h retention)
+│   ├── terraform-aws/                 # Enterprise AWS Terraform Profile ($180.00/mo)
+│   │   ├── main.tf, variables.tf, outputs.tf
+│   │   ├── vpc.tf, security_groups.tf # Multi-AZ VPC with isolated DB subnets
+│   │   ├── kms.tf                     # Envelope CMK (alias/schedulerbot-dek) + key rotation
+│   │   ├── rds_aurora.tf              # Aurora PG 16 with pg_cron parameter group
+│   │   ├── alb.tf, waf.tf             # TLS 1.3 ALB + WAFv2 rate limiting on /webhooks/whatsapp
+│   │   ├── ecs.tf, ssm.tf             # Private Fargate tasks + SSM Session Manager
+│   │   └── cloudwatch.tf              # Tier-3 30-day log groups
+│   ├── finops/                        # Cost Modeling & Drift Governance
+│   │   ├── budget-alerts.tf           # AWS Budgets ($180 base, $481.20 100k tier @ 75%/90%)
+│   │   ├── prometheus-finops.rules    # >25% fallback drift alert over 24h & KMS metrics
+│   │   └── cost_model_v4_4.md         # Reconciled unit-economics ledger (72.5%–79.1% savings)
+│   └── verification/                  # Security & Performance Verification Scripts
+│       ├── verify-zero-ports.sh       # nmap -Pn -p- audit asserting 0 open public WAN ports
+│       ├── probe-latency.sh           # Anycast (<140ms) & Meta Graph peering (<15ms)
+│       └── test-pg-cron-10s.sql       # PostgreSQL 16 sub-minute 10s cron & advisory lock fallback
 │
 ├── apps/
 │   ├── api-gateway/                   # Fastify v5 webhook ingress & REST API
@@ -91,7 +127,22 @@ npm run typecheck
 npm test
 ```
 
-### 3. Local Infrastructure (PostgreSQL 16 + `pg_cron`)
+### 3. Milestone M1 Infrastructure & FinOps Verification
+```bash
+# Run M1 IaC & FinOps automated Vitest suite (22 tests)
+npx vitest run tests/suites/m1-iac-and-finops.spec.ts
+
+# Execute Zero-Public-Port Ingress audit (dry-run mode for CI)
+bash infra/verification/verify-zero-ports.sh --dry-run
+
+# Execute Ingress Anycast (<140ms) & Meta Graph Peering (<15ms) probe
+bash infra/verification/probe-latency.sh --dry-run
+
+# Run PostgreSQL 16 10s pg_cron & advisory lock fallback verification
+psql -U scheduler -d scheduler_db -f infra/verification/test-pg-cron-10s.sql
+```
+
+### 4. Local Infrastructure (PostgreSQL 16 + `pg_cron`)
 ```bash
 # Start PostgreSQL 16 with pg_cron, pgcrypto, uuid-ossp
 docker compose -f docker/docker-compose.yml up -d
@@ -103,6 +154,8 @@ docker compose -f docker/docker-compose.yml --profile mock up -d
 ---
 
 ## Reference Documentation
-- [PROJECT.md](./PROJECT.md) — Program Milestones (`M0`–`M7`) and Epic-to-Issue mapping (`#1`–`#16`)
+- [PROJECT.md](./PROJECT.md) — Program Milestones (`M0`–`M7`) and Epic-to-Issue mapping (`#1`–`#31`)
+- [infra/README.md](./infra/README.md) — Milestone M1 IaC, Dual Hosting Profiles & Verification Guide
+- [infra/finops/cost_model_v4_4.md](./infra/finops/cost_model_v4_4.md) — Dual-Hosting Unit-Economics & FinOps Ledger
 - [docs/contracts/mock_reconciliation_v4_4.md](./docs/contracts/mock_reconciliation_v4_4.md) — Frozen M0-T3 Errata & MockAPI Reconciliation ADR
 - [docs/README.md](./docs/README.md) — Historical Documentation Portal

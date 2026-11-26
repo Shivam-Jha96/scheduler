@@ -1,0 +1,83 @@
+# ==============================================================================
+# Promtail Configuration - Telemetry & PII Redaction Pipeline
+# Lean VPS Logging (EP14-T3 / BR-05 Tier 3 30-Day Ephemeral Retention)
+# ==============================================================================
+# Ships logs to local Loki instance (http://127.0.0.1:3100/loki/api/v1/push)
+# Enforces defense-in-depth regex scrubbing for:
+#   1. E.164 phone numbers (WhatsApp customer numbers) -> +[REDACTED_PHONE]
+#   2. wa.me shortlinks -> [REDACTED_WA_ME_LINK]
+#   3. Bearer & Auth tokens -> Bearer [REDACTED_TOKEN]
+# ==============================================================================
+
+server:
+  http_listen_port: 9080
+  grpc_listen_port: 0
+
+positions:
+  filename: /var/lib/promtail/positions.yaml
+
+clients:
+  - url: http://127.0.0.1:3100/loki/api/v1/push
+    batchwait: 1s
+    batchsize: 1048576 # 1 MB
+
+scrape_configs:
+  # Fastify API Gateway & Ingress Logs
+  - job_name: schedulerbot/api-gateway
+    static_configs:
+      - targets:
+          - localhost
+        labels:
+          app: schedulerbot
+          component: api-gateway
+          profile: lean-vps
+          __path__: /var/log/schedulerbot/api-gateway*.log
+
+    pipeline_stages:
+      # PII Scrubbing Stage 1: Redact E.164 Phone Numbers (+1234567890)
+      - replace:
+          expression: '(\+?[1-9]\d{6,14})'
+          replace: '+[REDACTED_PHONE]'
+
+      # PII Scrubbing Stage 2: Redact wa.me Click-to-Chat Shortlinks
+      - replace:
+          expression: '(https?:\/\/wa\.me\/[0-9A-Za-z\-_]+)'
+          replace: '[REDACTED_WA_ME_LINK]'
+
+      # PII Scrubbing Stage 3: Redact Bearer Tokens & API Keys
+      - replace:
+          expression: '(?i)(bearer\s+)[A-Za-z0-9_\-\.]{20,}'
+          replace: '$1[REDACTED_TOKEN]'
+
+  # Delivery Worker Daemon Logs
+  - job_name: schedulerbot/delivery-worker
+    static_configs:
+      - targets:
+          - localhost
+        labels:
+          app: schedulerbot
+          component: delivery-worker
+          profile: lean-vps
+          __path__: /var/log/schedulerbot/delivery-worker*.log
+
+    pipeline_stages:
+      - replace:
+          expression: '(\+?[1-9]\d{6,14})'
+          replace: '+[REDACTED_PHONE]'
+      - replace:
+          expression: '(https?:\/\/wa\.me\/[0-9A-Za-z\-_]+)'
+          replace: '[REDACTED_WA_ME_LINK]'
+      - replace:
+          expression: '(?i)(bearer\s+)[A-Za-z0-9_\-\.]{20,}'
+          replace: '$1[REDACTED_TOKEN]'
+
+  # System Journal & Cloudflare Ingress Daemon Logs
+  - job_name: system/journal
+    journal:
+      max_age: 12h
+      labels:
+        app: system
+        profile: lean-vps
+    relabel_configs:
+      - source_labels: ['__journal__systemd_unit']
+        target_label: 'unit'

@@ -21,6 +21,7 @@ tests/
 │   ├── fsm_transitions_and_chaos_matrix.json   # 10-state FSM valid/illegal transitions, CAS race & Lease Reaper matrix
 │   └── security_privacy_and_optout_vectors.json# 64-hex HMAC, versioned BYTEA, 4-tier retention, Pino & opt-out vectors
 ├── suites/
+│   ├── m1-iac-and-finops.spec.ts               # M1 IaC (Lean VPS, AWS Terraform, FinOps & verification scripts, 22 tests)
 │   ├── fsm-and-cas-contracts.spec.ts           # 10-state FSM, CAS race & Erratum A.2 #7 bounded Lease Reaper checks
 │   ├── mockapi-v4-4-contract.spec.ts           # 5 en_US Utility templates, https://wa.me/{{1}}, 8 deltas, HMAC/replay
 │   ├── nlu-calibration-and-dataset.spec.ts     # Macro-F1 >= 0.92, ECE <= 0.05 evaluator, golden dataset & regex fast-path

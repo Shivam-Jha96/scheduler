@@ -1,0 +1,210 @@
+{
+  "metadata": {
+    "repository": "Shivam-Jha96/scheduler",
+    "project_id": "PVT_kwHOATDjps4BrbmU",
+    "milestone_m1_number": 2,
+    "milestone_m1_title": "M1: Zero-Trust Edge, Crypto Foundation & Production DDL",
+    "generated_at": "2026-11-26T11:14:41Z",
+    "assignee": "Shivam-Jha96",
+    "target_status": "In Review",
+    "pr_number": 32,
+    "pr_url": "https://github.com/Shivam-Jha96/scheduler/pull/32"
+  },
+  "milestones": {
+    "M0: Pre-Build Hygiene, V1.2 Purge & Errata Reconciliation": 1,
+    "M1: Zero-Trust Edge, Crypto Foundation & Production DDL": 2,
+    "M2: Meta WABA Integration, Identity Bootstrap & Compliance Gate": 3,
+    "M3: NLU Schedule Creation, In-Chat Routing & Hybrid Engine": 4,
+    "M4: Reliability, Observability, E2E Certification & MVP Launch": 5,
+    "M5: Phase-2 Wall-Clock Recurrence & Slash Grammar": 6,
+    "M6: Phase-2 Omnichannel Hexagonal SDK & Tier-1 Adapters": 7,
+    "M7: Phase-2 Ecosystem Bridges, Web Control Plane & SaaS Billing": 8
+  },
+  "epics": {
+    "EPIC-14": {
+      "number": 14,
+      "node_id": "I_kwDOVs6B1c8AAAABfavkXg",
+      "item_id": "PVTI_lAHOATDjps4BrbmUzhI4GMw",
+      "title": "[EPIC-14] Reconciled Network Ingress, Dual Hosting Profiles & Cost Modeling (FR-NET)",
+      "milestone": "M1: Zero-Trust Edge, Crypto Foundation & Production DDL",
+      "assignee": "Shivam-Jha96",
+      "status": "In Review"
+    },
+    "EPIC-13": {
+      "number": 13,
+      "node_id": "I_kwDOVs6B1c8AAAABfavjKw",
+      "title": "[EPIC-13] Zero-Trust Cryptography, Zero Name Hashes & 4-Tier Retention (FR-SEC)",
+      "milestone": "M1: Zero-Trust Edge, Crypto Foundation & Production DDL"
+    },
+    "EPIC-04": {
+      "number": 3,
+      "node_id": "I_kwDOVs6B1c8AAAABe5MgQg",
+      "title": "[EPIC-04] 5-Stage Hybrid Lifecycle, 10-State FSM & CAS Lease Queuing (FR-SCHED)"
+    }
+  },
+  "created_items": {
+    "STORY-1": {
+      "type": "story",
+      "number": 19,
+      "node_id": "I_kwDOVs6B1c8AAAABiua64g",
+      "item_id": "PVTI_lAHOATDjps4BrbmUzhMFD0o",
+      "title": "[EPIC-04-DDL] [STORY] PG 16+ Schema, 10-State FSM, pg_cron >= 1.5 Verification & Regional Peering (EP14-T2)",
+      "parent_epic": "#3 [EPIC-04] & #14 [EPIC-14]",
+      "parent_epic_node_id": "I_kwDOVs6B1c8AAAABe5MgQg",
+      "assignee": "Shivam-Jha96",
+      "milestone": "M1: Zero-Trust Edge, Crypto Foundation & Production DDL",
+      "status": "In Review"
+    },
+    "STORY-2": {
+      "type": "story",
+      "number": 20,
+      "node_id": "I_kwDOVs6B1c8AAAABiubG5w",
+      "item_id": "PVTI_lAHOATDjps4BrbmUzhMFEAM",
+      "title": "[STORY] [EP14-T1a] Implement Lean VPS Zero-Trust Ingress Profile IaC & OS Hardening (FR-NET-01, FR-NET-02)",
+      "parent_epic": "#14 [EPIC-14]",
+      "parent_epic_node_id": "I_kwDOVs6B1c8AAAABfavkXg",
+      "assignee": "Shivam-Jha96",
+      "milestone": "M1: Zero-Trust Edge, Crypto Foundation & Production DDL",
+      "status": "In Review"
+    },
+    "STORY-3": {
+      "type": "story",
+      "number": 21,
+      "node_id": "I_kwDOVs6B1c8AAAABiubU5w",
+      "item_id": "PVTI_lAHOATDjps4BrbmUzhMFEOA",
+      "title": "[STORY] [EP14-T1b] Implement Enterprise AWS Terraform Profile (VPC, ECS Fargate, Aurora PG16, KMS, ALB/WAF, SSM)",
+      "parent_epic": "#14 [EPIC-14]",
+      "parent_epic_node_id": "I_kwDOVs6B1c8AAAABfavkXg",
+      "assignee": "Shivam-Jha96",
+      "milestone": "M1: Zero-Trust Edge, Crypto Foundation & Production DDL",
+      "status": "In Review"
+    },
+    "STORY-4": {
+      "type": "story",
+      "number": 22,
+      "node_id": "I_kwDOVs6B1c8AAAABiubivA",
+      "item_id": "PVTI_lAHOATDjps4BrbmUzhMFEZY",
+      "title": "[STORY] [EP14-T3/T4] Implement Tier-3 30-Day Log Retention, FinOps Budget Alerts & Zero-Port Verification Suite",
+      "parent_epic": "#14 [EPIC-14]",
+      "parent_epic_node_id": "I_kwDOVs6B1c8AAAABfavkXg",
+      "assignee": "Shivam-Jha96",
+      "milestone": "M1: Zero-Trust Edge, Crypto Foundation & Production DDL",
+      "status": "In Review"
+    },
+    "STORY-2_SUBTASK_23": {
+      "type": "subtask",
+      "number": 23,
+      "node_id": "I_kwDOVs6B1c8AAAABiubuRA",
+      "item_id": "PVTI_lAHOATDjps4BrbmUzhMFElI",
+      "title": "[SUBTASK] [EP14-T1a.1] Configure cloudflared Outbound QUIC Tunnel & Redundant Systemd Service",
+      "parent_story": "#20 [STORY] [EP14-T1a] Implement Lean VPS Zero-Trust Ingress Profile IaC & OS Hardening (FR-NET-01, FR-NET-02)",
+      "parent_story_node_id": "I_kwDOVs6B1c8AAAABiubG5w",
+      "assignee": "Shivam-Jha96",
+      "milestone": "M1: Zero-Trust Edge, Crypto Foundation & Production DDL",
+      "status": "In Review"
+    },
+    "STORY-2_SUBTASK_24": {
+      "type": "subtask",
+      "number": 24,
+      "node_id": "I_kwDOVs6B1c8AAAABiufVxQ",
+      "item_id": "PVTI_lAHOATDjps4BrbmUzhMFHlk",
+      "title": "[SUBTASK] [EP14-T1a.2] Implement UFW Default-Deny Firewall, Kernel Sysctl Hardening & Tailscale FIDO2 ACLs",
+      "parent_story": "#20 [STORY] [EP14-T1a] Implement Lean VPS Zero-Trust Ingress Profile IaC & OS Hardening (FR-NET-01, FR-NET-02)",
+      "parent_story_node_id": "I_kwDOVs6B1c8AAAABiubG5w",
+      "assignee": "Shivam-Jha96",
+      "milestone": "M1: Zero-Trust Edge, Crypto Foundation & Production DDL",
+      "status": "In Review"
+    },
+    "STORY-2_SUBTASK_25": {
+      "type": "subtask",
+      "number": 25,
+      "node_id": "I_kwDOVs6B1c8AAAABiufj6A",
+      "item_id": "PVTI_lAHOATDjps4BrbmUzhMFH0A",
+      "title": "[SUBTASK] [EP14-T1a.3] Author Lean VPS PostgreSQL 16 + pg_cron >= 1.5 & pgBackRest Provisioning Scripts",
+      "parent_story": "#20 [STORY] [EP14-T1a] Implement Lean VPS Zero-Trust Ingress Profile IaC & OS Hardening (FR-NET-01, FR-NET-02)",
+      "parent_story_node_id": "I_kwDOVs6B1c8AAAABiubG5w",
+      "assignee": "Shivam-Jha96",
+      "milestone": "M1: Zero-Trust Edge, Crypto Foundation & Production DDL",
+      "status": "In Review"
+    },
+    "STORY-3_SUBTASK_26": {
+      "type": "subtask",
+      "number": 26,
+      "node_id": "I_kwDOVs6B1c8AAAABiufxfw",
+      "item_id": "PVTI_lAHOATDjps4BrbmUzhMFIAw",
+      "title": "[SUBTASK] [EP14-T1b.1] Author Terraform AWS Multi-AZ Private VPC, Isolated Subnets & Zero-Public-DB Security Groups",
+      "parent_story": "#21 [STORY] [EP14-T1b] Implement Enterprise AWS Terraform Profile (VPC, ECS Fargate, Aurora PG16, KMS, ALB/WAF, SSM)",
+      "parent_story_node_id": "I_kwDOVs6B1c8AAAABiubU5w",
+      "assignee": "Shivam-Jha96",
+      "milestone": "M1: Zero-Trust Edge, Crypto Foundation & Production DDL",
+      "status": "In Review"
+    },
+    "STORY-3_SUBTASK_27": {
+      "type": "subtask",
+      "number": 27,
+      "node_id": "I_kwDOVs6B1c8AAAABiuf_qg",
+      "item_id": "PVTI_lAHOATDjps4BrbmUzhMFIN4",
+      "title": "[SUBTASK] [EP14-T1b.2] Author Terraform RDS Aurora PG 16 (pg_cron >= 1.5) & Cloud KMS CMK (alias/schedulerbot-dek)",
+      "parent_story": "#21 [STORY] [EP14-T1b] Implement Enterprise AWS Terraform Profile (VPC, ECS Fargate, Aurora PG16, KMS, ALB/WAF, SSM)",
+      "parent_story_node_id": "I_kwDOVs6B1c8AAAABiubU5w",
+      "assignee": "Shivam-Jha96",
+      "milestone": "M1: Zero-Trust Edge, Crypto Foundation & Production DDL",
+      "status": "In Review"
+    },
+    "STORY-3_SUBTASK_28": {
+      "type": "subtask",
+      "number": 28,
+      "node_id": "I_kwDOVs6B1c8AAAABiugPDA",
+      "item_id": "PVTI_lAHOATDjps4BrbmUzhMFIcc",
+      "title": "[SUBTASK] [EP14-T1b.3] Author Terraform ALB, WAFv2 Rate-Limiting, ECS Fargate Services & Bastion-Free SSM Endpoints",
+      "parent_story": "#21 [STORY] [EP14-T1b] Implement Enterprise AWS Terraform Profile (VPC, ECS Fargate, Aurora PG16, KMS, ALB/WAF, SSM)",
+      "parent_story_node_id": "I_kwDOVs6B1c8AAAABiubU5w",
+      "assignee": "Shivam-Jha96",
+      "milestone": "M1: Zero-Trust Edge, Crypto Foundation & Production DDL",
+      "status": "In Review"
+    },
+    "STORY-4_SUBTASK_29": {
+      "type": "subtask",
+      "number": 29,
+      "node_id": "I_kwDOVs6B1c8AAAABiugc6g",
+      "item_id": "PVTI_lAHOATDjps4BrbmUzhMFIr4",
+      "title": "[SUBTASK] [EP14-T3.1] Configure Tier-3 30-Day Ephemeral Log Retention for AWS CloudWatch & Grafana Loki",
+      "parent_story": "#22 [STORY] [EP14-T3/T4] Implement Tier-3 30-Day Log Retention, FinOps Budget Alerts & Zero-Port Verification Suite",
+      "parent_story_node_id": "I_kwDOVs6B1c8AAAABiubivA",
+      "assignee": "Shivam-Jha96",
+      "milestone": "M1: Zero-Trust Edge, Crypto Foundation & Production DDL",
+      "status": "In Review"
+    },
+    "STORY-4_SUBTASK_30": {
+      "type": "subtask",
+      "number": 30,
+      "node_id": "I_kwDOVs6B1c8AAAABiugq2w",
+      "item_id": "PVTI_lAHOATDjps4BrbmUzhMFI4w",
+      "title": "[SUBTASK] [EP14-T4.1] Configure FinOps AWS Budget Alerts (75%/90%), Prometheus >25% Fallback Rule & Unit-Economics Model",
+      "parent_story": "#22 [STORY] [EP14-T3/T4] Implement Tier-3 30-Day Log Retention, FinOps Budget Alerts & Zero-Port Verification Suite",
+      "parent_story_node_id": "I_kwDOVs6B1c8AAAABiubivA",
+      "assignee": "Shivam-Jha96",
+      "milestone": "M1: Zero-Trust Edge, Crypto Foundation & Production DDL",
+      "status": "In Review"
+    },
+    "STORY-4_SUBTASK_31": {
+      "type": "subtask",
+      "number": 31,
+      "node_id": "I_kwDOVs6B1c8AAAABiug5Fg",
+      "item_id": "PVTI_lAHOATDjps4BrbmUzhMFJHg",
+      "title": "[SUBTASK] [EP14-T4.2] Build Zero-Port nmap Audit, Anycast/Meta Latency Probes & M1 IaC Automated Test Suite",
+      "parent_story": "#22 [STORY] [EP14-T3/T4] Implement Tier-3 30-Day Log Retention, FinOps Budget Alerts & Zero-Port Verification Suite",
+      "parent_story_node_id": "I_kwDOVs6B1c8AAAABiubivA",
+      "assignee": "Shivam-Jha96",
+      "milestone": "M1: Zero-Trust Edge, Crypto Foundation & Production DDL",
+      "status": "In Review"
+    }
+  },
+  "pr_item": {
+    "number": 32,
+    "item_id": "PVTI_lAHOATDjps4BrbmUzhMFrFk",
+    "title": "feat(m1-iac): implement Dual-Profile Zero-Trust IaC, FinOps & Verification Suite (EPIC-14)",
+    "status": "In Review",
+    "url": "https://github.com/Shivam-Jha96/scheduler/pull/32"
+  }
+}
